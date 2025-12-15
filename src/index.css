@@ -1,0 +1,133 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.5;
+  font-weight: 700;
+  background-color: #FFFEF2;
+  color: #0A0A0A;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #FFFEF2;
+}
+
+.dark {
+  background-color: #0A0A0A;
+  color: #FFFEF2;
+}
+
+.dark #root {
+  background-color: #0A0A0A;
+}
+
+/* Brutalism Button Base */
+.btn-brutal {
+  border: 3px solid #000000;
+  font-weight: 700;
+  text-transform: uppercase;
+  transition: all 0.1s ease;
+  letter-spacing: 0.5px;
+}
+
+.btn-brutal:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px 0px #000000;
+}
+
+.btn-brutal:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px 0px #000000;
+}
+
+/* Dark Mode Button */
+.dark .btn-brutal {
+  border-color: #FFFEF2;
+}
+
+.dark .btn-brutal:hover {
+  box-shadow: 6px 6px 0px 0px #FFFEF2;
+}
+
+.dark .btn-brutal:active {
+  box-shadow: 2px 2px 0px 0px #FFFEF2;
+}
+
+/* Brutalism Card */
+.card-brutal {
+  border: 3px solid #000000;
+  box-shadow: 4px 4px 0px 0px #000000;
+  transition: all 0.2s ease;
+}
+
+.card-brutal:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 8px 8px 0px 0px #000000;
+}
+
+/* Dark Mode Card */
+.dark .card-brutal {
+  border-color: #FFFEF2;
+  box-shadow: 4px 4px 0px 0px #FFFEF2;
+}
+
+.dark .card-brutal:hover {
+  box-shadow: 8px 8px 0px 0px #FFFEF2;
+}
+
+/* Slider Brutalism */
+.slider-brutal {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 8px;
+  background: #FFFEF2;
+  border: 3px solid #000000;
+  outline: none;
+}
+
+.slider-brutal::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  background: #000000;
+  cursor: pointer;
+  border: 3px solid #000000;
+  box-shadow: 2px 2px 0px 0px #000000;
+}
+
+.slider-brutal::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  background: #000000;
+  cursor: pointer;
+  border: 3px solid #000000;
+  box-shadow: 2px 2px 0px 0px #000000;
+}
+
+.dark .slider-brutal {
+  background: #0A0A0A;
+  border-color: #FFFEF2;
+}
+
+.dark .slider-brutal::-webkit-slider-thumb {
+  background: #FFFEF2;
+  border-color: #FFFEF2;
+  box-shadow: 2px 2px 0px 0px #FFFEF2;
+}
+
+.dark .slider-brutal::-moz-range-thumb {
+  background: #FFFEF2;
+  border-color: #FFFEF2;
+  box-shadow: 2px 2px 0px 0px #FFFEF2;
+}
