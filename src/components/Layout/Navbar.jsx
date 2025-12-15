@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useTheme } from '../../context/ThemeContext'
+import { TrophyIcon } from '@heroicons/react/24/solid'
 
 export default function Navbar() {
   const { theme, toggleTheme } = useTheme()
@@ -17,7 +18,15 @@ export default function Navbar() {
               to="/" 
               className="hidden sm:block px-3 py-1.5 sm:px-4 sm:py-2 font-bold text-sm uppercase tracking-wide border-3 border-black dark:border-brutal-bg hover:bg-black hover:text-white dark:hover:bg-brutal-bg dark:hover:text-brutal-dark transition-all"
             >
-              HOME
+              BERANDA
+            </Link>
+            
+            <Link 
+              to="/quiz" 
+              className="px-3 py-1.5 sm:px-4 sm:py-2 font-bold text-sm uppercase tracking-wide border-3 border-black dark:border-brutal-bg bg-brutal-warning text-white hover:bg-brutal-warning/80 transition-all flex items-center gap-1.5"
+            >
+              <TrophyIcon className="w-4 h-4" />
+              <span className="hidden sm:inline">KUIS</span>
             </Link>
             
             <button
