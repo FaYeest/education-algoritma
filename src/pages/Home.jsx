@@ -9,7 +9,8 @@ import {
   Bars3BottomLeftIcon,
   ArrowsPointingOutIcon,
   ArrowTrendingDownIcon,
-  AcademicCapIcon
+  AcademicCapIcon,
+  SparklesIcon
 } from '@heroicons/react/24/solid'
 
 const algorithms = [
@@ -112,31 +113,58 @@ export default function Home() {
         ))}
       </div>
 
-      {/* Quiz CTA Banner */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1 }}
-        className="mt-8 sm:mt-12"
-      >
-        <Link to="/quiz">
-          <div className="card-brutal bg-gradient-to-r from-brutal-warning to-brutal-primary text-white p-6 sm:p-8 cursor-pointer hover:scale-105 transition-transform">
-            <div className="flex items-center justify-between flex-wrap gap-4">
+      {/* Quiz CTA Banners */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8 sm:mt-12">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1 }}
+        >
+          <Link to="/quiz">
+            <div className="card-brutal bg-gradient-to-r from-brutal-warning to-brutal-primary text-white p-6 sm:p-8 cursor-pointer hover:scale-105 transition-transform">
               <div className="flex items-center gap-4">
-                <AcademicCapIcon className="w-12 h-12 sm:w-16 sm:h-16" />
+                <AcademicCapIcon className="w-12 h-12 sm:w-16 sm:h-16 flex-shrink-0" />
                 <div>
-                  <h3 className="text-2xl sm:text-3xl font-black uppercase mb-1">
-                    UJI PENGETAHUAN KAMU!
+                  <h3 className="text-xl sm:text-2xl font-black uppercase mb-1">
+                    KUIS KLASIK
                   </h3>
                   <p className="text-sm sm:text-base font-bold uppercase opacity-90">
-                    Ikuti Kuis Tantangan Algoritma →
+                    Pertanyaan tetap & terstruktur →
                   </p>
                 </div>
               </div>
             </div>
-          </div>
-        </Link>
-      </motion.div>
+          </Link>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.1 }}
+        >
+          <Link to="/quiz-ai">
+            <div className="card-brutal bg-gradient-to-r from-brutal-purple to-brutal-secondary text-white p-6 sm:p-8 cursor-pointer hover:scale-105 transition-transform relative overflow-hidden">
+              <div className="absolute top-2 right-2">
+                <span className="bg-brutal-warning text-brutal-dark px-3 py-1 text-xs font-black uppercase border-2 border-black">
+                  NEW!
+                </span>
+              </div>
+              <div className="flex items-center gap-4">
+                <SparklesIcon className="w-12 h-12 sm:w-16 sm:h-16 flex-shrink-0 animate-pulse" />
+                <div>
+                  <h3 className="text-xl sm:text-2xl font-black uppercase mb-1 flex items-center gap-2">
+                    KUIS AI
+                    <SparklesIcon className="w-6 h-6" />
+                  </h3>
+                  <p className="text-sm sm:text-base font-bold uppercase opacity-90">
+                    Pertanyaan baru setiap hari! →
+                  </p>
+                </div>
+              </div>
+            </div>
+          </Link>
+        </motion.div>
+      </div>
 
     </div>
   )

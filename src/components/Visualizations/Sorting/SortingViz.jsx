@@ -4,6 +4,8 @@ import { generateRandomArray } from '../../../utils/arrayHelpers'
 import { useSpeed } from '../../../context/SpeedContext'
 import PlaybackControls from '../../Common/PlaybackControls'
 import StatsPanel from '../../Common/StatsPanel'
+import AllStepsList from '../../Common/AllStepsList'
+import { API_BASE_URL } from '../../../config/api'
 import { 
   BoltIcon,
   ArrowsUpDownIcon,
@@ -12,7 +14,9 @@ import {
   ArrowsRightLeftIcon,
   ChartBarIcon,
   ArrowPathIcon,
-  MagnifyingGlassIcon
+  MagnifyingGlassIcon,
+  ListBulletIcon,
+  PlayIcon
 } from '@heroicons/react/24/solid'
 
 export default function SortingViz() {
@@ -24,6 +28,9 @@ export default function SortingViz() {
   const [comparing, setComparing] = useState([])
   const [swapped, setSwapped] = useState([])
   const [sorted, setSorted] = useState([])
+  const [viewMode, setViewMode] = useState('step') // 'step' or 'list'
+  const [isLoadingSteps, setIsLoadingSteps] = useState(false)
+  const [animationCompleted, setAnimationCompleted] = useState(false) // Track if animation finished
   const { speed, setSpeed, getDelay } = useSpeed()
 
   const algorithms = {
@@ -54,8 +61,9 @@ export default function SortingViz() {
   }
 
   const fetchSteps = async () => {
+    setIsLoadingSteps(true)
     try {
-      const res = await fetch('http://localhost:8000/api/algorithms/sorting', {
+      const res = await fetch(`${API_BASE_URL}/api/algorithms/sorting`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ algorithm, array })
@@ -70,14 +78,19 @@ export default function SortingViz() {
     } catch (error) {
       console.error('Failed to fetch sorting steps:', error)
       return []
+    } finally {
+      setIsLoadingSteps(false)
     }
   }
 
   const handlePlay = async () => {
     if (steps.length === 0) {
+      setIsPlaying(true) // Set loading state
       const newSteps = await fetchSteps()
       if (newSteps.length > 0) {
         setIsPlaying(true)
+      } else {
+        setIsPlaying(false)
       }
     } else {
       setIsPlaying(true)
@@ -93,6 +106,7 @@ export default function SortingViz() {
     setComparing([])
     setSwapped([])
     setSorted([])
+    setAnimationCompleted(false)
     if (!keepArray) {
       setArray(generateRandomArray(array.length))
     }
@@ -118,6 +132,7 @@ export default function SortingViz() {
     setComparing([])
     setSwapped([])
     setSorted([])
+    setAnimationCompleted(false)
   }
 
   const handleAlgorithmChange = (newAlgo) => {
@@ -128,6 +143,7 @@ export default function SortingViz() {
     setComparing([])
     setSwapped([])
     setSorted([])
+    setAnimationCompleted(false)
   }
 
   const handleArraySizeChange = (newSize) => {
@@ -138,6 +154,7 @@ export default function SortingViz() {
     setComparing([])
     setSwapped([])
     setSorted([])
+    setAnimationCompleted(false)
     setArray(generateRandomArray(size))
   }
 
@@ -149,7 +166,9 @@ export default function SortingViz() {
         }, getDelay())
         return () => clearTimeout(timer)
       } else {
+        // Animation completed - sorting finished
         setIsPlaying(false)
+        setAnimationCompleted(true) // Mark animation as completed
         // Mark all as sorted at the end
         setSorted(array.map((_, i) => i))
       }
@@ -242,6 +261,42 @@ export default function SortingViz() {
             </button>
           ))}
         </div>
+      </div>
+
+      {/* View Mode Toggle */}
+      <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-4">
+        <label className="font-black uppercase text-sm block mb-3">
+          Mode Tampilan:
+        </label>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setViewMode('step')}
+            className={`btn-brutal px-6 py-3 text-sm font-black uppercase transition-colors flex items-center gap-2 ${
+              viewMode === 'step'
+                ? 'bg-brutal-primary text-white'
+                : 'bg-white dark:bg-black hover:bg-brutal-secondary'
+            }`}
+          >
+            <PlayIcon className="w-5 h-5" />
+            STEP-BY-STEP
+          </button>
+          <button
+            onClick={() => setViewMode('list')}
+            className={`btn-brutal px-6 py-3 text-sm font-black uppercase transition-colors flex items-center gap-2 ${
+              viewMode === 'list'
+                ? 'bg-brutal-primary text-white'
+                : 'bg-white dark:bg-black hover:bg-brutal-secondary'
+            }`}
+          >
+            <ListBulletIcon className="w-5 h-5" />
+            LIHAT SEMUA STEP
+          </button>
+        </div>
+        <p className="text-xs font-bold uppercase mt-2 opacity-70">
+          {viewMode === 'step' 
+            ? 'Mode animasi step-by-step dengan kontrol playback'
+            : 'Lihat semua step sekaligus dalam daftar lengkap'}
+        </p>
       </div>
 
       {/* Array Size Control */}
@@ -464,6 +519,18 @@ export default function SortingViz() {
               </div>
             </div>
           </div>
+
+          {/* All Steps List - Only shown in 'list' mode */}
+          {viewMode === 'list' && (
+            <div className="mt-4">
+              <AllStepsList 
+                steps={steps} 
+                onGenerateSteps={fetchSteps}
+                isLoading={isLoadingSteps}
+                animationCompleted={animationCompleted}
+              />
+            </div>
+          )}
         </div>
 
         {/* Sidebar */}

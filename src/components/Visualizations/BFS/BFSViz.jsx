@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import PathfindingStepsList from '../../Common/PathfindingStepsList'
 import {
   PlayIcon,
   PauseIcon,
@@ -79,6 +80,8 @@ export default function BFSViz() {
   const [isComplete, setIsComplete] = useState(false)
   const [score, setScore] = useState(0)
   const [totalCells, setTotalCells] = useState(0)
+  const [viewMode, setViewMode] = useState('step')
+  const [animationCompleted, setAnimationCompleted] = useState(false)
 
   useEffect(() => {
     setMaze(MAZES[difficulty])
@@ -192,6 +195,7 @@ export default function BFSViz() {
     setIsComplete(false)
     setScore(0)
     setTotalCells(0)
+    setAnimationCompleted(false)
   }
 
   useEffect(() => {
@@ -206,6 +210,7 @@ export default function BFSViz() {
         if (step.action === 'found') {
           setIsComplete(true)
           setIsPlaying(false)
+          setAnimationCompleted(true)
           const efficiency = Math.round((step.path.length / totalCells) * 100)
           setScore(efficiency)
         }
@@ -406,6 +411,35 @@ export default function BFSViz() {
             </div>
           </div>
 
+          {/* View Mode Toggle */}
+          <div className="card-brutal bg-white dark:bg-black p-4 mt-4">
+            <div className="flex items-center gap-3">
+              <span className="font-black uppercase text-sm">Mode Tampilan:</span>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setViewMode('step')}
+                  className={`btn-brutal px-4 py-2 font-black uppercase text-sm ${
+                    viewMode === 'step'
+                      ? 'bg-brutal-primary text-white'
+                      : 'bg-white dark:bg-brutal-dark text-black dark:text-white'
+                  }`}
+                >
+                  Step-by-Step
+                </button>
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`btn-brutal px-4 py-2 font-black uppercase text-sm ${
+                    viewMode === 'list'
+                      ? 'bg-brutal-primary text-white'
+                      : 'bg-white dark:bg-brutal-dark text-black dark:text-white'
+                  }`}
+                >
+                  Lihat Semua Step
+                </button>
+              </div>
+            </div>
+          </div>
+
           {/* Current Action */}
           {currentStepData.message && (
             <motion.div
@@ -415,6 +449,17 @@ export default function BFSViz() {
             >
               <p className="font-black text-sm sm:text-base">{currentStepData.message}</p>
             </motion.div>
+          )}
+
+          {/* All Steps List - Only shown in 'list' mode */}
+          {viewMode === 'list' && (
+            <div className="mt-4">
+              <PathfindingStepsList 
+                steps={steps} 
+                animationCompleted={animationCompleted}
+                algorithmName="BFS"
+              />
+            </div>
           )}
         </div>
 

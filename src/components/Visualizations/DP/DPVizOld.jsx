@@ -38,7 +38,7 @@ export default function DPViz() {
     setExplanation('')
     try {
       if (mode === 'knapsack') {
-        const res = await fetch('http://localhost:8000/api/algorithms/dp/knapsack', {
+        const res = await fetch(\${API_BASE_URL}/api/algorithms/dp/knapsack', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ capacity: 7, items: [ { weight: 3, value: 4 }, { weight: 4, value: 5 }, { weight: 2, value: 3 } ] })
         })
@@ -46,7 +46,7 @@ export default function DPViz() {
         setTable(data.table || [])
         setExplanation('Knapsack: tabel dari backend terisi, kombinasi barang optimal dihitung.')
       } else {
-        const res = await fetch('http://localhost:8000/api/algorithms/dp/lcs', {
+        const res = await fetch(\${API_BASE_URL}/api/algorithms/dp/lcs', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ a: 'ABCBDAB', b: 'BDCABA' })
         })
@@ -133,3 +133,5 @@ export default function DPViz() {
     </div>
   )
 }
+
+

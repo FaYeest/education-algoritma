@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import DPStepsList from '../../Common/DPStepsList'
 import {
   PlayIcon,
   PauseIcon,
@@ -67,6 +68,8 @@ export default function DPViz() {
   const [isComplete, setIsComplete] = useState(false)
   const [totalValue, setTotalValue] = useState(0)
   const [totalWeight, setTotalWeight] = useState(0)
+  const [viewMode, setViewMode] = useState('step')
+  const [animationCompleted, setAnimationCompleted] = useState(false)
 
   useEffect(() => {
     setConfig(SCENARIOS[scenario])
@@ -194,6 +197,7 @@ export default function DPViz() {
     setIsComplete(false)
     setTotalValue(0)
     setTotalWeight(0)
+    setAnimationCompleted(false)
   }
 
   useEffect(() => {
@@ -210,6 +214,7 @@ export default function DPViz() {
         if (step.action === 'complete') {
           setIsComplete(true)
           setIsPlaying(false)
+          setAnimationCompleted(true)
           setTotalValue(step.totalValue)
           setTotalWeight(step.totalWeight)
         }
@@ -432,6 +437,35 @@ export default function DPViz() {
             </div>
           </div>
 
+          {/* View Mode Toggle */}
+          <div className="card-brutal bg-white dark:bg-black p-4 mt-4">
+            <div className="flex items-center gap-3">
+              <span className="font-black uppercase text-sm">Mode Tampilan:</span>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setViewMode('step')}
+                  className={`btn-brutal px-4 py-2 font-black uppercase text-sm ${
+                    viewMode === 'step'
+                      ? 'bg-brutal-primary text-white'
+                      : 'bg-white dark:bg-brutal-dark text-black dark:text-white'
+                  }`}
+                >
+                  Step-by-Step
+                </button>
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`btn-brutal px-4 py-2 font-black uppercase text-sm ${
+                    viewMode === 'list'
+                      ? 'bg-brutal-primary text-white'
+                      : 'bg-white dark:bg-brutal-dark text-black dark:text-white'
+                  }`}
+                >
+                  Lihat Semua Step
+                </button>
+              </div>
+            </div>
+          </div>
+
           {/* Current Action */}
           {currentStepData.message && (
             <motion.div
@@ -441,6 +475,16 @@ export default function DPViz() {
             >
               <p className="font-black text-sm sm:text-base">{currentStepData.message}</p>
             </motion.div>
+          )}
+
+          {/* All Steps List - Only shown in 'list' mode */}
+          {viewMode === 'list' && (
+            <div className="mt-4">
+              <DPStepsList 
+                steps={steps} 
+                animationCompleted={animationCompleted}
+              />
+            </div>
           )}
         </div>
 

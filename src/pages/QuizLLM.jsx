@@ -1,26 +1,27 @@
 import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 import { 
   TrophyIcon, 
   XMarkIcon, 
   CheckIcon,
   ArrowPathIcon,
-  ChartBarIcon,
   ClockIcon,
   FireIcon,
   LightBulbIcon,
   StarIcon,
   SparklesIcon,
+  CalendarIcon,
+  CpuChipIcon,
   HandThumbUpIcon,
   BookOpenIcon,
   AcademicCapIcon,
   SpeakerWaveIcon,
   SpeakerXMarkIcon
 } from '@heroicons/react/24/solid'
-import { quizQuestions } from '../utils/quizData'
 import { useSoundManager } from '../hooks/useSoundManager'
 
-export default function Quiz() {
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+
+export default function QuizLLM() {
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [score, setScore] = useState(0)
   const [showResult, setShowResult] = useState(false)
@@ -32,15 +33,16 @@ export default function Quiz() {
   const [difficulty, setDifficulty] = useState('medium')
   const [showExplanation, setShowExplanation] = useState(false)
   const [correctAnswers, setCorrectAnswers] = useState(0)
-  const [answersHistory, setAnswersHistory] = useState([])
-  const [showReview, setShowReview] = useState(false)
+  const [questions, setQuestions] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+  const [answersHistory, setAnswersHistory] = useState([]) // Track all answers
+  const [showReview, setShowReview] = useState(false) // Toggle review mode
 
   // Sound Manager
   const sound = useSoundManager()
 
-  const questions = quizQuestions[difficulty]
-
-  // Sound effects for completion
+  // Sound effects for completion and timer
   useEffect(() => {
     if (showResult) {
       sound.stopBGM()
@@ -67,6 +69,33 @@ export default function Quiz() {
 
     return () => clearInterval(timer)
   }, [gameStarted, showResult, selectedAnswer, currentQuestion, sound])
+
+  const fetchQuestions = async (selectedDifficulty) => {
+    setLoading(true)
+    setError(null)
+    
+    try {
+      const response = await fetch(`${API_URL}/api/quiz/${selectedDifficulty}?count=10`)
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch questions')
+      }
+      
+      const data = await response.json()
+      
+      if (data.success && data.questions && data.questions.length > 0) {
+        setQuestions(data.questions)
+        setGameStarted(true)
+      } else {
+        throw new Error('No questions available')
+      }
+    } catch (err) {
+      setError(err.message)
+      console.error('Error fetching questions:', err)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const handleTimeout = () => {
     setAnsweredCorrect(false)
@@ -141,6 +170,8 @@ export default function Quiz() {
     setGameStarted(false)
     setShowExplanation(false)
     setCorrectAnswers(0)
+    setQuestions([])
+    setError(null)
     setAnswersHistory([])
     setShowReview(false)
     sound.stopBGM() // Stop background music
@@ -148,38 +179,61 @@ export default function Quiz() {
 
   const startGame = (selectedDifficulty) => {
     setDifficulty(selectedDifficulty)
-    setGameStarted(true)
+    fetchQuestions(selectedDifficulty)
     sound.playBGM() // Start background music
+  }
+
+  if (loading) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-8 text-center">
+          <div className="animate-spin w-16 h-16 border-4 border-brutal-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+          <h2 className="text-2xl font-black uppercase">Memuat Pertanyaan...</h2>
+          <p className="text-sm font-bold uppercase opacity-70 mt-2">Menggunakan AI untuk generate pertanyaan unik</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <div className="card-brutal bg-brutal-danger text-white p-8 text-center">
+          <XMarkIcon className="w-16 h-16 mx-auto mb-4" />
+          <h2 className="text-2xl font-black uppercase mb-4">Error</h2>
+          <p className="text-lg font-bold mb-6">{error}</p>
+          <button
+            onClick={resetQuiz}
+            className="btn-brutal bg-white text-brutal-danger px-6 py-3 font-black uppercase"
+          >
+            Coba Lagi
+          </button>
+        </div>
+      </div>
+    )
   }
 
   if (!gameStarted) {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-8"
-        >
+        <div className="text-center mb-8">
           <TrophyIcon className="w-16 h-16 sm:w-24 sm:h-24 mx-auto mb-4 text-brutal-warning" />
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black uppercase mb-4">
-            KUIS ALGORITMA
+            KUIS ALGORITMA AI
           </h1>
           <p className="text-lg sm:text-xl font-bold uppercase tracking-wide opacity-80">
-            Uji pengetahuan algoritma kamu!
+            Pertanyaan baru setiap hari dengan AI!
           </p>
-        </motion.div>
+        </div>
 
         <div className="grid gap-6 max-w-2xl mx-auto">
           {[
             { id: 'easy', name: 'MUDAH', desc: 'Untuk pemula', color: 'bg-brutal-success', icon: StarIcon },
             { id: 'medium', name: 'SEDANG', desc: 'Level menengah', color: 'bg-brutal-warning', icon: FireIcon },
             { id: 'hard', name: 'SULIT', desc: 'Tantangan ahli', color: 'bg-brutal-danger', icon: TrophyIcon }
-          ].map((level, index) => (
-            <motion.button
+          ].map((level) => (
+            <button
               key={level.id}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.1 }}
               onClick={() => startGame(level.id)}
               className={`card-brutal ${level.color} text-white p-6 text-left hover:scale-105 transition-transform cursor-pointer`}
             >
@@ -194,43 +248,42 @@ export default function Quiz() {
                 </div>
                 <level.icon className="w-12 h-12" />
               </div>
-            </motion.button>
+            </button>
           ))}
         </div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
-          className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-6 mt-8 max-w-2xl mx-auto"
-        >
+        <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-6 mt-8 max-w-2xl mx-auto">
           <h3 className="text-xl font-black uppercase mb-4 flex items-center gap-2">
             <LightBulbIcon className="w-6 h-6 text-brutal-warning" />
-            CARA BERMAIN:
+            FITUR BARU:
           </h3>
           <ul className="space-y-2 font-bold uppercase text-sm">
             <li className="flex items-center gap-2">
-              <CheckIcon className="w-4 h-4 text-brutal-success" />
-              Jawab pertanyaan dalam 30 detik
+              <CpuChipIcon className="w-5 h-5 text-brutal-primary" />
+              Pertanyaan di-generate oleh AI
             </li>
             <li className="flex items-center gap-2">
-              <FireIcon className="w-4 h-4 text-brutal-danger" />
+              <CalendarIcon className="w-5 h-5 text-brutal-success" />
+              Pertanyaan baru setiap hari
+            </li>
+            <li className="flex items-center gap-2">
+              <SparklesIcon className="w-5 h-5 text-brutal-warning" />
+              Random selection - tidak ada pertanyaan yang sama
+            </li>
+            <li className="flex items-center gap-2">
+              <ClockIcon className="w-5 h-5 text-brutal-secondary" />
+              Jawab dalam 30 detik
+            </li>
+            <li className="flex items-center gap-2">
+              <FireIcon className="w-5 h-5 text-brutal-danger" />
               Bangun streak untuk bonus poin
             </li>
             <li className="flex items-center gap-2">
-              <StarIcon className="w-4 h-4 text-brutal-warning" />
-              Jawaban lebih cepat = lebih banyak poin
-            </li>
-            <li className="flex items-center gap-2">
-              <ChartBarIcon className="w-4 h-4 text-brutal-primary" />
-              Dapatkan {questions.length} pertanyaan per putaran
-            </li>
-            <li className="flex items-center gap-2">
-              <LightBulbIcon className="w-4 h-4 text-brutal-warning" />
-              Lihat penjelasan setelah menjawab
+              <LightBulbIcon className="w-5 h-5 text-brutal-warning" />
+              Penjelasan detail setiap jawaban
             </li>
           </ul>
-        </motion.div>
+        </div>
       </div>
     )
   }
@@ -264,13 +317,7 @@ export default function Quiz() {
               const isCorrect = record.isCorrect
 
               return (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-6"
-                >
+                <div key={index} className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-6">
                   {/* Question Number and Status */}
                   <div className="flex items-center justify-between mb-4">
                     <span className="font-black text-lg">
@@ -334,20 +381,18 @@ export default function Quiz() {
                   </div>
 
                   {/* Explanation */}
-                  {question.explanation && (
-                    <div className="card-brutal bg-brutal-warning bg-opacity-10 p-4 mt-4">
-                      <div className="flex items-start gap-3">
-                        <LightBulbIcon className="w-6 h-6 text-brutal-warning flex-shrink-0 mt-1" />
-                        <div>
-                          <h4 className="font-black uppercase text-sm mb-2">PENJELASAN:</h4>
-                          <p className="text-sm font-medium leading-relaxed">
-                            {question.explanation}
-                          </p>
-                        </div>
+                  <div className="card-brutal bg-brutal-warning bg-opacity-10 p-4 mt-4">
+                    <div className="flex items-start gap-3">
+                      <LightBulbIcon className="w-6 h-6 text-brutal-warning flex-shrink-0 mt-1" />
+                      <div>
+                        <h4 className="font-black uppercase text-sm mb-2">PENJELASAN:</h4>
+                        <p className="text-sm font-medium leading-relaxed">
+                          {question.explanation}
+                        </p>
                       </div>
                     </div>
-                  )}
-                </motion.div>
+                  </div>
+                </div>
               )
             })}
           </div>
@@ -372,13 +417,10 @@ export default function Quiz() {
       )
     }
     
+    // Results Screen
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-8 text-center"
-        >
+        <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-8 text-center">
           <TrophyIcon className={`w-24 h-24 mx-auto mb-6 ${
             percentage >= 80 ? 'text-brutal-success' : 
             percentage >= 60 ? 'text-brutal-warning' : 
@@ -449,7 +491,7 @@ export default function Quiz() {
               KEMBALI
             </button>
           </div>
-        </motion.div>
+        </div>
       </div>
     )
   }
@@ -474,7 +516,6 @@ export default function Quiz() {
         </button>
       )}
 
-      {/* Header Stats */}
       <div className="grid grid-cols-3 gap-4 mb-6">
         <div className="card-brutal bg-brutal-primary text-white p-3 text-center">
           <div className="text-2xl font-black">{score}</div>
@@ -490,7 +531,6 @@ export default function Quiz() {
         </div>
       </div>
 
-      {/* Progress Bar */}
       <div className="mb-6">
         <div className="flex justify-between items-center mb-2">
           <span className="text-sm font-bold uppercase">Pertanyaan {currentQuestion + 1}/{questions.length}</span>
@@ -499,120 +539,95 @@ export default function Quiz() {
           </span>
         </div>
         <div className="h-4 border-3 border-black dark:border-brutal-bg bg-brutal-bg dark:bg-brutal-dark">
-          <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: `${progress}%` }}
-            className="h-full bg-brutal-primary"
+          <div
+            style={{ width: `${progress}%` }}
+            className="h-full bg-brutal-primary transition-all duration-300"
           />
         </div>
       </div>
 
-      {/* Question Card */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={currentQuestion}
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -50 }}
-          className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-6 sm:p-8 mb-6"
-        >
-          <h3 className="text-xl sm:text-2xl font-black uppercase mb-6 leading-tight">
-            {question.question}
-          </h3>
+      <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-6 sm:p-8 mb-6">
+        <h3 className="text-xl sm:text-2xl font-black uppercase mb-6 leading-tight">
+          {question.question}
+        </h3>
 
-          <div className="space-y-3">
-            {question.answers.map((answer, index) => {
-              const isSelected = selectedAnswer === index
-              const isCorrect = index === question.correctAnswer
-              const showFeedback = selectedAnswer !== null
+        <div className="space-y-3">
+          {question.answers.map((answer, index) => {
+            const isSelected = selectedAnswer === index
+            const isCorrect = index === question.correctAnswer
+            const showFeedback = selectedAnswer !== null
 
-              return (
-                <motion.button
-                  key={index}
-                  whileHover={{ scale: selectedAnswer === null ? 1.02 : 1 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => handleAnswer(index)}
-                  disabled={selectedAnswer !== null}
-                  className={`w-full p-4 text-left font-bold uppercase border-3 transition-all ${
-                    showFeedback && isCorrect
-                      ? 'bg-brutal-success text-white border-brutal-success'
-                      : showFeedback && isSelected && !isCorrect
-                      ? 'bg-brutal-danger text-white border-brutal-danger'
-                      : 'bg-white dark:bg-brutal-dark border-black dark:border-brutal-bg hover:bg-brutal-primary hover:text-white'
-                  } ${selectedAnswer !== null ? 'cursor-not-allowed' : 'cursor-pointer'}`}
-                >
-                  <div className="flex items-center justify-between">
-                    <span>{answer}</span>
-                    {showFeedback && isCorrect && (
-                      <CheckIcon className="w-6 h-6" />
-                    )}
-                    {showFeedback && isSelected && !isCorrect && (
-                      <XMarkIcon className="w-6 h-6" />
-                    )}
-                  </div>
-                </motion.button>
-              )
-            })}
-          </div>
-        </motion.div>
-      </AnimatePresence>
-
-      {/* Feedback Message with Explanation */}
-      <AnimatePresence>
-        {answeredCorrect !== null && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            className="space-y-4"
-          >
-            <div className={`card-brutal p-4 text-center ${
-              answeredCorrect 
-                ? 'bg-brutal-success text-white' 
-                : 'bg-brutal-danger text-white'
-            }`}>
-              <p className="text-lg font-black uppercase flex items-center justify-center gap-2">
-                {answeredCorrect ? (
-                  <>
-                    <CheckIcon className="w-6 h-6" />
-                    BENAR! +{10 + Math.floor(timeLeft / 3)} POIN
-                  </>
-                ) : (
-                  <>
-                    <XMarkIcon className="w-6 h-6" />
-                    SALAH! JAWABAN YANG BENAR: {question.answers[question.correctAnswer]}
-                  </>
-                )}
-              </p>
-              {answeredCorrect && streak > 1 && (
-                <p className="text-sm font-bold uppercase mt-1 flex items-center justify-center gap-2">
-                  <FireIcon className="w-5 h-5" />
-                  STREAK {streak}X!
-                </p>
-              )}
-            </div>
-            
-            {showExplanation && question.explanation && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-4"
+            return (
+              <button
+                key={index}
+                onClick={() => handleAnswer(index)}
+                disabled={selectedAnswer !== null}
+                className={`w-full p-4 text-left font-bold uppercase border-3 transition-all ${
+                  showFeedback && isCorrect
+                    ? 'bg-brutal-success text-white border-brutal-success'
+                    : showFeedback && isSelected && !isCorrect
+                    ? 'bg-brutal-danger text-white border-brutal-danger'
+                    : 'bg-white dark:bg-brutal-dark border-black dark:border-brutal-bg hover:bg-brutal-primary hover:text-white'
+                } ${selectedAnswer !== null ? 'cursor-not-allowed' : 'cursor-pointer'}`}
               >
-                <div className="flex items-start gap-3">
-                  <LightBulbIcon className="w-6 h-6 text-brutal-warning flex-shrink-0 mt-1" />
-                  <div>
-                    <h4 className="font-black uppercase text-sm mb-2">PENJELASAN:</h4>
-                    <p className="text-sm font-medium leading-relaxed">
-                      {question.explanation}
-                    </p>
-                  </div>
+                <div className="flex items-center justify-between">
+                  <span>{answer}</span>
+                  {showFeedback && isCorrect && (
+                    <CheckIcon className="w-6 h-6" />
+                  )}
+                  {showFeedback && isSelected && !isCorrect && (
+                    <XMarkIcon className="w-6 h-6" />
+                  )}
                 </div>
-              </motion.div>
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      {answeredCorrect !== null && (
+        <div className="space-y-4">
+          <div className={`card-brutal p-4 text-center ${
+            answeredCorrect 
+              ? 'bg-brutal-success text-white' 
+              : 'bg-brutal-danger text-white'
+          }`}>
+            <p className="text-lg font-black uppercase flex items-center justify-center gap-2">
+              {answeredCorrect ? (
+                <>
+                  <CheckIcon className="w-6 h-6" />
+                  BENAR! +{10 + Math.floor(timeLeft / 3)} POIN
+                </>
+              ) : (
+                <>
+                  <XMarkIcon className="w-6 h-6" />
+                  SALAH! JAWABAN YANG BENAR: {question.answers[question.correctAnswer]}
+                </>
+              )}
+            </p>
+            {answeredCorrect && streak > 1 && (
+              <p className="text-sm font-bold uppercase mt-1 flex items-center justify-center gap-2">
+                <FireIcon className="w-5 h-5" />
+                STREAK {streak}X!
+              </p>
             )}
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
+          
+          {showExplanation && question.explanation && (
+            <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-4">
+              <div className="flex items-start gap-3">
+                <LightBulbIcon className="w-6 h-6 text-brutal-warning flex-shrink-0 mt-1" />
+                <div>
+                  <h4 className="font-black uppercase text-sm mb-2">PENJELASAN:</h4>
+                  <p className="text-sm font-medium leading-relaxed">
+                    {question.explanation}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }

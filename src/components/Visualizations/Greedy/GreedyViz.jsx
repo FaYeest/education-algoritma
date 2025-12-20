@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useSpeed } from '../../../context/SpeedContext'
 import PlaybackControls from '../../Common/PlaybackControls'
 import StatsPanel from '../../Common/StatsPanel'
+import GreedyStepsList from '../../Common/GreedyStepsList'
+import { API_BASE_URL } from '../../../config/api'
 import { 
   BoltIcon,
   CurrencyDollarIcon,
@@ -17,6 +19,9 @@ export default function GreedyViz() {
   const [steps, setSteps] = useState([])
   const [currentStep, setCurrentStep] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
+  const [viewMode, setViewMode] = useState('step') // 'step' or 'list'
+  const [isLoadingSteps, setIsLoadingSteps] = useState(false)
+  const [animationCompleted, setAnimationCompleted] = useState(false)
   const { speed, setSpeed, getDelay } = useSpeed()
 
   // Coin Change State
@@ -46,8 +51,9 @@ export default function GreedyViz() {
   }, [amount])
 
   const fetchSteps = async () => {
+    setIsLoadingSteps(true)
     try {
-      const res = await fetch('http://localhost:8000/api/algorithms/greedy/coin-change', {
+      const res = await fetch(`${API_BASE_URL}/api/algorithms/greedy/coin-change`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ coins, amount })
@@ -56,10 +62,13 @@ export default function GreedyViz() {
       setSteps(data.steps || [])
       setCoinResult(data.result || {})
       setCurrentStep(0)
+      setAnimationCompleted(false)
       return data.steps || []
     } catch (error) {
       console.error('Failed to fetch greedy steps:', error)
       return []
+    } finally {
+      setIsLoadingSteps(false)
     }
   }
 
@@ -81,6 +90,7 @@ export default function GreedyViz() {
     setCurrentStep(0)
     setSteps([])
     setCoinResult({})
+    setAnimationCompleted(false)
   }
 
   const handleStepForward = () => {
@@ -104,6 +114,7 @@ export default function GreedyViz() {
         return () => clearTimeout(timer)
       } else {
         setIsPlaying(false)
+        setAnimationCompleted(true)
       }
     }
   }, [isPlaying, currentStep, steps, getDelay])
@@ -211,6 +222,35 @@ export default function GreedyViz() {
           <span className="font-black text-brutal-primary text-lg min-w-[60px] text-center">
             {speed === 1 ? 'Lambat' : speed <= 3 ? 'Sedang' : speed <= 7 ? 'Cepat' : 'Kilat'}
           </span>
+        </div>
+      </div>
+
+      {/* View Mode Toggle */}
+      <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-4">
+        <div className="flex items-center gap-3">
+          <span className="font-black uppercase text-sm">Mode Tampilan:</span>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setViewMode('step')}
+              className={`btn-brutal px-4 py-2 font-black uppercase text-sm ${
+                viewMode === 'step'
+                  ? 'bg-brutal-primary text-white'
+                  : 'bg-white dark:bg-brutal-dark text-black dark:text-white'
+              }`}
+            >
+              Step-by-Step
+            </button>
+            <button
+              onClick={() => setViewMode('list')}
+              className={`btn-brutal px-4 py-2 font-black uppercase text-sm ${
+                viewMode === 'list'
+                  ? 'bg-brutal-primary text-white'
+                  : 'bg-white dark:bg-brutal-dark text-black dark:text-white'
+              }`}
+            >
+              Lihat Semua Step
+            </button>
+          </div>
         </div>
       </div>
 
@@ -348,6 +388,16 @@ export default function GreedyViz() {
               <p className="font-bold text-base sm:text-lg leading-relaxed">
                 {getStepExplanation()}
               </p>
+            </div>
+          )}
+
+          {/* All Steps List - Only shown in 'list' mode */}
+          {viewMode === 'list' && (
+            <div className="mt-4">
+              <GreedyStepsList 
+                steps={steps} 
+                animationCompleted={animationCompleted}
+              />
             </div>
           )}
         </div>

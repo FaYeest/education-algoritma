@@ -4,6 +4,8 @@ import { useSpeed } from '../../../context/SpeedContext'
 import { generateRandomArray } from '../../../utils/arrayHelpers'
 import PlaybackControls from '../../Common/PlaybackControls'
 import StatsPanel from '../../Common/StatsPanel'
+import GenericStepsList from '../../Common/GenericStepsList'
+import { API_BASE_URL } from '../../../config/api'
 import { 
   BoltIcon, 
   ChartBarIcon, 
@@ -23,11 +25,15 @@ export default function DivideConquerViz() {
   const [currentStep, setCurrentStep] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
   const [showTree, setShowTree] = useState(false)
+  const [viewMode, setViewMode] = useState('step')
+  const [isLoadingSteps, setIsLoadingSteps] = useState(false)
+  const [animationCompleted, setAnimationCompleted] = useState(false)
   const { speed, setSpeed, getDelay } = useSpeed()
 
   const fetchSteps = async () => {
+    setIsLoadingSteps(true)
     try {
-      const res = await fetch('http://localhost:8000/api/algorithms/divide-conquer/merge-sort', {
+      const res = await fetch(`${API_BASE_URL}/api/algorithms/divide-conquer/merge-sort`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ array })
@@ -35,10 +41,13 @@ export default function DivideConquerViz() {
       const data = await res.json()
       setSteps(data.steps || [])
       setCurrentStep(0)
+      setAnimationCompleted(false)
       return data.steps || []
     } catch (error) {
       console.error('Failed to fetch merge sort steps:', error)
       return []
+    } finally {
+      setIsLoadingSteps(false)
     }
   }
 
@@ -60,6 +69,7 @@ export default function DivideConquerViz() {
     setCurrentStep(0)
     setSteps([])
     setArray(generateRandomArray(8))
+    setAnimationCompleted(false)
   }
 
   const handleStepForward = () => {
@@ -83,6 +93,7 @@ export default function DivideConquerViz() {
         return () => clearTimeout(timer)
       } else {
         setIsPlaying(false)
+        setAnimationCompleted(true)
       }
     }
   }, [isPlaying, currentStep, steps, getDelay])
@@ -245,6 +256,35 @@ export default function DivideConquerViz() {
         </p>
       </div>
 
+      {/* View Mode Toggle */}
+      <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-4">
+        <div className="flex items-center gap-3">
+          <span className="font-black uppercase text-sm">Mode Tampilan:</span>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setViewMode('step')}
+              className={`btn-brutal px-4 py-2 font-black uppercase text-sm ${
+                viewMode === 'step'
+                  ? 'bg-brutal-primary text-white'
+                  : 'bg-white dark:bg-brutal-dark text-black dark:text-white'
+              }`}
+            >
+              Step-by-Step
+            </button>
+            <button
+              onClick={() => setViewMode('list')}
+              className={`btn-brutal px-4 py-2 font-black uppercase text-sm ${
+                viewMode === 'list'
+                  ? 'bg-brutal-primary text-white'
+                  : 'bg-white dark:bg-brutal-dark text-black dark:text-white'
+              }`}
+            >
+              Lihat Semua Step
+            </button>
+          </div>
+        </div>
+      </div>
+
       <div className="grid lg:grid-cols-4 gap-6">
         <div className="lg:col-span-3">
           {/* Main Visual */}
@@ -393,6 +433,17 @@ export default function DivideConquerViz() {
                   </motion.div>
                 </div>
               )}
+            </div>
+          )}
+
+          {/* All Steps List - Only shown in 'list' mode */}
+          {viewMode === 'list' && (
+            <div className="mt-4">
+              <GenericStepsList 
+                steps={steps} 
+                animationCompleted={animationCompleted}
+                algorithmName="Merge Sort"
+              />
             </div>
           )}
         </div>

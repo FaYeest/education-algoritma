@@ -4,6 +4,8 @@ import { generateRandomArray } from '../../../utils/arrayHelpers'
 import { useSpeed } from '../../../context/SpeedContext'
 import PlaybackControls from '../../Common/PlaybackControls'
 import StatsPanel from '../../Common/StatsPanel'
+import GenericStepsList from '../../Common/GenericStepsList'
+import { API_BASE_URL } from '../../../config/api'
 import { 
   BoltIcon,
   MagnifyingGlassIcon,
@@ -20,11 +22,15 @@ export default function BruteForceViz() {
   const [currentStep, setCurrentStep] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
   const [matchedIndices, setMatchedIndices] = useState([])
+  const [viewMode, setViewMode] = useState('step')
+  const [isLoadingSteps, setIsLoadingSteps] = useState(false)
+  const [animationCompleted, setAnimationCompleted] = useState(false)
   const { speed, setSpeed, getDelay } = useSpeed()
 
   const fetchSteps = async () => {
+    setIsLoadingSteps(true)
     try {
-      const res = await fetch('http://localhost:8000/api/algorithms/search', {
+      const res = await fetch(`${API_BASE_URL}/api/algorithms/search`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ algorithm: 'linear', array, target })
@@ -33,10 +39,13 @@ export default function BruteForceViz() {
       setSteps(data.steps || [])
       setCurrentStep(0)
       setMatchedIndices([])
+      setAnimationCompleted(false)
       return data.steps || []
     } catch (error) {
       console.error('Failed to fetch bruteforce steps:', error)
       return []
+    } finally {
+      setIsLoadingSteps(false)
     }
   }
 
@@ -58,6 +67,7 @@ export default function BruteForceViz() {
     setCurrentStep(0)
     setSteps([])
     setMatchedIndices([])
+    setAnimationCompleted(false)
   }
 
   const handleStepForward = () => {
@@ -86,6 +96,7 @@ export default function BruteForceViz() {
         return () => clearTimeout(timer)
       } else {
         setIsPlaying(false)
+        setAnimationCompleted(true)
         // On completion, get the final step with all found indices
         const finalStep = steps[steps.length - 1]
         if (finalStep && finalStep.final && finalStep.indices) {
@@ -263,6 +274,35 @@ export default function BruteForceViz() {
         </div>
       </div>
 
+      {/* View Mode Toggle */}
+      <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-4">
+        <div className="flex items-center gap-3">
+          <span className="font-black uppercase text-sm">Mode Tampilan:</span>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setViewMode('step')}
+              className={`btn-brutal px-4 py-2 font-black uppercase text-sm ${
+                viewMode === 'step'
+                  ? 'bg-brutal-primary text-white'
+                  : 'bg-white dark:bg-brutal-dark text-black dark:text-white'
+              }`}
+            >
+              Step-by-Step
+            </button>
+            <button
+              onClick={() => setViewMode('list')}
+              className={`btn-brutal px-4 py-2 font-black uppercase text-sm ${
+                viewMode === 'list'
+                  ? 'bg-brutal-primary text-white'
+                  : 'bg-white dark:bg-brutal-dark text-black dark:text-white'
+              }`}
+            >
+              Lihat Semua Step
+            </button>
+          </div>
+        </div>
+      </div>
+
       <div className="grid lg:grid-cols-4 gap-6">
         <div className="lg:col-span-3">
           {/* Main Visualization */}
@@ -400,6 +440,17 @@ export default function BruteForceViz() {
               <div className="font-bold text-base sm:text-lg leading-relaxed">
                 {getStepExplanation()}
               </div>
+            </div>
+          )}
+
+          {/* All Steps List - Only shown in 'list' mode */}
+          {viewMode === 'list' && (
+            <div className="mt-4">
+              <GenericStepsList 
+                steps={steps} 
+                animationCompleted={animationCompleted}
+                algorithmName="String Matching"
+              />
             </div>
           )}
         </div>
