@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import PathfindingStepsList from '../../Common/PathfindingStepsList'
 import {
   PlayIcon,
   PauseIcon,
@@ -13,59 +14,100 @@ import {
   UserIcon,
   FireIcon,
   StarIcon,
-  LightBulbIcon
+  BeakerIcon
 } from '@heroicons/react/24/solid'
 
-// Maze presets - Easy, Medium, Hard
+// Maze presets - Easy, Medium, Hard, + 2 untuk perbandingan BFS vs DFS
 const MAZES = {
   easy: {
     name: 'MUDAH - Jalan Lurus',
     size: 5,
     grid: [
-      [1, 1, 1, 1, 1],
-      [1, 0, 0, 0, 1],
-      [1, 0, 1, 0, 1],
-      [1, 0, 0, 0, 1],
-      [1, 1, 1, 1, 1],
+      [1,1,1,1,1],
+      [1,0,0,0,1],
+      [1,0,1,0,1],
+      [1,0,0,0,1],
+      [1,1,1,1,1],
     ],
     start: { row: 1, col: 1 },
-    goal: { row: 3, col: 3 }
+    goal:  { row: 3, col: 3 }
   },
   medium: {
     name: 'SEDANG - Labirin',
     size: 7,
     grid: [
-      [1, 1, 1, 1, 1, 1, 1],
-      [1, 0, 0, 0, 1, 0, 1],
-      [1, 0, 1, 0, 1, 0, 1],
-      [1, 0, 1, 0, 0, 0, 1],
-      [1, 0, 1, 1, 1, 0, 1],
-      [1, 0, 0, 0, 0, 0, 1],
-      [1, 1, 1, 1, 1, 1, 1],
+      [1,1,1,1,1,1,1],
+      [1,0,0,0,1,0,1],
+      [1,0,1,0,1,0,1],
+      [1,0,1,0,0,0,1],
+      [1,0,1,1,1,0,1],
+      [1,0,0,0,0,0,1],
+      [1,1,1,1,1,1,1],
     ],
     start: { row: 1, col: 1 },
-    goal: { row: 5, col: 5 }
+    goal:  { row: 5, col: 5 }
   },
   hard: {
     name: 'SULIT - Maze Rumit',
     size: 9,
     grid: [
-      [1, 1, 1, 1, 1, 1, 1, 1, 1],
-      [1, 0, 0, 0, 1, 0, 0, 0, 1],
-      [1, 0, 1, 0, 1, 0, 1, 0, 1],
-      [1, 0, 1, 0, 0, 0, 1, 0, 1],
-      [1, 0, 1, 1, 1, 1, 1, 0, 1],
-      [1, 0, 0, 0, 0, 0, 0, 0, 1],
-      [1, 1, 1, 0, 1, 1, 1, 0, 1],
-      [1, 0, 0, 0, 0, 0, 0, 0, 1],
-      [1, 1, 1, 1, 1, 1, 1, 1, 1],
+      [1,1,1,1,1,1,1,1,1],
+      [1,0,0,0,1,0,0,0,1],
+      [1,0,1,0,1,0,1,0,1],
+      [1,0,1,0,0,0,1,0,1],
+      [1,0,1,1,1,1,1,0,1],
+      [1,0,0,0,0,0,0,0,1],
+      [1,1,1,0,1,1,1,0,1],
+      [1,0,0,0,0,0,0,0,1],
+      [1,1,1,1,1,1,1,1,1],
     ],
     start: { row: 1, col: 1 },
-    goal: { row: 7, col: 7 }
+    goal:  { row: 7, col: 7 }
+  },
+
+  /* ===========================
+     MAZES KHUSUS PERBANDINGAN
+     =========================== */
+
+  compareA: {
+    name: 'COMPARE A - Cabang Dalam',
+    size: 7,
+    grid: [
+      [1,1,1,1,1,1,1],
+      [1,0,0,1,0,0,1], // baris target (goal kanan)
+      [1,0,0,1,0,0,1],
+      [1,0,1,1,0,0,1],
+      [1,0,0,0,0,0,1],
+      [1,1,1,1,1,0,1],
+      [1,1,1,1,1,1,1],
+    ],
+    // start kiri atas, goal di baris atas kanan → BFS cepat lebar, DFS bisa nyemplung di cabang bawah
+    start: { row: 1, col: 1 },
+    goal:  { row: 1, col: 5 }
+  },
+
+  compareB: {
+    name: 'COMPARE B - Jebakan Koridor Panjang',
+    size: 9,
+    grid: [
+      [1,1,1,1,1,1,1,1,1],
+      [1,0,1,0,0,0,1,0,1],
+      [1,0,1,0,1,0,1,0,1],
+      [1,0,0,0,1,0,0,0,1],
+      [1,1,1,0,1,1,1,0,1],
+      [1,0,0,0,0,0,1,0,1],
+      [1,0,1,1,1,0,1,0,1],
+      [1,0,0,0,0,0,0,0,1],
+      [1,1,1,1,1,1,1,1,1],
+    ],
+    // start kiri atas-ish, goal kanan bawah-ish; ada jalur panjang / spiral yang akan "menggoda" DFS
+    start: { row: 1, col: 1 },
+    goal:  { row: 7, col: 7 }
   }
 }
 
-export default function BFSViz() {
+
+export default function DFSViz() {
   const [difficulty, setDifficulty] = useState('easy')
   const [maze, setMaze] = useState(MAZES.easy)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -73,52 +115,71 @@ export default function BFSViz() {
   const [currentStep, setCurrentStep] = useState(0)
   const [steps, setSteps] = useState([])
   const [visited, setVisited] = useState(new Set())
-  const [queue, setQueue] = useState([])
+  const [stack, setStack] = useState([])
   const [currentPos, setCurrentPos] = useState(null)
   const [path, setPath] = useState([])
   const [isComplete, setIsComplete] = useState(false)
   const [score, setScore] = useState(0)
   const [totalCells, setTotalCells] = useState(0)
+  const [backtracking, setBacktracking] = useState(false)
+  const [viewMode, setViewMode] = useState('step')
+  const [animationCompleted, setAnimationCompleted] = useState(false)
 
   useEffect(() => {
     setMaze(MAZES[difficulty])
     handleReset()
   }, [difficulty])
 
-  const generateBFSSteps = () => {
+  const generateDFSSteps = () => {
     const steps = []
     const visited = new Set()
-    const queue = [{ pos: maze.start, path: [maze.start] }]
+    const stack = [{ pos: maze.start, path: [maze.start] }]
     const posToString = (pos) => `${pos.row},${pos.col}`
-    
-    visited.add(posToString(maze.start))
     
     steps.push({
       action: 'start',
       current: maze.start,
       visited: new Set(visited),
-      queue: [...queue],
+      stack: [...stack],
       path: [],
-      message: 'Mulai dari posisi START!'
+      backtracking: false,
+      message: 'Mulai dari posisi START! Menyelam dalam...'
     })
 
     const directions = [
       { row: -1, col: 0, name: 'ATAS' },
+      { row: 0, col: 1, name: 'KANAN' },
       { row: 1, col: 0, name: 'BAWAH' },
-      { row: 0, col: -1, name: 'KIRI' },
-      { row: 0, col: 1, name: 'KANAN' }
+      { row: 0, col: -1, name: 'KIRI' }
     ]
 
-    while (queue.length > 0) {
-      const { pos, path } = queue.shift()
+    while (stack.length > 0) {
+      const { pos, path } = stack.pop()
+      const posStr = posToString(pos)
+      
+      if (visited.has(posStr)) {
+        steps.push({
+          action: 'skip',
+          current: pos,
+          visited: new Set(visited),
+          stack: [...stack],
+          path: [...path],
+          backtracking: true,
+          message: `Sel (${pos.row}, ${pos.col}) sudah dikunjungi, backtrack...`
+        })
+        continue
+      }
+      
+      visited.add(posStr)
       
       steps.push({
         action: 'visit',
         current: pos,
         visited: new Set(visited),
-        queue: [...queue],
+        stack: [...stack],
         path: [...path],
-        message: `Mengunjungi sel (${pos.row}, ${pos.col})`
+        backtracking: false,
+        message: `Mengunjungi sel (${pos.row}, ${pos.col}) - Depth: ${path.length}`
       })
 
       // Check if goal reached
@@ -127,15 +188,18 @@ export default function BFSViz() {
           action: 'found',
           current: pos,
           visited: new Set(visited),
-          queue: [],
+          stack: [],
           path: [...path],
-          message: `GOAL DITEMUKAN! Path length: ${path.length}`
+          backtracking: false,
+          message: `GOAL DITEMUKAN! 🎉 Path length: ${path.length}`
         })
         break
       }
 
-      // Explore neighbors
-      for (const dir of directions) {
+      // Explore neighbors (in reverse to maintain DFS order)
+      let hasUnvisited = false
+      for (let i = directions.length - 1; i >= 0; i--) {
+        const dir = directions[i]
         const newPos = {
           row: pos.row + dir.row,
           col: pos.col + dir.col
@@ -151,19 +215,32 @@ export default function BFSViz() {
           maze.grid[newPos.row][newPos.col] === 0 &&
           !visited.has(newPosStr)
         ) {
-          visited.add(newPosStr)
-          queue.push({ pos: newPos, path: [...path, newPos] })
+          hasUnvisited = true
+          stack.push({ pos: newPos, path: [...path, newPos] })
           
           steps.push({
             action: 'explore',
             current: pos,
             exploring: newPos,
             visited: new Set(visited),
-            queue: [...queue],
+            stack: [...stack],
             path: [...path],
-            message: `Cek arah ${dir.name} → Tambah ke queue!`
+            backtracking: false,
+            message: `Cek arah ${dir.name} → Push ke stack!`
           })
         }
+      }
+      
+      if (!hasUnvisited && stack.length > 0) {
+        steps.push({
+          action: 'backtrack',
+          current: pos,
+          visited: new Set(visited),
+          stack: [...stack],
+          path: [...path],
+          backtracking: true,
+          message: 'Jalan buntu! Backtrack ke posisi sebelumnya...'
+        })
       }
     }
 
@@ -172,7 +249,7 @@ export default function BFSViz() {
 
   const handlePlay = () => {
     if (steps.length === 0) {
-      const newSteps = generateBFSSteps()
+      const newSteps = generateDFSSteps()
       setSteps(newSteps)
       setTotalCells(newSteps.filter(s => s.action === 'visit').length)
     }
@@ -186,12 +263,14 @@ export default function BFSViz() {
     setCurrentStep(0)
     setSteps([])
     setVisited(new Set())
-    setQueue([])
+    setStack([])
     setCurrentPos(null)
     setPath([])
     setIsComplete(false)
     setScore(0)
     setTotalCells(0)
+    setBacktracking(false)
+    setAnimationCompleted(false)
   }
 
   useEffect(() => {
@@ -199,13 +278,15 @@ export default function BFSViz() {
       const timer = setTimeout(() => {
         const step = steps[currentStep]
         setVisited(step.visited)
-        setQueue(step.queue)
+        setStack(step.stack)
         setCurrentPos(step.current)
         setPath(step.path)
+        setBacktracking(step.backtracking)
         
         if (step.action === 'found') {
           setIsComplete(true)
           setIsPlaying(false)
+          setAnimationCompleted(true)
           const efficiency = Math.round((step.path.length / totalCells) * 100)
           setScore(efficiency)
         }
@@ -237,7 +318,9 @@ export default function BFSViz() {
     
     // Current position
     if (currentPos && row === currentPos.row && col === currentPos.col) {
-      return 'bg-brutal-primary animate-pulse'
+      return backtracking 
+        ? 'bg-brutal-danger animate-pulse' 
+        : 'bg-brutal-primary animate-pulse'
     }
     
     // Final path
@@ -245,9 +328,9 @@ export default function BFSViz() {
       return 'bg-brutal-success'
     }
     
-    // In queue
-    if (queue.some(q => q.pos.row === row && q.pos.col === col)) {
-      return 'bg-brutal-cyan/50'
+    // In stack
+    if (stack.some(s => s.pos.row === row && s.pos.col === col)) {
+      return 'bg-brutal-purple/50'
     }
     
     // Visited
@@ -268,7 +351,9 @@ export default function BFSViz() {
       return <FlagIcon className="w-4 h-4 sm:w-6 sm:h-6 text-black" />
     }
     if (currentPos && row === currentPos.row && col === currentPos.col) {
-      return <FireIcon className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
+      return backtracking 
+        ? <ArrowPathIcon className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
+        : <FireIcon className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
     }
     return null
   }
@@ -276,13 +361,13 @@ export default function BFSViz() {
   return (
     <div className="min-h-screen bg-brutal-bg dark:bg-black p-4 sm:p-6 space-y-6">
       {/* Header */}
-      <div className="card-brutal bg-gradient-to-r from-brutal-primary to-brutal-cyan text-white p-6 text-center">
+      <div className="card-brutal bg-gradient-to-r from-brutal-secondary to-brutal-purple text-white p-6 text-center">
         <h2 className="text-2xl sm:text-3xl font-black uppercase flex items-center justify-center gap-3">
-          <MapIcon className="w-8 h-8" />
-          BFS MAZE SOLVER
+          <BeakerIcon className="w-8 h-8" />
+          DFS MAZE EXPLORER
         </h2>
         <p className="text-sm sm:text-base font-bold uppercase mt-2">
-          Temukan Jalan Tercepat dengan Breadth-First Search!
+          Jelajahi Maze Sedalam Mungkin dengan Depth-First Search! 🌊
         </p>
       </div>
 
@@ -293,15 +378,16 @@ export default function BFSViz() {
         className="card-brutal bg-brutal-warning text-black p-4"
       >
         <h3 className="font-black uppercase text-sm mb-2 flex items-center gap-2">
-          <LightBulbIcon className="w-5 h-5" />
+          <InformationCircleIcon className="w-5 h-5" />
           Cara Main:
         </h3>
         <ul className="text-xs font-bold space-y-1">
           <li>🟦 <strong>BIRU</strong> = Posisi START</li>
           <li>🟨 <strong>KUNING</strong> = GOAL (Tujuan)</li>
           <li>⬛ <strong>HITAM</strong> = Tembok (Tidak bisa lewat)</li>
-          <li>🔵 <strong>BIRU MUDA</strong> = Dalam Queue (Menunggu)</li>
-          <li>🟩 <strong>HIJAU</strong> = Path terpendek yang ditemukan!</li>
+          <li>🟣 <strong>UNGU</strong> = Dalam Stack (Menunggu)</li>
+          <li>🔴 <strong>MERAH</strong> = Backtracking (Mundur!)</li>
+          <li>🟩 <strong>HIJAU</strong> = Path yang ditemukan!</li>
         </ul>
       </motion.div>
 
@@ -320,8 +406,8 @@ export default function BFSViz() {
                   disabled={isPlaying}
                   className={`btn-brutal ${
                     difficulty === key
-                      ? 'bg-brutal-primary text-white'
-                      : 'bg-brutal-secondary text-black hover:bg-gray-300'
+                      ? 'bg-brutal-secondary text-white'
+                      : 'bg-brutal-bg text-black hover:bg-gray-300'
                   } disabled:opacity-50 disabled:cursor-not-allowed text-xs sm:text-sm`}
                 >
                   {mazeData.name.split(' - ')[0]}
@@ -406,15 +492,59 @@ export default function BFSViz() {
             </div>
           </div>
 
+          {/* View Mode Toggle */}
+          <div className="card-brutal bg-white dark:bg-black p-4 mt-4">
+            <div className="flex items-center gap-3">
+              <span className="font-black uppercase text-sm">Mode Tampilan:</span>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setViewMode('step')}
+                  className={`btn-brutal px-4 py-2 font-black uppercase text-sm ${
+                    viewMode === 'step'
+                      ? 'bg-brutal-primary text-white'
+                      : 'bg-white dark:bg-brutal-dark text-black dark:text-white'
+                  }`}
+                >
+                  Step-by-Step
+                </button>
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`btn-brutal px-4 py-2 font-black uppercase text-sm ${
+                    viewMode === 'list'
+                      ? 'bg-brutal-primary text-white'
+                      : 'bg-white dark:bg-brutal-dark text-black dark:text-white'
+                  }`}
+                >
+                  Lihat Semua Step
+                </button>
+              </div>
+            </div>
+          </div>
+
           {/* Current Action */}
           {currentStepData.message && (
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="card-brutal bg-brutal-primary text-white p-4"
+              className={`card-brutal p-4 ${
+                backtracking 
+                  ? 'bg-brutal-danger text-white' 
+                  : 'bg-brutal-secondary text-white'
+              }`}
             >
               <p className="font-black text-sm sm:text-base">{currentStepData.message}</p>
             </motion.div>
+          )}
+
+          {/* All Steps List - Only shown in 'list' mode */}
+          {viewMode === 'list' && (
+            <div className="mt-4">
+              <PathfindingStepsList 
+                steps={steps} 
+                animationCompleted={animationCompleted}
+                algorithmName="DFS"
+              />
+            </div>
           )}
         </div>
 
@@ -427,11 +557,11 @@ export default function BFSViz() {
               <div>
                 <div className="flex justify-between text-xs font-bold mb-1">
                   <span>Langkah</span>
-                  <span className="text-brutal-primary">{currentStep} / {steps.length}</span>
+                  <span className="text-brutal-secondary">{currentStep} / {steps.length}</span>
                 </div>
                 <div className="h-3 bg-gray-200 dark:bg-gray-700 border-2 border-black">
                   <motion.div
-                    className="h-full bg-brutal-primary"
+                    className="h-full bg-brutal-secondary"
                     initial={{ width: 0 }}
                     animate={{ width: `${steps.length > 0 ? (currentStep / steps.length) * 100 : 0}%` }}
                   />
@@ -440,24 +570,24 @@ export default function BFSViz() {
             </div>
           </div>
 
-          {/* Queue */}
-          <div className="card-brutal bg-brutal-cyan text-white p-4">
+          {/* Stack */}
+          <div className="card-brutal bg-brutal-purple text-white p-4">
             <h3 className="font-black uppercase text-sm mb-3 flex items-center gap-2">
               <SparklesIcon className="w-5 h-5" />
-              Queue: {queue.length}
+              Stack: {stack.length}
             </h3>
             <div className="space-y-2 max-h-40 overflow-y-auto">
-              {queue.length === 0 ? (
+              {stack.length === 0 ? (
                 <p className="text-xs opacity-80">Kosong</p>
               ) : (
-                queue.slice(0, 5).map((item, idx) => (
+                stack.slice(-5).reverse().map((item, idx) => (
                   <div key={idx} className="bg-white/20 px-2 py-1 text-xs font-bold rounded">
                     ({item.pos.row}, {item.pos.col})
                   </div>
                 ))
               )}
-              {queue.length > 5 && (
-                <p className="text-xs opacity-80">+{queue.length - 5} lainnya...</p>
+              {stack.length > 5 && (
+                <p className="text-xs opacity-80">+{stack.length - 5} lainnya...</p>
               )}
             </div>
           </div>
@@ -468,16 +598,22 @@ export default function BFSViz() {
             <div className="space-y-2 text-xs font-bold">
               <div className="flex justify-between">
                 <span>Sel Dikunjungi:</span>
-                <span className="text-brutal-primary">{visited.size}</span>
+                <span className="text-brutal-secondary">{visited.size}</span>
               </div>
               <div className="flex justify-between">
-                <span>Panjang Path:</span>
-                <span className="text-brutal-success">{path.length}</span>
+                <span>Depth Level:</span>
+                <span className="text-brutal-purple">{path.length}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Backtrack:</span>
+                <span className="text-brutal-danger">
+                  {steps.slice(0, currentStep).filter(s => s.backtracking).length}
+                </span>
               </div>
               {isComplete && (
                 <div className="flex justify-between">
-                  <span>Efisiensi:</span>
-                  <span className="text-brutal-warning">{score}%</span>
+                  <span>Path Length:</span>
+                  <span className="text-brutal-success">{path.length}</span>
                 </div>
               )}
             </div>
@@ -487,12 +623,13 @@ export default function BFSViz() {
           <div className="card-brutal bg-brutal-warning text-black p-4">
             <h3 className="font-black uppercase text-sm mb-2 flex items-center gap-2">
               <InformationCircleIcon className="w-5 h-5" />
-              Info BFS
+              Info DFS
             </h3>
             <div className="text-xs font-bold space-y-2">
-              <p>✓ Menjamin path terpendek</p>
-              <p>✓ Explore level per level</p>
-              <p>✓ Menggunakan Queue (FIFO)</p>
+              <p>✓ Explore sedalam mungkin</p>
+              <p>✓ Backtrack saat mentok</p>
+              <p>✓ Menggunakan Stack (LIFO)</p>
+              <p>⚠ Path tidak selalu terpendek!</p>
               <p className="text-[10px] opacity-80 mt-2">
                 Complexity: O(V + E)
               </p>
@@ -522,7 +659,7 @@ export default function BFSViz() {
               <div className="space-y-3 text-lg font-bold">
                 <p>Path Length: <span className="text-4xl">{path.length}</span></p>
                 <p>Sel Dikunjungi: {visited.size}</p>
-                <p>Efisiensi: {score}%</p>
+                <p>Total Backtrack: {steps.filter(s => s.backtracking).length}</p>
                 <div className="flex gap-2 justify-center mt-4">
                   {[...Array(Math.ceil(score / 20))].map((_, i) => (
                     <StarIcon key={i} className="w-8 h-8 text-brutal-warning" />

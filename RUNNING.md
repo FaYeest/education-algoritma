@@ -131,6 +131,24 @@ education-algoritma/
 
 ## 🔧 Troubleshooting
 
+### **API Configuration**
+
+Frontend sekarang menggunakan environment variable untuk API URL.
+
+**Development (Localhost):**
+File `.env` sudah diset:
+```
+VITE_API_URL=http://localhost:8000
+```
+
+**Production:**
+Setelah deploy backend, buat file `.env.production`:
+```
+VITE_API_URL=https://your-backend-url.com
+```
+
+Atau backend URL akan auto-detect dari hostname di `src/config/api.js`
+
 ### **Port Already in Use**
 
 **Backend (8000):**

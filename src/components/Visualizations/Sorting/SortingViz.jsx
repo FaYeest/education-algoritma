@@ -4,6 +4,8 @@ import { generateRandomArray } from '../../../utils/arrayHelpers'
 import { useSpeed } from '../../../context/SpeedContext'
 import PlaybackControls from '../../Common/PlaybackControls'
 import StatsPanel from '../../Common/StatsPanel'
+import AllStepsList from '../../Common/AllStepsList'
+import { API_BASE_URL } from '../../../config/api'
 import { 
   BoltIcon,
   ArrowsUpDownIcon,
@@ -12,7 +14,10 @@ import {
   ArrowsRightLeftIcon,
   ChartBarIcon,
   ArrowPathIcon,
-  MagnifyingGlassIcon
+  MagnifyingGlassIcon,
+  ListBulletIcon,
+  PlayIcon,
+  ViewColumnsIcon
 } from '@heroicons/react/24/solid'
 
 export default function SortingViz() {
@@ -24,6 +29,9 @@ export default function SortingViz() {
   const [comparing, setComparing] = useState([])
   const [swapped, setSwapped] = useState([])
   const [sorted, setSorted] = useState([])
+  const [viewMode, setViewMode] = useState('step') // 'step' or 'list'
+  const [isLoadingSteps, setIsLoadingSteps] = useState(false)
+  const [animationCompleted, setAnimationCompleted] = useState(false) // Track if animation finished
   const { speed, setSpeed, getDelay } = useSpeed()
 
   const algorithms = {
@@ -54,8 +62,9 @@ export default function SortingViz() {
   }
 
   const fetchSteps = async () => {
+    setIsLoadingSteps(true)
     try {
-      const res = await fetch('http://localhost:8000/api/algorithms/sorting', {
+      const res = await fetch(`${API_BASE_URL}/api/algorithms/sorting`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ algorithm, array })
@@ -70,14 +79,19 @@ export default function SortingViz() {
     } catch (error) {
       console.error('Failed to fetch sorting steps:', error)
       return []
+    } finally {
+      setIsLoadingSteps(false)
     }
   }
 
   const handlePlay = async () => {
     if (steps.length === 0) {
+      setIsPlaying(true) // Set loading state
       const newSteps = await fetchSteps()
       if (newSteps.length > 0) {
         setIsPlaying(true)
+      } else {
+        setIsPlaying(false)
       }
     } else {
       setIsPlaying(true)
@@ -93,6 +107,7 @@ export default function SortingViz() {
     setComparing([])
     setSwapped([])
     setSorted([])
+    setAnimationCompleted(false)
     if (!keepArray) {
       setArray(generateRandomArray(array.length))
     }
@@ -118,6 +133,7 @@ export default function SortingViz() {
     setComparing([])
     setSwapped([])
     setSorted([])
+    setAnimationCompleted(false)
   }
 
   const handleAlgorithmChange = (newAlgo) => {
@@ -128,6 +144,7 @@ export default function SortingViz() {
     setComparing([])
     setSwapped([])
     setSorted([])
+    setAnimationCompleted(false)
   }
 
   const handleArraySizeChange = (newSize) => {
@@ -138,6 +155,7 @@ export default function SortingViz() {
     setComparing([])
     setSwapped([])
     setSorted([])
+    setAnimationCompleted(false)
     setArray(generateRandomArray(size))
   }
 
@@ -149,7 +167,9 @@ export default function SortingViz() {
         }, getDelay())
         return () => clearTimeout(timer)
       } else {
+        // Animation completed - sorting finished
         setIsPlaying(false)
+        setAnimationCompleted(true) // Mark animation as completed
         // Mark all as sorted at the end
         setSorted(array.map((_, i) => i))
       }
@@ -244,6 +264,42 @@ export default function SortingViz() {
         </div>
       </div>
 
+      {/* View Mode Toggle */}
+      {/* <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-4">
+        <label className="font-black uppercase text-sm block mb-3">
+          Mode Tampilan:
+        </label>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setViewMode('step')}
+            className={`btn-brutal px-6 py-3 text-sm font-black uppercase transition-colors flex items-center gap-2 ${
+              viewMode === 'step'
+                ? 'bg-brutal-primary text-white'
+                : 'bg-white dark:bg-black hover:bg-brutal-secondary'
+            }`}
+          >
+            <PlayIcon className="w-5 h-5" />
+            STEP-BY-STEP
+          </button>
+          <button
+            onClick={() => setViewMode('list')}
+            className={`btn-brutal px-6 py-3 text-sm font-black uppercase transition-colors flex items-center gap-2 ${
+              viewMode === 'list'
+                ? 'bg-brutal-primary text-white'
+                : 'bg-white dark:bg-black hover:bg-brutal-secondary'
+            }`}
+          >
+            <ListBulletIcon className="w-5 h-5" />
+            LIHAT SEMUA STEP
+          </button>
+        </div>
+        <p className="text-xs font-bold uppercase mt-2 opacity-70">
+          {viewMode === 'step' 
+            ? 'Mode animasi step-by-step dengan kontrol playback'
+            : 'Lihat semua step sekaligus dalam daftar lengkap'}
+        </p>
+      </div> */}
+
       {/* Array Size Control */}
       <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-4">
         <label className="font-black uppercase text-sm block mb-2 flex items-center gap-2">
@@ -258,17 +314,6 @@ export default function SortingViz() {
           onChange={(e) => handleArraySizeChange(e.target.value)}
           className="slider-brutal w-full"
         />
-      </div>
-
-      {/* Randomize Button */}
-      <div className="flex gap-3">
-        <button
-          onClick={handleRandomize}
-          className="btn-brutal px-4 py-2 bg-brutal-warning text-black font-black uppercase flex items-center gap-2"
-        >
-          <ArrowsRightLeftIcon className="w-5 h-5" />
-          Acak Array
-        </button>
       </div>
 
       {/* Speed Control */}
@@ -290,6 +335,17 @@ export default function SortingViz() {
             {speed === 1 ? 'Lambat' : speed <= 3 ? 'Sedang' : speed <= 7 ? 'Cepat' : 'Kilat'}
           </span>
         </div>
+      </div>
+
+      {/* Randomize Button */}
+      <div className="flex gap-3">
+        <button
+          onClick={handleRandomize}
+          className="btn-brutal px-4 py-2 bg-brutal-warning text-black font-black uppercase flex items-center gap-2"
+        >
+          <ArrowsRightLeftIcon className="w-5 h-5" />
+          Acak Array
+        </button>
       </div>
 
       <div className="grid lg:grid-cols-4 gap-6">
@@ -418,56 +474,104 @@ export default function SortingViz() {
               </div>
             </div>
           ) : (
-            <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-6 mt-4">
-              <div className="flex items-center justify-between mb-4">
-                <span className="font-bold uppercase text-sm opacity-70">
-                  Langkah {currentStep + 1} dari {steps.length}
-                </span>
-                <div className={`px-3 py-1 border-3 border-black dark:border-brutal-bg font-black text-sm ${
-                  currentStep === steps.length - 1
-                    ? 'bg-brutal-success text-white'
-                    : swapped.length > 0
-                    ? 'bg-brutal-danger text-white'
-                    : comparing.length > 0
-                    ? 'bg-brutal-warning text-black'
-                    : 'bg-brutal-secondary text-black'
-                }`}>
-                  {currentStep === steps.length - 1 ? 'SELESAI' : swapped.length > 0 ? 'SWAP' : comparing.length > 0 ? 'COMPARE' : 'IDLE'}
+            <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-6 mt-4 space-y-4">
+              {/* View Mode Toggle */}
+              <div className="flex items-center gap-3 pb-4 border-b-3 border-black dark:border-brutal-bg">
+                <span className="font-black uppercase text-sm whitespace-nowrap">Mode:</span>
+                <div className="flex gap-2 flex-1">
+                  <button
+                    onClick={() => setViewMode('step')}
+                    className={`btn-brutal px-3 py-2 font-black uppercase text-xs flex-1 transition-all flex items-center justify-center gap-2 ${
+                      viewMode === 'step'
+                        ? 'bg-brutal-primary text-white'
+                        : 'bg-white dark:bg-gray-800 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700'
+                    }`}
+                  >
+                    <ViewColumnsIcon className="w-4 h-4" />
+                    Step
+                  </button>
+                  <button
+                    onClick={() => setViewMode('list')}
+                    className={`btn-brutal px-3 py-2 font-black uppercase text-xs flex-1 transition-all flex items-center justify-center gap-2 ${
+                      viewMode === 'list'
+                        ? 'bg-brutal-primary text-white'
+                        : 'bg-white dark:bg-gray-800 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700'
+                    }`}
+                  >
+                    <ListBulletIcon className="w-4 h-4" />
+                    List
+                  </button>
                 </div>
               </div>
-              
-              <div className="font-bold text-base sm:text-lg leading-relaxed">
-                {getStepExplanation()}
+
+              {/* Step Content - only show in step mode */}
+              {viewMode === 'step' && (
+                <>
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold uppercase text-sm opacity-70">
+                      Langkah {currentStep + 1} dari {steps.length}
+                    </span>
+                    <div className={`px-3 py-1 border-3 border-black dark:border-brutal-bg font-black text-sm ${
+                      currentStep === steps.length - 1
+                        ? 'bg-brutal-success text-white'
+                        : swapped.length > 0
+                        ? 'bg-brutal-danger text-white'
+                        : comparing.length > 0
+                        ? 'bg-brutal-warning text-black'
+                        : 'bg-brutal-secondary text-black'
+                    }`}>
+                      {currentStep === steps.length - 1 ? 'SELESAI' : swapped.length > 0 ? 'SWAP' : comparing.length > 0 ? 'COMPARE' : 'IDLE'}
+                    </div>
+                  </div>
+                  
+                  <div className="font-bold text-base sm:text-lg leading-relaxed">
+                    {getStepExplanation()}
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+
+          {/* Legend - Only show in step mode */}
+          {viewMode === 'step' && steps.length > 0 && (
+            <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-4 mt-4">
+              <h3 className="text-sm font-black uppercase mb-3">Penjelasan Warna:</h3>
+              <div className="grid grid-cols-2 gap-3 text-sm font-bold">
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 bg-brutal-cyan border-2 border-black dark:border-brutal-bg"></div>
+                  <span>Belum Diproses</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 bg-brutal-warning border-2 border-black dark:border-brutal-bg"></div>
+                  <span>Sedang Dibandingkan</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 bg-brutal-danger border-2 border-black dark:border-brutal-bg"></div>
+                  <span>Sedang Ditukar</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 bg-brutal-success border-2 border-black dark:border-brutal-bg"></div>
+                  <span>Sudah Terurut</span>
+                </div>
               </div>
             </div>
           )}
 
-          {/* Legend */}
-          <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-4 mt-4">
-            <h3 className="text-sm font-black uppercase mb-3">Penjelasan Warna:</h3>
-            <div className="grid grid-cols-2 gap-3 text-sm font-bold">
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 bg-brutal-cyan border-2 border-black dark:border-brutal-bg"></div>
-                <span>Belum Diproses</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 bg-brutal-warning border-2 border-black dark:border-brutal-bg"></div>
-                <span>Sedang Dibandingkan</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 bg-brutal-danger border-2 border-black dark:border-brutal-bg"></div>
-                <span>Sedang Ditukar</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 bg-brutal-success border-2 border-black dark:border-brutal-bg"></div>
-                <span>Sudah Terurut</span>
-              </div>
+          {/* All Steps List - Only shown in 'list' mode */}
+          {viewMode === 'list' && steps.length > 0 && (
+            <div className="mt-4">
+              <AllStepsList 
+                steps={steps} 
+                onGenerateSteps={fetchSteps}
+                isLoading={isLoadingSteps}
+                animationCompleted={animationCompleted}
+              />
             </div>
-          </div>
+          )}
         </div>
 
-        {/* Sidebar */}
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-1 space-y-4">
+          {/* Stats */}
           <StatsPanel stats={{ 
             'Kompleksitas': algorithms[algorithm].time,
             'Terbaik': algorithms[algorithm].best,
@@ -475,98 +579,118 @@ export default function SortingViz() {
             'Memori': algorithms[algorithm].space
           }} />
           
-          <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-4 mt-4">
-            <h3 className="text-base font-black uppercase tracking-tight mb-3 flex items-center gap-2">
-              <ChartBarIcon className="w-5 h-5 text-brutal-primary" />
+          {/* Tentang Algoritma */}
+          <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-4">
+            <h3 className="text-sm font-black uppercase tracking-tight mb-2 flex items-center gap-2">
+              <ChartBarIcon className="w-4 h-4 text-brutal-primary" />
               Tentang {algorithms[algorithm].name}
             </h3>
-            <p className="text-sm font-bold leading-relaxed">
+            <p className="text-xs font-bold leading-relaxed">
               {algorithms[algorithm].description}
             </p>
           </div>
 
-          {algorithm === 'bubble' && (
-            <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-4 mt-4">
-              <h3 className="text-base font-black uppercase tracking-tight mb-3">Cara Kerja</h3>
-              <ol className="text-sm space-y-2 font-bold">
+          {/* Cara Kerja - Dynamic based on algorithm */}
+          <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-4">
+            <h3 className="text-sm font-black uppercase tracking-tight mb-2 flex items-center gap-2">
+              <ArrowPathIcon className="w-4 h-4 text-brutal-primary" />
+              Cara Kerja
+            </h3>
+            {algorithm === 'bubble' && (
+              <ol className="text-xs space-y-2 font-bold">
                 <li className="flex gap-2">
-                  <span className="text-brutal-warning">1.</span>
+                  <span className="text-brutal-warning font-black min-w-[16px]">1.</span>
                   <span>Bandingkan 2 elemen bersebelahan</span>
                 </li>
                 <li className="flex gap-2">
-                  <span className="text-brutal-warning">2.</span>
+                  <span className="text-brutal-warning font-black min-w-[16px]">2.</span>
                   <span>Tukar jika urutan salah</span>
                 </li>
                 <li className="flex gap-2">
-                  <span className="text-brutal-warning">3.</span>
-                  <span>Ulangi sampai tidak ada pertukaran</span>
+                  <span className="text-brutal-success font-black min-w-[16px]">3.</span>
+                  <span>Ulangi sampai tidak ada swap</span>
                 </li>
               </ol>
-            </div>
-          )}
-
-          {algorithm === 'selection' && (
-            <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-4 mt-4">
-              <h3 className="text-base font-black uppercase tracking-tight mb-3">Cara Kerja</h3>
-              <ol className="text-sm space-y-2 font-bold">
+            )}
+            {algorithm === 'selection' && (
+              <ol className="text-xs space-y-2 font-bold">
                 <li className="flex gap-2">
-                  <span className="text-brutal-warning">1.</span>
+                  <span className="text-brutal-warning font-black min-w-[16px]">1.</span>
                   <span>Cari elemen terkecil</span>
                 </li>
                 <li className="flex gap-2">
-                  <span className="text-brutal-warning">2.</span>
-                  <span>Tukar dengan elemen pertama</span>
+                  <span className="text-brutal-warning font-black min-w-[16px]">2.</span>
+                  <span>Tukar dengan posisi awal</span>
                 </li>
                 <li className="flex gap-2">
-                  <span className="text-brutal-warning">3.</span>
+                  <span className="text-brutal-success font-black min-w-[16px]">3.</span>
                   <span>Ulangi untuk sisa array</span>
                 </li>
               </ol>
-            </div>
-          )}
-
-          {algorithm === 'insertion' && (
-            <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-4 mt-4">
-              <h3 className="text-base font-black uppercase tracking-tight mb-3">Cara Kerja</h3>
-              <ol className="text-sm space-y-2 font-bold">
+            )}
+            {algorithm === 'insertion' && (
+              <ol className="text-xs space-y-2 font-bold">
                 <li className="flex gap-2">
-                  <span className="text-brutal-warning">1.</span>
-                  <span>Ambil elemen berikutnya</span>
+                  <span className="text-brutal-warning font-black min-w-[16px]">1.</span>
+                  <span>Ambil elemen dari kanan</span>
                 </li>
                 <li className="flex gap-2">
-                  <span className="text-brutal-warning">2.</span>
-                  <span>Sisipkan di posisi yang tepat</span>
+                  <span className="text-brutal-warning font-black min-w-[16px]">2.</span>
+                  <span>Sisipkan ke posisi yang tepat</span>
                 </li>
                 <li className="flex gap-2">
-                  <span className="text-brutal-warning">3.</span>
-                  <span>Geser elemen lebih besar</span>
+                  <span className="text-brutal-success font-black min-w-[16px]">3.</span>
+                  <span>Ulangi sampai selesai</span>
                 </li>
               </ol>
-            </div>
-          )}
-
-          <div className="card-brutal bg-brutal-success dark:bg-brutal-dark p-4 mt-4">
-            <h3 className="text-base font-black uppercase tracking-tight mb-2 text-white flex items-center gap-2">
-              <CheckCircleIcon className="w-5 h-5" />
-              Kapan Digunakan
-            </h3>
-            <ul className="text-sm space-y-2 font-bold text-white">
-              <li>✓ Data ukuran kecil</li>
-              <li>✓ Mudah diimplementasi</li>
-              <li>✓ Untuk pembelajaran</li>
-            </ul>
+            )}
           </div>
 
-          <div className="card-brutal bg-brutal-danger dark:bg-brutal-dark p-4 mt-4">
-            <h3 className="text-base font-black uppercase tracking-tight mb-2 text-white flex items-center gap-2">
-              <XCircleIcon className="w-5 h-5" />
-              Kekurangan
-            </h3>
-            <ul className="text-sm space-y-2 font-bold text-white">
-              <li>✗ Lambat untuk data besar</li>
-              <li>✗ Kompleksitas O(n²)</li>
-              <li>✗ Banyak perbandingan</li>
-            </ul>
+          {/* Pros & Cons */}
+          <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-4">
+            <div className="mb-3">
+              <h3 className="text-sm font-black uppercase tracking-tight mb-2 text-brutal-success flex items-center gap-2">
+                <CheckCircleIcon className="w-4 h-4" />
+                Keuntungan
+              </h3>
+              <ul className="text-xs space-y-1 font-bold">
+                <li className="flex items-center gap-1">
+                  <span className="text-brutal-success">✓</span>
+                  <span>Mudah dipahami & diimplementasi</span>
+                </li>
+                <li className="flex items-center gap-1">
+                  <span className="text-brutal-success">✓</span>
+                  <span>Tidak butuh memori ekstra</span>
+                </li>
+                <li className="flex items-center gap-1">
+                  <span className="text-brutal-success">✓</span>
+                  <span>Baik untuk data kecil</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="border-t-2 border-black dark:border-brutal-bg my-3"></div>
+
+            <div>
+              <h3 className="text-sm font-black uppercase tracking-tight mb-2 text-brutal-danger flex items-center gap-2">
+                <XCircleIcon className="w-4 h-4" />
+                Kekurangan
+              </h3>
+              <ul className="text-xs space-y-1 font-bold">
+                <li className="flex items-center gap-1">
+                  <span className="text-brutal-danger">✗</span>
+                  <span>Lambat untuk data besar O(n²)</span>
+                </li>
+                <li className="flex items-center gap-1">
+                  <span className="text-brutal-danger">✗</span>
+                  <span>Banyak perbandingan berulang</span>
+                </li>
+                <li className="flex items-center gap-1">
+                  <span className="text-brutal-danger">✗</span>
+                  <span>Tidak efisien dibanding Merge/Quick</span>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>

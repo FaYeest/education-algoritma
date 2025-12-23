@@ -3,8 +3,7 @@ import SortingViz from '../components/Visualizations/Sorting/SortingViz'
 import BruteForceViz from '../components/Visualizations/BruteForce/BruteForceViz'
 import DivideConquerViz from '../components/Visualizations/DivideConquer/DivideConquerViz'
 import GreedyViz from '../components/Visualizations/Greedy/GreedyViz'
-import BFSViz from '../components/Visualizations/BFS/BFSViz'
-import DFSViz from '../components/Visualizations/DFS/DFSViz'
+import PathfindingViz from '../components/Visualizations/Pathfinding/PathfindingViz'
 import DPViz from '../components/Visualizations/DP/DPViz'
 import MSTViz from '../components/Visualizations/MST/MSTViz'
 
@@ -13,8 +12,8 @@ const visualizations = {
   'divide-conquer': DivideConquerViz,
   'greedy': GreedyViz,
   'sorting': SortingViz,
-  'bfs': BFSViz,
-  'dfs': DFSViz,
+  'bfs': PathfindingViz,
+  'dfs': PathfindingViz,
   'dp': DPViz,
   'mst': MSTViz,
 }

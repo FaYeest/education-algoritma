@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Environment variables
+.env
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -23,6 +26,7 @@ dist-ssr
 *.sln
 *.sw?
 
+<<<<<<< HEAD
 # key files
 .env
 backend/.env
@@ -30,3 +34,20 @@ backend/.env
 __pycache__/
 *.pyc
 
+=======
+# Backend
+backend/__pycache__
+backend/*.pyc
+backend/.env
+backend/quiz_cache.json
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+>>>>>>> dev

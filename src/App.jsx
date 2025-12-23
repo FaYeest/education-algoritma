@@ -3,6 +3,7 @@ import Navbar from './components/Layout/Navbar'
 import Home from './pages/Home'
 import AlgorithmDetail from './pages/AlgorithmDetail'
 import Quiz from './pages/Quiz'
+import QuizLLM from './pages/QuizLLM'
 import { ThemeProvider } from './context/ThemeContext'
 import { SpeedProvider } from './context/SpeedContext'
 import './App.css'
@@ -18,6 +19,7 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/algorithm/:id" element={<AlgorithmDetail />} />
               <Route path="/quiz" element={<Quiz />} />
+              <Route path="/quiz-ai" element={<QuizLLM />} />
             </Routes>
           </main>
         </div>

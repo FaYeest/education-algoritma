@@ -25,7 +25,7 @@ export default function MSTViz() {
   const handlePlay = async () => {
     setExplanation('')
     try {
-      const res = await fetch('http://localhost:8000/api/algorithms/mst', {
+      const res = await fetch(\${API_BASE_URL}/api/algorithms/mst', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ algorithm: algo, nodes: nodes.map(n=>n.id), edges })
       })
@@ -121,3 +121,5 @@ export default function MSTViz() {
     </div>
   )
 }
+
+

@@ -52,7 +52,7 @@ export default function BFSViz() {
 
   const fetchBFS = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/algorithms/graph/bfs', {
+      const response = await fetch(\${API_BASE_URL}/api/algorithms/graph/bfs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(defaultGraph)
@@ -482,3 +482,5 @@ export default function BFSViz() {
     </div>
   )
 }
+
+
