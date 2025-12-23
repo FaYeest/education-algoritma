@@ -46,13 +46,15 @@
 
 ### 🎯 Algoritma Optimization
 - **Greedy Algorithm** - Coin Change Problem
-- **Dynamic Programming** - 0/1 Knapsack & Longest Common Subsequence
-- **Minimum Spanning Tree** - Kruskal's & Prim's Algorithm
+- **Dynamic Programming** - 0/1 Knapsack with interactive scenarios & Dungeon Maze pathfinding
+- **Minimum Spanning Tree** - Kruskal's & Prim's Algorithm with city network visualization
 
 ### 🎮 Fitur Gamifikasi
 - **Quiz System** dengan 3 level kesulitan (Mudah, Sedang, Sulit)
 - **Score & Streak System** untuk memotivasi belajar
 - **Real-time Feedback** dengan penjelasan detail
+- **Interactive Controls** dengan PlaybackControls (Play, Pause, Reset, Next, Prev)
+- **Multiple View Modes** (Step-by-Step & List All Steps)
 - **Leaderboard** (coming soon)
 
 ---
@@ -146,15 +148,19 @@ education-algoritma/
 ├── src/                         # React Frontend
 │   ├── components/
 │   │   ├── Common/             # Reusable components
+│   │   │   ├── PlaybackControls.jsx  # Universal playback controls
+│   │   │   ├── GenericStepsList.jsx  # Generic steps display
+│   │   │   ├── DPStepsList.jsx       # DP-specific steps
+│   │   │   └── StatsPanel.jsx        # Statistics panel
 │   │   ├── Layout/             # Layout components (Navbar, Footer)
 │   │   └── Visualizations/     # Algorithm visualizations
 │   │       ├── BruteForce/
 │   │       ├── Sorting/
-│   │       ├── BFS/
-│   │       ├── DFS/
+│   │       ├── BFS/            # Breadth-First Search
+│   │       ├── DFS/            # Depth-First Search
 │   │       ├── Greedy/
-│   │       ├── DP/
-│   │       └── MST/
+│   │       ├── DP/             # Dynamic Programming with Dungeon Maze
+│   │       └── MST/            # Minimum Spanning Tree
 │   ├── context/                # React Context (Theme, Speed)
 │   ├── hooks/                  # Custom hooks
 │   ├── pages/                  # Page components
@@ -182,9 +188,15 @@ education-algoritma/
 ### 1. Eksplorasi Algoritma
 1. Pilih algoritma dari halaman beranda
 2. Klik **MULAI** untuk memulai visualisasi
-3. Atur kecepatan dengan slider **Kecepatan**
-4. Amati setiap langkah dengan indikator visual
-5. Klik **RESET** untuk mengulang dari awal
+3. Gunakan **PlaybackControls** untuk kontrol penuh:
+   - ▶️ **PLAY** - Jalankan animasi otomatis
+   - ⏸️ **PAUSE** - Jeda animasi
+   - ⏮️ **PREV** - Kembali ke step sebelumnya
+   - ⏭️ **NEXT** - Lanjut ke step berikutnya
+   - 🔄 **RESET** - Mulai dari awal
+4. Atur kecepatan dengan slider **Kecepatan** (Lambat - Kilat)
+5. Toggle antara **Step-by-Step** dan **List All Steps** mode
+6. Amati setiap langkah dengan indikator visual dan penjelasan detail
 
 ### 2. Ikuti Kuis
 1. Klik tombol **KUIS** di navbar
@@ -261,8 +273,25 @@ Body: { "amount": 63, "coins": [1,5,10,25] }
 ### Dynamic Programming
 ```
 POST /api/algorithms/dp/knapsack
-Body: { "weights": [...], "values": [...], "capacity": 50 }
+Body: { 
+  "weights": [4,3,2,5,1], 
+  "values": [500,400,150,100,50], 
+  "capacity": 10 
+}
+
+Response: {
+  "steps": [...],  // Step-by-step solving process
+  "selected_items": [...],  // Optimal items selected
+  "total_value": 1000,
+  "total_weight": 9
+}
 ```
+
+**Scenarios Available:**
+- Traveling (Nyusun Tas)
+- Treasure Hunt (Cari Harta)
+- Shopping (Belanja Hemat)
+- **Dungeon Maze** (Cari Jalur Terbaik) - Grid-based pathfinding with max coin collection
 
 📄 **Full API Documentation**: http://localhost:8000/docs
 
@@ -337,6 +366,23 @@ Jika ada pertanyaan atau masalah:
 
 ---
 
+## 🆕 Latest Updates
+
+### Version 1.2 (December 2024)
+- ✅ **PlaybackControls Component** - Universal playback controls across all algorithms
+- ✅ **Dungeon Maze Visualization** - Interactive grid-based DP pathfinding
+- ✅ **MST Node Names** - Display actual city names instead of IDs
+- ✅ **Improved View Modes** - Better Step-by-Step and List view toggle
+- ✅ **Speed Control Labels** - Visual labels (Lambat, Sedang, Cepat, Kilat)
+- ✅ **Consistent UI/UX** - Unified controls and styling across all visualizations
+
+### Version 1.1 (November 2024)
+- ✅ BFS & DFS implementation with unified visualization
+- ✅ Enhanced graph traversal with city/location themes
+- ✅ MST algorithms with Kruskal's and Prim's visualization
+
+---
+
 ## 🗺️ Roadmap
 
 ### Version 1.0 (Current)
@@ -344,6 +390,9 @@ Jika ada pertanyaan atau masalah:
 - ✅ BFS & DFS implementation
 - ✅ Quiz system
 - ✅ Dark mode support
+- ✅ PlaybackControls for all algorithms
+- ✅ Dungeon Maze for DP visualization
+- ✅ Multiple scenarios for each algorithm
 
 ### Version 2.0 (Planned)
 - [ ] More algorithms (A*, Dijkstra, Floyd-Warshall)
@@ -362,8 +411,32 @@ Jika ada pertanyaan atau masalah:
 **A:** 
 1. Tambahkan implementasi di `backend/algorithms/`
 2. Buat komponen visualisasi di `src/components/Visualizations/`
-3. Update routing di `AlgorithmDetail.jsx`
-4. Tambahkan card di `Home.jsx`
+3. Gunakan `PlaybackControls` component untuk konsistensi
+4. Tambahkan view mode toggle (Step-by-Step & List)
+5. Update routing di `AlgorithmDetail.jsx`
+6. Tambahkan card di `Home.jsx`
+
+### Q: Bagaimana cara menggunakan PlaybackControls?
+**A:** PlaybackControls adalah komponen reusable yang menyediakan:
+- Play/Pause toggle
+- Reset button
+- Next/Previous step navigation
+- Automatic disable saat animasi selesai
+
+Import dan gunakan seperti ini:
+```jsx
+import PlaybackControls from '../../Common/PlaybackControls'
+
+<PlaybackControls
+  isPlaying={isPlaying}
+  onPlay={handlePlay}
+  onPause={handlePause}
+  onReset={handleReset}
+  onStepForward={handleStepForward}
+  onStepBackward={handleStepBackward}
+  disabled={isComplete}
+/>
+```
 
 ### Q: Kenapa visualisasi lambat?
 **A:** Atur kecepatan menggunakan slider kecepatan di setiap halaman algoritma.
