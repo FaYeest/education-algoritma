@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import DPStepsList from '../../Common/DPStepsList'
+import PlaybackControls from '../../Common/PlaybackControls'
 import {
   PlayIcon,
   PauseIcon,
@@ -14,7 +15,9 @@ import {
   ScaleIcon,
   StarIcon,
   LightBulbIcon,
-  TrophyIcon
+  TrophyIcon,
+  ViewColumnsIcon,
+  ListBulletIcon
 } from '@heroicons/react/24/solid'
 
 // Item presets for different scenarios
@@ -22,6 +25,7 @@ const SCENARIOS = {
   traveling: {
     name: 'TRAVELING - Nyusun Tas',
     capacity: 10,
+    type: 'knapsack',
     items: [
       { id: 1, name: 'Laptop', weight: 4, value: 500, icon: '💻' },
       { id: 2, name: 'Kamera', weight: 3, value: 400, icon: '📷' },
@@ -33,6 +37,7 @@ const SCENARIOS = {
   treasure: {
     name: 'TREASURE HUNT - Cari Harta',
     capacity: 15,
+    type: 'knapsack',
     items: [
       { id: 1, name: 'Emas', weight: 8, value: 1000, icon: '💰' },
       { id: 2, name: 'Berlian', weight: 3, value: 800, icon: '💎' },
@@ -45,6 +50,7 @@ const SCENARIOS = {
   shopping: {
     name: 'SHOPPING - Belanja Hemat',
     capacity: 8,
+    type: 'knapsack',
     items: [
       { id: 1, name: 'Smartphone', weight: 2, value: 400, icon: '📱' },
       { id: 2, name: 'Headphone', weight: 1, value: 150, icon: '🎧' },
@@ -52,6 +58,25 @@ const SCENARIOS = {
       { id: 4, name: 'Jam', weight: 1, value: 300, icon: '⌚' },
       { id: 5, name: 'Tas', weight: 2, value: 180, icon: '🎒' },
     ]
+  },
+  dungeon: {
+    name: 'DUNGEON - Cari Jalur Terbaik',
+    type: 'grid',
+    size: 6,
+    grid: [
+      [3, 2, 1, 4, 2, 5],
+      [1, 4, 3, 2, 5, 1],
+      [2, 1, 5, 3, 1, 4],
+      [4, 3, 2, 1, 4, 2],
+      [1, 2, 4, 3, 2, 3],
+      [3, 1, 2, 5, 1, 10]
+    ],
+    icons: {
+      start: '🧙',
+      end: '👑',
+      coin: '💰',
+      path: '🔥'
+    }
   }
 }
 
@@ -70,6 +95,7 @@ export default function DPViz() {
   const [totalWeight, setTotalWeight] = useState(0)
   const [viewMode, setViewMode] = useState('step')
   const [animationCompleted, setAnimationCompleted] = useState(false)
+  const [path, setPath] = useState([])
 
   useEffect(() => {
     setConfig(SCENARIOS[scenario])
@@ -102,7 +128,7 @@ export default function DPViz() {
           table: dp.map(row => [...row]),
           cell: { i, j: w },
           item: item,
-          message: `Cek ${item.icon} ${item.name} (Berat: ${item.weight}kg, Nilai: $${item.value}) untuk kapasitas ${w}kg`
+          message: `Cek ${item.name} (Berat: ${item.weight}kg, Nilai: $${item.value}) untuk kapasitas ${w}kg`
         })
 
         if (item.weight > w) {
@@ -177,10 +203,117 @@ export default function DPViz() {
     return { steps, finalTable: dp, selected }
   }
 
+  const generateDungeonSteps = () => {
+    const grid = config.grid
+    const n = grid.length
+    const m = grid[0].length
+    const steps = []
+    
+    // Initialize DP table for max coins
+    const dp = Array(n).fill(0).map(() => Array(m).fill(0))
+    dp[0][0] = grid[0][0]
+    
+    steps.push({
+      action: 'init',
+      table: dp.map(row => [...row]),
+      cell: { i: 0, j: 0 },
+      path: [],
+      message: `🧙 Mulai dari posisi (0,0)! Koin: ${grid[0][0]} 💰`
+    })
+
+    // Fill first row - only can go right
+    for (let j = 1; j < m; j++) {
+      dp[0][j] = dp[0][j-1] + grid[0][j]
+      steps.push({
+        action: 'fill_row',
+        table: dp.map(row => [...row]),
+        cell: { i: 0, j },
+        path: [],
+        message: `➡️ Gerak ke kanan (0,${j}). Total koin: ${dp[0][j]} 💰`
+      })
+    }
+
+    // Fill first column - only can go down
+    for (let i = 1; i < n; i++) {
+      dp[i][0] = dp[i-1][0] + grid[i][0]
+      steps.push({
+        action: 'fill_col',
+        table: dp.map(row => [...row]),
+        cell: { i, j: 0 },
+        path: [],
+        message: `⬇️ Gerak ke bawah (${i},0). Total koin: ${dp[i][0]} 💰`
+      })
+    }
+
+    // Fill rest of table
+    for (let i = 1; i < n; i++) {
+      for (let j = 1; j < m; j++) {
+        const fromTop = dp[i-1][j]
+        const fromLeft = dp[i][j-1]
+        const maxPrev = Math.max(fromTop, fromLeft)
+        dp[i][j] = maxPrev + grid[i][j]
+        
+        const direction = fromTop > fromLeft ? '⬇️ dari atas' : '➡️ dari kiri'
+        
+        steps.push({
+          action: 'compute',
+          table: dp.map(row => [...row]),
+          cell: { i, j },
+          path: [],
+          comparison: { fromTop, fromLeft },
+          message: `🔍 Posisi (${i},${j}): Max(${fromTop}, ${fromLeft}) + ${grid[i][j]} = ${dp[i][j]} 💰 ${direction}`
+        })
+      }
+    }
+
+    // Backtrack to find path
+    const path = []
+    let i = n - 1
+    let j = m - 1
+    path.push({ i, j })
+
+    while (i > 0 || j > 0) {
+      if (i === 0) {
+        j--
+      } else if (j === 0) {
+        i--
+      } else if (dp[i-1][j] > dp[i][j-1]) {
+        i--
+      } else {
+        j--
+      }
+      path.unshift({ i, j })
+      
+      steps.push({
+        action: 'backtrack',
+        table: dp.map(row => [...row]),
+        cell: { i, j },
+        path: [...path],
+        message: `🔙 Backtrack: Jalur terbaik melalui (${i},${j})`
+      })
+    }
+
+    steps.push({
+      action: 'complete',
+      table: dp.map(row => [...row]),
+      cell: { i: n-1, j: m-1 },
+      path: [...path],
+      totalValue: dp[n-1][m-1],
+      message: `🎉 SELESAI! 👑 Total koin terkumpul: ${dp[n-1][m-1]} 💰`
+    })
+
+    return { steps, finalTable: dp, path, totalValue: dp[n-1][m-1] }
+  }
+
   const handlePlay = () => {
     if (steps.length === 0) {
-      const { steps: newSteps } = generateDPSteps()
-      setSteps(newSteps)
+      if (config.type === 'grid') {
+        const { steps: newSteps } = generateDungeonSteps()
+        setSteps(newSteps)
+      } else {
+        const { steps: newSteps } = generateDPSteps()
+        setSteps(newSteps)
+      }
     }
     setIsPlaying(true)
   }
@@ -198,6 +331,52 @@ export default function DPViz() {
     setTotalValue(0)
     setTotalWeight(0)
     setAnimationCompleted(false)
+    setPath([])
+  }
+
+  const handleStepForward = () => {
+    if (currentStep < steps.length) {
+      const step = steps[currentStep]
+      setDpTable(step.table)
+      setCurrentCell(step.cell)
+      
+      if (step.action === 'backtrack' || step.action === 'complete') {
+        setSelectedItems(step.selected || [])
+      }
+      
+      if (step.action === 'complete') {
+        setIsComplete(true)
+        setAnimationCompleted(true)
+        setTotalValue(step.totalValue)
+        setTotalWeight(step.totalWeight)
+      }
+      
+      setCurrentStep(currentStep + 1)
+    }
+  }
+
+  const handleStepBackward = () => {
+    if (currentStep > 0) {
+      const prevStep = currentStep - 1
+      setCurrentStep(prevStep)
+      
+      if (prevStep > 0) {
+        const step = steps[prevStep - 1]
+        setDpTable(step.table)
+        setCurrentCell(step.cell)
+        
+        if (step.action === 'backtrack' || step.action === 'complete') {
+          setSelectedItems(step.selected || [])
+        }
+      } else {
+        setDpTable([])
+        setCurrentCell({ i: -1, j: -1 })
+        setSelectedItems([])
+      }
+      
+      setIsComplete(false)
+      setAnimationCompleted(false)
+    }
   }
 
   useEffect(() => {
@@ -206,9 +385,11 @@ export default function DPViz() {
         const step = steps[currentStep]
         setDpTable(step.table)
         setCurrentCell(step.cell)
+        setPath(step.path || [])
         
         if (step.action === 'backtrack' || step.action === 'complete') {
           setSelectedItems(step.selected || [])
+          setPath(step.path || [])
         }
         
         if (step.action === 'complete') {
@@ -263,20 +444,31 @@ export default function DPViz() {
           <LightBulbIcon className="w-5 h-5" />
           Cara Main:
         </h3>
-        <ul className="text-xs font-bold space-y-1">
-          <li>🎯 <strong>Tujuan:</strong> Maksimalkan nilai barang dalam tas dengan kapasitas terbatas</li>
-          <li>📊 <strong>Tabel DP:</strong> Baris = Item, Kolom = Kapasitas (kg)</li>
-          <li>✅ <strong>HIJAU:</strong> Item dimasukkan tas (include)</li>
-          <li>⚠️ <strong>KUNING:</strong> Item dilewati (exclude)</li>
-          <li>❌ <strong>MERAH:</strong> Terlalu berat (skip)</li>
-          <li>🔙 <strong>Backtrack:</strong> Cari item mana aja yang optimal!</li>
-        </ul>
+        {config.type === 'knapsack' ? (
+          <ul className="text-xs font-bold space-y-1">
+            <li>🎯 <strong>Tujuan:</strong> Maksimalkan nilai barang dalam tas dengan kapasitas terbatas</li>
+            <li>📊 <strong>Tabel DP:</strong> Baris = Item, Kolom = Kapasitas (kg)</li>
+            <li>✅ <strong>HIJAU:</strong> Item dimasukkan tas (include)</li>
+            <li>⚠️ <strong>KUNING:</strong> Item dilewati (exclude)</li>
+            <li>❌ <strong>MERAH:</strong> Terlalu berat (skip)</li>
+            <li>🔙 <strong>Backtrack:</strong> Cari item mana aja yang optimal!</li>
+          </ul>
+        ) : (
+          <ul className="text-xs font-bold space-y-1">
+            <li>🧙 <strong>Tujuan:</strong> Cari jalur dari START ke GOAL dengan koin maksimal!</li>
+            <li>📊 <strong>Tabel DP:</strong> dp[i][j] = max koin sampai posisi (i,j)</li>
+            <li>➡️ <strong>Gerak:</strong> Hanya bisa ke KANAN atau ke BAWAH</li>
+            <li>💰 <strong>Formula:</strong> dp[i][j] = max(dari atas, dari kiri) + koin[i][j]</li>
+            <li>🔥 <strong>HIJAU:</strong> Jalur optimal yang dipilih</li>
+            <li>👑 <strong>Goal:</strong> Kumpulkan koin sebanyak mungkin!</li>
+          </ul>
+        )}
       </motion.div>
 
       <div className="grid lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
           {/* Scenario Selector */}
-          <div className="card-brutal bg-white dark:bg-gray-900 p-4">
+          <div className="card-brutal bg-brutal-bg dark:bg-gray-900 p-4">
             <h3 className="font-black uppercase text-sm mb-3">Pilih Skenario:</h3>
             <div className="grid grid-cols-3 gap-3">
               {Object.entries(SCENARIOS).map(([key, data]) => (
@@ -297,17 +489,75 @@ export default function DPViz() {
             <p className="text-xs font-bold mt-2 opacity-70">
               Skenario: {config.name}
             </p>
-            <p className="text-xs font-bold mt-1 flex items-center gap-2">
-              <ScaleIcon className="w-4 h-4 text-brutal-primary" />
-              Kapasitas Tas: {config.capacity}kg
-            </p>
+            {config.type === 'knapsack' && (
+              <p className="text-xs font-bold mt-1 flex items-center gap-2">
+                <ScaleIcon className="w-4 h-4 text-brutal-primary" />
+                Kapasitas Tas: {config.capacity}kg
+              </p>
+            )}
+            {config.type === 'grid' && (
+              <p className="text-xs font-bold mt-1">
+                🧙 Start → 👑 Goal | Kumpulkan 💰 maksimal!
+              </p>
+            )}
           </div>
 
-          {/* Items Display */}
-          <div className="card-brutal bg-white dark:bg-gray-900 p-4">
-            <h3 className="font-black uppercase text-sm mb-3">Barang Tersedia:</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {config.items.map((item) => {
+          {/* Dungeon Grid Visualization */}
+          {config.type === 'grid' && (
+            <div className="card-brutal bg-black p-4">
+              <h3 className="font-black uppercase text-sm mb-3 text-white">Dungeon Maze:</h3>
+              <div className="grid gap-1" style={{
+                gridTemplateColumns: `repeat(${config.size}, 1fr)`,
+                maxWidth: '600px',
+                margin: '0 auto'
+              }}>
+                {config.grid.map((row, i) => 
+                  row.map((coins, j) => {
+                    const isStart = i === 0 && j === 0
+                    const isEnd = i === config.size - 1 && j === config.size - 1
+                    const isCurrent = currentCell.i === i && currentCell.j === j
+                    const isInPath = path.some(p => p.i === i && p.j === j)
+                    const cellValue = dpTable[i]?.[j] || 0
+                    
+                    return (
+                      <motion.div
+                        key={`${i}-${j}`}
+                        className={`aspect-square border-2 border-gray-700 flex flex-col items-center justify-center text-xs font-black transition-all ${
+                          isCurrent
+                            ? 'bg-brutal-primary text-white scale-110 z-10'
+                            : isInPath
+                            ? 'bg-brutal-success text-white'
+                            : isStart
+                            ? 'bg-brutal-cyan text-white'
+                            : isEnd
+                            ? 'bg-brutal-warning text-black'
+                            : 'bg-gray-800 text-white'
+                        }`}
+                        animate={{
+                          scale: isCurrent ? 1.1 : 1
+                        }}
+                      >
+                        <span className="text-2xl">
+                          {isStart ? config.icons.start : isEnd ? config.icons.end : isInPath ? config.icons.path : config.icons.coin}
+                        </span>
+                        <span className="text-[10px] mt-1">{coins}</span>
+                        {cellValue > 0 && (
+                          <span className="text-[8px] font-black text-brutal-warning">{cellValue}</span>
+                        )}
+                      </motion.div>
+                    )
+                  })
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Items Display - Only for knapsack */}
+          {config.type === 'knapsack' && (
+            <div className="card-brutal bg-brutal-bg dark:bg-gray-900 p-4">
+              <h3 className="font-black uppercase text-sm mb-3">Barang Tersedia:</h3>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {config.items.map((item) => {
                 const isSelected = selectedItems.some(s => s.id === item.id)
                 const isCurrent = currentStepData.item?.id === item.id
                 
@@ -345,45 +595,82 @@ export default function DPViz() {
               })}
             </div>
           </div>
+          )}
 
           {/* DP Table */}
-          <div className="card-brutal bg-white dark:bg-gray-900 p-4">
+          <div className="card-brutal bg-brutal-bg dark:bg-gray-900 p-4">
             <h3 className="font-black uppercase text-sm mb-3">Tabel Dynamic Programming:</h3>
             {dpTable.length > 0 ? (
               <div className="overflow-x-auto">
-                <table className="w-full text-xs font-black border-collapse">
-                  <thead>
-                    <tr>
-                      <th className="border-2 border-black dark:border-white p-1 bg-brutal-secondary">Item</th>
-                      {Array.from({ length: config.capacity + 1 }, (_, i) => (
-                        <th key={i} className="border-2 border-black dark:border-white p-1 bg-brutal-secondary">
-                          {i}kg
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {dpTable.map((row, i) => (
-                      <tr key={i}>
-                        <td className="border-2 border-black dark:border-white p-1 bg-brutal-secondary text-center">
-                          {i === 0 ? '∅' : config.items[i - 1]?.icon}
-                        </td>
-                        {row.map((value, j) => (
-                          <td
-                            key={j}
-                            className={`border-2 border-black dark:border-white p-1 text-center transition-all ${getCellColor(
-                              i,
-                              j,
-                              value
-                            )}`}
-                          >
-                            ${value}
-                          </td>
+                {config.type === 'knapsack' ? (
+                  <table className="w-full text-xs font-black border-collapse">
+                    <thead>
+                      <tr>
+                        <th className="border-2 border-black dark:border-white p-1 bg-brutal-secondary">Item</th>
+                        {Array.from({ length: config.capacity + 1 }, (_, i) => (
+                          <th key={i} className="border-2 border-black dark:border-white p-1 bg-brutal-secondary">
+                            {i}kg
+                          </th>
                         ))}
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {dpTable.map((row, i) => (
+                        <tr key={i}>
+                          <td className="border-2 border-black dark:border-white p-1 bg-brutal-secondary text-center">
+                            {i === 0 ? '∅' : config.items[i - 1]?.icon}
+                          </td>
+                            {row.map((value, j) => (
+                              <td
+                                key={j}
+                                className={`border-2 border-black dark:border-white p-1 text-center transition-all ${getCellColor(
+                                  i,
+                                  j,
+                                  value
+                                )}`}
+                              >
+                                ${value}
+                              </td>
+                            ))}
+                          </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                ) : (
+                  <table className="w-full text-xs font-black border-collapse">
+                    <thead>
+                      <tr>
+                        <th className="border-2 border-black dark:border-white p-1 bg-brutal-secondary">Pos</th>
+                        {Array.from({ length: config.size }, (_, j) => (
+                          <th key={j} className="border-2 border-black dark:border-white p-1 bg-brutal-secondary">
+                            Col {j}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {dpTable.map((row, i) => (
+                        <tr key={i}>
+                          <td className="border-2 border-black dark:border-white p-1 bg-brutal-secondary text-center">
+                            Row {i}
+                          </td>
+                          {row.map((value, j) => (
+                            <td
+                              key={j}
+                              className={`border-2 border-black dark:border-white p-1 text-center transition-all ${getCellColor(
+                                i,
+                                j,
+                                value
+                              )}`}
+                            >
+                              💰{value}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
               </div>
             ) : (
               <div className="text-center py-8 text-sm font-bold opacity-50">
@@ -393,52 +680,18 @@ export default function DPViz() {
           </div>
 
           {/* Controls */}
-          <div className="card-brutal bg-white dark:bg-gray-900 p-4 space-y-4">
-            <div className="flex flex-wrap gap-3">
-              <button
-                onClick={handlePlay}
-                disabled={isPlaying || isComplete}
-                className="btn-brutal bg-brutal-success text-white hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-              >
-                <PlayIcon className="w-5 h-5" />
-                MULAI
-              </button>
-              <button
-                onClick={handlePause}
-                disabled={!isPlaying}
-                className="btn-brutal bg-brutal-warning text-black hover:bg-yellow-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-              >
-                <PauseIcon className="w-5 h-5" />
-                PAUSE
-              </button>
-              <button
-                onClick={handleReset}
-                className="btn-brutal bg-brutal-danger text-white hover:bg-red-600 flex items-center gap-2"
-              >
-                <ArrowPathIcon className="w-5 h-5" />
-                RESET
-              </button>
-            </div>
-
-            {/* Speed Control */}
-            <div>
-              <label className="flex items-center gap-2 mb-2 font-black uppercase text-xs">
-                <BoltIcon className="w-4 h-4 text-brutal-warning" />
-                Kecepatan: {speed}x
-              </label>
-              <input
-                type="range"
-                min="1"
-                max="10"
-                value={speed}
-                onChange={(e) => setSpeed(Number(e.target.value))}
-                className="slider-brutal w-full"
-              />
-            </div>
-          </div>
+          <PlaybackControls
+            isPlaying={isPlaying}
+            onPlay={handlePlay}
+            onPause={handlePause}
+            onReset={handleReset}
+            onStepForward={handleStepForward}
+            onStepBackward={handleStepBackward}
+            disabled={isComplete}
+          />
 
           {/* View Mode Toggle */}
-          <div className="card-brutal bg-white dark:bg-black p-4 mt-4">
+          <div className="card-brutal bg-brutal-bg dark:bg-gray-900 p-4 mt-4">
             <div className="flex items-center gap-3">
               <span className="font-black uppercase text-sm">Mode Tampilan:</span>
               <div className="flex gap-2">
@@ -447,7 +700,7 @@ export default function DPViz() {
                   className={`btn-brutal px-4 py-2 font-black uppercase text-sm ${
                     viewMode === 'step'
                       ? 'bg-brutal-primary text-white'
-                      : 'bg-white dark:bg-brutal-dark text-black dark:text-white'
+                      : 'bg-brutal-bg dark:bg-gray-900 text-black dark:text-white'
                   }`}
                 >
                   Step-by-Step
@@ -457,7 +710,7 @@ export default function DPViz() {
                   className={`btn-brutal px-4 py-2 font-black uppercase text-sm ${
                     viewMode === 'list'
                       ? 'bg-brutal-primary text-white'
-                      : 'bg-white dark:bg-brutal-dark text-black dark:text-white'
+                      : 'bg-brutal-bg dark:bg-gray-900 text-black dark:text-white'
                   }`}
                 >
                   Lihat Semua Step
@@ -491,7 +744,7 @@ export default function DPViz() {
         {/* Sidebar Stats */}
         <div className="space-y-4">
           {/* Progress */}
-          <div className="card-brutal bg-white dark:bg-gray-900 p-4">
+          <div className="card-brutal bg-brutal-bg dark:bg-gray-900 p-4">
             <h3 className="font-black uppercase text-sm mb-3">Progress:</h3>
             <div className="space-y-3">
               <div>
@@ -547,7 +800,7 @@ export default function DPViz() {
                     animate={{ x: 0, opacity: 1 }}
                     className="flex items-center gap-2 p-2 bg-brutal-cyan/20 border-2 border-brutal-cyan"
                   >
-                    <span className="text-xl">{item.icon}</span>
+                    <span className="text-2xl">{item.icon}</span>
                     <div className="flex-1">
                       <p className="font-black text-xs">{item.name}</p>
                       <p className="text-[10px] font-bold">{item.weight}kg • ${item.value}</p>

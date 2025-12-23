@@ -9,6 +9,8 @@ import {
   Bars3BottomLeftIcon,
   ArrowsPointingOutIcon,
   ArrowTrendingDownIcon,
+  TableCellsIcon,
+  ShareIcon,
   AcademicCapIcon,
   SparklesIcon
 } from '@heroicons/react/24/solid'
@@ -17,7 +19,7 @@ const algorithms = [
   {
     id: 'brute-force',
     name: 'BRUTE FORCE',
-    description: 'Coba semua kemungkinan - periksa setiap solusi',
+    description: 'Coba semua kemungkinan sampai ketemu solusi',
     icon: MagnifyingGlassIcon,
     color: 'bg-brutal-primary'
   },
@@ -31,7 +33,7 @@ const algorithms = [
   {
     id: 'greedy',
     name: 'GREEDY ALGORITHM',
-    description: 'Pilih opsi terbaik di setiap langkah',
+    description: 'Ambil langkah terbaik di setiap tahap untuk hasil optimal',
     icon: TrophyIcon,
     color: 'bg-brutal-success'
   },
@@ -44,30 +46,23 @@ const algorithms = [
   },
   {
     id: 'bfs',
-    name: 'BFS - PENJELAJAH GELOMBANG',
-    description: 'Breadth-First Search - jelajah level per level',
+    name: 'GRAPH PATHFINDING',
+    description: 'BFS & DFS - Temukan jalan terpendek di maze',
     icon: ArrowsPointingOutIcon,
     color: 'bg-brutal-cyan'
   },
   {
-    id: 'dfs',
-    name: 'DFS - PENYELAM DALAM',
-    description: 'Depth-First Search - menyelam dalam lalu mundur',
-    icon: ArrowTrendingDownIcon,
-    color: 'bg-brutal-secondary'
-  },
-  {
     id: 'dp',
     name: 'DYNAMIC PROGRAMMING',
-    description: 'Knapsack & LCS dengan tabel DP/memoization',
-    icon: Bars3BottomLeftIcon,
+    description: 'Optimasi solusi dengan tabel perhitungan',
+    icon: TableCellsIcon,
     color: 'bg-brutal-success'
   },
   {
     id: 'mst',
     name: 'MINIMUM SPANNING TREE',
-    description: 'Kruskal/Prim dengan union-find/frontier',
-    icon: Bars3BottomLeftIcon,
+    description: 'Menyambungkan node dengan biaya minimum',
+    icon: ShareIcon,
     color: 'bg-brutal-warning'
   },
 ]

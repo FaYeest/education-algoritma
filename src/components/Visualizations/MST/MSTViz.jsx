@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import GenericStepsList from '../../Common/GenericStepsList'
+import PlaybackControls from '../../Common/PlaybackControls'
 import {
   PlayIcon,
   PauseIcon,
@@ -15,7 +16,9 @@ import {
   HomeModernIcon,
   TrophyIcon,
   LightBulbIcon,
-  WifiIcon
+  WifiIcon,
+  ViewColumnsIcon,
+  ListBulletIcon
 } from '@heroicons/react/24/solid'
 
 // City network scenarios
@@ -159,6 +162,11 @@ export default function MSTViz() {
       }
       return true
     }
+
+    const getNodeName = (nodeId) => {
+      const node = config.nodes.find(n => n.id === nodeId)
+      return node ? node.name : nodeId
+    }
     
     steps.push({
       action: 'init',
@@ -171,10 +179,13 @@ export default function MSTViz() {
     let totalCost = 0
     
     edges.forEach((edge, idx) => {
+      const fromName = getNodeName(edge.from)
+      const toName = getNodeName(edge.to)
+      
       steps.push({
         action: 'check',
         edge: edge,
-        message: `🔍 Cek edge ${edge.from}-${edge.to} (Rp${edge.weight} ${config.unit})`,
+        message: `🔍 Cek edge ${fromName}-${toName} (Rp${edge.weight} ${config.unit})`,
         edges: [...mstEdges],
         totalCost: totalCost
       })
@@ -185,7 +196,7 @@ export default function MSTViz() {
         steps.push({
           action: 'add',
           edge: edge,
-          message: `✅ Tambah ${edge.from}-${edge.to}! Tidak bikin cycle. Total: Rp${totalCost} ${config.unit}`,
+          message: `✅ Tambah ${fromName}-${toName}! Tidak bikin cycle. Total: Rp${totalCost} ${config.unit}`,
           edges: [...mstEdges],
           totalCost: totalCost
         })
@@ -193,7 +204,7 @@ export default function MSTViz() {
         steps.push({
           action: 'reject',
           edge: edge,
-          message: `❌ Tolak ${edge.from}-${edge.to}! Bikin cycle (${edge.from} dan ${edge.to} sudah terhubung)`,
+          message: `❌ Tolak ${fromName}-${toName}! Bikin cycle (${fromName} dan ${toName} sudah terhubung)`,
           edges: [...mstEdges],
           totalCost: totalCost
         })
@@ -216,14 +227,20 @@ export default function MSTViz() {
     const visited = new Set()
     const mstEdges = []
     let totalCost = 0
+
+    const getNodeName = (nodeId) => {
+      const node = config.nodes.find(n => n.id === nodeId)
+      return node ? node.name : nodeId
+    }
     
     // Start from first node
     const startNode = config.nodes[0].id
+    const startNodeName = getNodeName(startNode)
     visited.add(startNode)
     
     steps.push({
       action: 'init',
-      message: `🚀 Mulai Prim dari ${startNode}! Tambah node terdekat satu per satu.`,
+      message: `🚀 Mulai Prim dari ${startNodeName}! Tambah node terdekat satu per satu.`,
       edges: [],
       totalCost: 0,
       visited: new Set(visited)
@@ -248,11 +265,14 @@ export default function MSTViz() {
       
       if (minEdge) {
         const newNode = visited.has(minEdge.from) ? minEdge.to : minEdge.from
+        const fromName = getNodeName(minEdge.from)
+        const toName = getNodeName(minEdge.to)
+        const newNodeName = getNodeName(newNode)
         
         steps.push({
           action: 'check',
           edge: minEdge,
-          message: `🔍 Cek edge terdekat: ${minEdge.from}-${minEdge.to} (Rp${minEdge.weight} ${config.unit})`,
+          message: `🔍 Cek edge terdekat: ${fromName}-${toName} (Rp${minEdge.weight} ${config.unit})`,
           edges: [...mstEdges],
           totalCost: totalCost,
           visited: new Set(visited)
@@ -265,7 +285,7 @@ export default function MSTViz() {
         steps.push({
           action: 'add',
           edge: minEdge,
-          message: `✅ Tambah ${minEdge.from}-${minEdge.to}! Node ${newNode} terhubung. Total: Rp${totalCost} ${config.unit}`,
+          message: `✅ Tambah ${fromName}-${toName}! Node ${newNodeName} terhubung. Total: Rp${totalCost} ${config.unit}`,
           edges: [...mstEdges],
           totalCost: totalCost,
           visited: new Set(visited)
@@ -304,6 +324,46 @@ export default function MSTViz() {
     setIsComplete(false)
     setVisitedNodes(new Set())
     setAnimationCompleted(false)
+  }
+
+  const handleStepForward = () => {
+    if (currentStep < steps.length) {
+      const step = steps[currentStep]
+      setMstEdges(step.edges)
+      setTotalCost(step.totalCost)
+      setCurrentEdge(step.edge || null)
+      setVisitedNodes(step.visited || new Set())
+      
+      if (step.action === 'complete') {
+        setIsComplete(true)
+        setAnimationCompleted(true)
+      }
+      
+      setCurrentStep(currentStep + 1)
+    }
+  }
+
+  const handleStepBackward = () => {
+    if (currentStep > 0) {
+      const prevStep = currentStep - 1
+      setCurrentStep(prevStep)
+      
+      if (prevStep > 0) {
+        const step = steps[prevStep - 1]
+        setMstEdges(step.edges)
+        setTotalCost(step.totalCost)
+        setCurrentEdge(step.edge || null)
+        setVisitedNodes(step.visited || new Set())
+      } else {
+        setMstEdges([])
+        setTotalCost(0)
+        setCurrentEdge(null)
+        setVisitedNodes(new Set())
+      }
+      
+      setIsComplete(false)
+      setAnimationCompleted(false)
+    }
   }
 
   useEffect(() => {
@@ -366,10 +426,15 @@ export default function MSTViz() {
     return visitedNodes.has(nodeId)
   }
 
+  const getNodeName = (nodeId) => {
+    const node = config.nodes.find(n => n.id === nodeId)
+    return node ? node.name : nodeId
+  }
+
   return (
     <div className="min-h-screen bg-brutal-bg dark:bg-black p-4 sm:p-6 space-y-6">
       {/* Header */}
-      <div className={`card-brutal bg-gradient-to-r from-${config.color} to-brutal-cyan text-white p-6 text-center`}>
+      <div className="card-brutal bg-gradient-to-r from-brutal-warning to-brutal-secondary text-white p-6 text-center">
         <h2 className="text-2xl sm:text-3xl font-black uppercase flex items-center justify-center gap-3">
           <MapIcon className="w-8 h-8" />
           MST - MINIMUM SPANNING TREE
@@ -535,38 +600,22 @@ export default function MSTViz() {
           </div>
 
           {/* Controls */}
-          <div className="card-brutal bg-white dark:bg-gray-900 p-4 space-y-4">
-            <div className="flex flex-wrap gap-3">
-              <button
-                onClick={handlePlay}
-                disabled={isPlaying || isComplete}
-                className="btn-brutal bg-brutal-success text-white hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-              >
-                <PlayIcon className="w-5 h-5" />
-                MULAI
-              </button>
-              <button
-                onClick={handlePause}
-                disabled={!isPlaying}
-                className="btn-brutal bg-brutal-warning text-black hover:bg-yellow-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-              >
-                <PauseIcon className="w-5 h-5" />
-                PAUSE
-              </button>
-              <button
-                onClick={handleReset}
-                className="btn-brutal bg-brutal-danger text-white hover:bg-red-600 flex items-center gap-2"
-              >
-                <ArrowPathIcon className="w-5 h-5" />
-                RESET
-              </button>
-            </div>
+          <PlaybackControls
+            isPlaying={isPlaying}
+            onPlay={handlePlay}
+            onPause={handlePause}
+            onReset={handleReset}
+            onStepForward={handleStepForward}
+            onStepBackward={handleStepBackward}
+            disabled={isComplete}
+          />
 
-            {/* Speed Control */}
-            <div>
-              <label className="flex items-center gap-2 mb-2 font-black uppercase text-xs">
-                <BoltIcon className="w-4 h-4 text-brutal-warning" />
-                Kecepatan: {speed}x
+          {/* Speed Control */}
+          <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-4">
+            <div className="flex items-center gap-4">
+              <label className="font-black uppercase text-sm whitespace-nowrap flex items-center gap-2">
+                <BoltIcon className="w-5 h-5 text-brutal-primary" />
+                Kecepatan:
               </label>
               <input
                 type="range"
@@ -574,35 +623,40 @@ export default function MSTViz() {
                 max="10"
                 value={speed}
                 onChange={(e) => setSpeed(Number(e.target.value))}
-                className="slider-brutal w-full"
+                className="slider-brutal flex-1"
               />
+              <span className="font-black text-brutal-primary text-lg min-w-[60px] text-center">
+                {speed === 1 ? 'Lambat' : speed <= 3 ? 'Sedang' : speed <= 7 ? 'Cepat' : 'Kilat'}
+              </span>
             </div>
           </div>
 
           {/* View Mode Toggle */}
-          <div className="card-brutal bg-white dark:bg-black p-4 mt-4">
-            <div className="flex items-center gap-3">
-              <span className="font-black uppercase text-sm">Mode Tampilan:</span>
-              <div className="flex gap-2">
+          <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-6 space-y-4">
+            <div className="flex items-center gap-3 pb-4 border-b-3 border-black dark:border-brutal-bg">
+              <span className="font-black uppercase text-sm whitespace-nowrap">Mode:</span>
+              <div className="flex gap-2 flex-1">
                 <button
                   onClick={() => setViewMode('step')}
-                  className={`btn-brutal px-4 py-2 font-black uppercase text-sm ${
+                  className={`btn-brutal px-3 py-2 font-black uppercase text-xs flex-1 transition-all flex items-center justify-center gap-2 ${
                     viewMode === 'step'
                       ? 'bg-brutal-primary text-white'
-                      : 'bg-white dark:bg-brutal-dark text-black dark:text-white'
+                      : 'bg-white dark:bg-gray-800 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700'
                   }`}
                 >
-                  Step-by-Step
+                  <ViewColumnsIcon className="w-4 h-4" />
+                  Step
                 </button>
                 <button
                   onClick={() => setViewMode('list')}
-                  className={`btn-brutal px-4 py-2 font-black uppercase text-sm ${
+                  className={`btn-brutal px-3 py-2 font-black uppercase text-xs flex-1 transition-all flex items-center justify-center gap-2 ${
                     viewMode === 'list'
                       ? 'bg-brutal-primary text-white'
-                      : 'bg-white dark:bg-brutal-dark text-black dark:text-white'
+                      : 'bg-white dark:bg-gray-800 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700'
                   }`}
                 >
-                  Lihat Semua Step
+                  <ListBulletIcon className="w-4 h-4" />
+                  List
                 </button>
               </div>
             </div>
@@ -692,7 +746,7 @@ export default function MSTViz() {
                     <div className="flex items-center gap-2">
                       <CheckCircleIcon className="w-4 h-4 text-brutal-success" />
                       <span className="font-black text-xs">
-                        {edge.from} ↔ {edge.to}
+                        {getNodeName(edge.from)} ↔ {getNodeName(edge.to)}
                       </span>
                     </div>
                     <span className="text-xs font-bold">Rp{edge.weight}</span>

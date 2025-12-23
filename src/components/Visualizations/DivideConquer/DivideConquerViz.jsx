@@ -16,7 +16,10 @@ import {
   MagnifyingGlassIcon,
   PlusCircleIcon,
   ArrowPathIcon,
-  PlayIcon
+  PlayIcon,
+  ViewColumnsIcon,
+  ListBulletIcon,
+  XCircleIcon
 } from '@heroicons/react/24/solid'
 
 export default function DivideConquerViz() {
@@ -24,7 +27,6 @@ export default function DivideConquerViz() {
   const [steps, setSteps] = useState([])
   const [currentStep, setCurrentStep] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
-  const [showTree, setShowTree] = useState(false)
   const [viewMode, setViewMode] = useState('step')
   const [isLoadingSteps, setIsLoadingSteps] = useState(false)
   const [animationCompleted, setAnimationCompleted] = useState(false)
@@ -124,7 +126,15 @@ export default function DivideConquerViz() {
   }
 
   const displayArray = currentStepData.array || array
+  // Dynamic max value - always relative to largest number in current array
   const maxValue = Math.max(...displayArray, 1)
+
+  console.log('DivideConquer Debug:', { 
+    stepsLength: steps.length, 
+    displayArray, 
+    currentStepData,
+    maxValue
+  })
 
   const getStepTitle = () => {
     const action = currentStepData.action
@@ -210,6 +220,9 @@ export default function DivideConquerViz() {
         </p>
       </div>
 
+      {/* Interactive Input Section - REMOVE THIS */}
+      {/* Moved to Main Visual */}
+
       <div className="flex flex-wrap gap-3">
         <button
           onClick={() => {
@@ -222,13 +235,6 @@ export default function DivideConquerViz() {
         >
           <ArrowsRightLeftIcon className="w-5 h-5" />
           Acak Angka
-        </button>
-        <button
-          onClick={() => setShowTree(!showTree)}
-          className="btn-brutal px-4 py-2 bg-brutal-cyan text-black font-black uppercase flex items-center gap-2"
-        >
-          {showTree ? <ChartBarIcon className="w-5 h-5" /> : <ChartBarIcon className="w-5 h-5" />}
-          {showTree ? 'Lihat Bar' : 'Lihat Pohon'}
         </button>
       </div>
 
@@ -251,102 +257,141 @@ export default function DivideConquerViz() {
             {speed === 1 ? 'Lambat' : speed <= 3 ? 'Sedang' : speed <= 7 ? 'Cepat' : 'Kilat'}
           </span>
         </div>
-        <p className="text-xs font-bold uppercase mt-2 opacity-70">
-          Delay: {Math.round(getDelay())}ms per step
-        </p>
-      </div>
-
-      {/* View Mode Toggle */}
-      <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-4">
-        <div className="flex items-center gap-3">
-          <span className="font-black uppercase text-sm">Mode Tampilan:</span>
-          <div className="flex gap-2">
-            <button
-              onClick={() => setViewMode('step')}
-              className={`btn-brutal px-4 py-2 font-black uppercase text-sm ${
-                viewMode === 'step'
-                  ? 'bg-brutal-primary text-white'
-                  : 'bg-white dark:bg-brutal-dark text-black dark:text-white'
-              }`}
-            >
-              Step-by-Step
-            </button>
-            <button
-              onClick={() => setViewMode('list')}
-              className={`btn-brutal px-4 py-2 font-black uppercase text-sm ${
-                viewMode === 'list'
-                  ? 'bg-brutal-primary text-white'
-                  : 'bg-white dark:bg-brutal-dark text-black dark:text-white'
-              }`}
-            >
-              Lihat Semua Step
-            </button>
-          </div>
-        </div>
       </div>
 
       <div className="grid lg:grid-cols-4 gap-6">
         <div className="lg:col-span-3">
           {/* Main Visual */}
-          <div className="card-brutal bg-white dark:bg-black p-6 min-h-[400px]">
-            <AnimatePresence mode="wait">
-              {!showTree ? (
-                <motion.div
-                  key="bar"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="flex items-end justify-center gap-2 h-80"
-                >
-                  {displayArray.map((value, index) => {
-                    const height = (value / maxValue) * 100
-                    return (
-                      <motion.div
-                        key={`${index}-${value}`}
-                        className="flex flex-col items-center flex-1 max-w-[60px]"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.05 }}
-                      >
-                        <motion.div
-                          className={`w-full border-3 border-black dark:border-brutal-bg ${getBarColor(index)} transition-colors relative`}
-                          style={{ height: `${height}%`, minHeight: '30px' }}
-                          animate={{
-                            scale: currentStepData.placing === index ? 1.15 : 1,
-                          }}
-                          transition={{ duration: 0.3, type: "spring" }}
-                        >
-                          {currentStepData.placing === index && (
-                            <motion.div
-                              className="absolute -top-8 left-1/2 -translate-x-1/2"
-                              initial={{ y: -10, opacity: 0 }}
-                              animate={{ y: 0, opacity: 1 }}
-                            >
-                              <ArrowDownIcon className="w-6 h-6 text-brutal-success" />
-                            </motion.div>
-                          )}
-                        </motion.div>
-                        <span className="text-sm sm:text-base font-black mt-2">{value}</span>
-                      </motion.div>
-                    )
-                  })}
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="tree"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="h-80 flex items-center justify-center"
-                >
-                  <div className="text-center">
-                    <ChartBarIcon className="w-24 h-24 mx-auto mb-4 text-brutal-primary" />
-                    <p className="font-black text-xl uppercase">Visualisasi Pohon</p>
-                    <p className="font-bold text-sm mt-2 opacity-80">Coming Soon!</p>
+          <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-6 min-h-[400px]">
+            {/* Interactive Input - Above Visualization */}
+            <div className="mb-6 pb-6 border-b-3 border-black dark:border-brutal-bg">
+              <div className="flex flex-col sm:flex-row gap-4">
+                {/* Input Field */}
+                <div className="flex-1">
+                  <label className="text-xs font-black uppercase opacity-70 block mb-2">
+                    Masukkan Array Kustom
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Contoh: 8, 3, 5, 1, 9, 2"
+                    className="w-full px-4 py-2 border-3 border-black dark:border-brutal-bg font-bold text-sm
+                               bg-brutal-bg dark:bg-gray-900
+                               focus:outline-none focus:ring-2 focus:ring-brutal-primary"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        const input = e.target.value.trim()
+                        if (input) {
+                          const numbers = input
+                            .split(/[,\s]+/)
+                            .map(n => parseInt(n.trim()))
+                            .filter(n => !isNaN(n) && n >= 1 && n <= 100)
+                          
+                          if (numbers.length >= 2 && numbers.length <= 20) {
+                            setArray(numbers)
+                            setSteps([])
+                            setCurrentStep(0)
+                            setIsPlaying(false)
+                            setAnimationCompleted(false)
+                            e.target.value = ''
+                          } else {
+                            alert('Masukkan 2-20 angka antara 1-100!')
+                          }
+                        }
+                      }
+                    }}
+                  />
+                  <p className="text-xs font-bold mt-1 opacity-60">
+                    Tekan ENTER • 2-20 angka • Range 1-100
+                  </p>
+                </div>
+
+                {/* Preset Buttons */}
+                <div className="sm:w-auto">
+                  <label className="text-xs font-black uppercase opacity-70 block mb-2">
+                    Preset Cepat
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      onClick={() => {
+                        setArray([5, 2, 8, 1, 9])
+                        handleReset()
+                      }}
+                      className="btn-brutal px-3 py-1 bg-brutal-bg dark:bg-gray-900 font-black text-xs"
+                      title="Array kecil 5 elemen"
+                    >
+                      Kecil
+                    </button>
+                    <button
+                      onClick={() => {
+                        setArray([10, 9, 8, 7, 6, 5, 4, 3, 2, 1])
+                        handleReset()
+                      }}
+                      className="btn-brutal px-3 py-1 bg-brutal-danger text-white font-black text-xs"
+                      title="Worst case - descending"
+                    >
+                      Terburuk
+                    </button>
+                    <button
+                      onClick={() => {
+                        setArray([1, 2, 3, 4, 5, 6, 7, 8])
+                        handleReset()
+                      }}
+                      className="btn-brutal px-3 py-1 bg-brutal-success text-white font-black text-xs"
+                      title="Best case - already sorted"
+                    >
+                      Terbaik
+                    </button>
                   </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                </div>
+              </div>
+
+              {/* Current Array Display - Compact */}
+              <div className="mt-3 p-2 bg-brutal-primary bg-opacity-10 border-2 border-brutal-primary inline-block">
+                <span className="text-xs font-black uppercase text-brutal-primary mr-2">Array:</span>
+                <span className="font-black text-sm">[{array.join(', ')}]</span>
+                <span className="text-xs font-bold opacity-60 ml-2">({array.length} elemen)</span>
+              </div>
+            </div>
+
+            {/* Visualization */}
+            <div className="flex items-end justify-center gap-2 h-80">
+              {displayArray.map((value, index) => {
+                const heightPercentage = (value / maxValue) * 100
+                
+                return (
+                  <motion.div
+                    key={`${index}-${value}`}
+                    className="flex flex-col items-center flex-1 max-w-[60px]"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                  >
+                    <motion.div
+                      className={`w-full border-3 border-black dark:border-brutal-bg ${getBarColor(index)} transition-colors relative`}
+                      style={{ 
+                        height: `${heightPercentage}%`,
+                        minHeight: '40px'
+                      }}
+                      animate={{
+                        scale: currentStepData.placing === index ? 1.15 : 1,
+                      }}
+                      transition={{ duration: 0.3, type: "spring" }}
+                    >
+                      {currentStepData.placing === index && (
+                        <motion.div
+                          className="absolute -top-8 left-1/2 -translate-x-1/2"
+                          initial={{ y: -10, opacity: 0 }}
+                          animate={{ y: 0, opacity: 1 }}
+                        >
+                          <ArrowDownIcon className="w-6 h-6 text-brutal-success" />
+                        </motion.div>
+                      )}
+                    </motion.div>
+                    <span className="text-sm sm:text-base font-black mt-2">{value}</span>
+                  </motion.div>
+                )
+              })}
+            </div>
           </div>
 
           {/* Controls */}
@@ -361,7 +406,7 @@ export default function DivideConquerViz() {
             />
           </div>
 
-          {/* Step Info - Lebih User Friendly */}
+          {/* Step Info */}
           {steps.length === 0 ? (
             <div className="card-brutal bg-brutal-primary text-white p-6 mt-4 text-center">
               <div className="space-y-3">
@@ -375,28 +420,60 @@ export default function DivideConquerViz() {
               </div>
             </div>
           ) : (
-            <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-6 mt-4">
-              <div className="flex items-center justify-between mb-4">
-                <span className="font-bold uppercase text-sm opacity-70">
-                  Langkah {currentStep + 1} dari {steps.length}
-                </span>
-                <div className={`px-3 py-1 border-3 border-black dark:border-brutal-bg font-black text-lg ${
-                  currentStepData.action === 'divide' ? 'bg-brutal-warning text-black' :
-                  currentStepData.action?.startsWith('merge') ? 'bg-brutal-cyan text-black' :
-                  currentStepData.action === 'complete' ? 'bg-brutal-success text-white' :
-                  'bg-brutal-secondary text-black'
-                }`}>
-                  {getStepTitle()}
+            <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-6 mt-4 space-y-4">
+              {/* View Mode Toggle */}
+              <div className="flex items-center gap-3 pb-4 border-b-3 border-black dark:border-brutal-bg">
+                <span className="font-black uppercase text-sm whitespace-nowrap">Mode:</span>
+                <div className="flex gap-2 flex-1">
+                  <button
+                    onClick={() => setViewMode('step')}
+                    className={`btn-brutal px-3 py-2 font-black uppercase text-xs flex-1 transition-all flex items-center justify-center gap-2 ${
+                      viewMode === 'step'
+                        ? 'bg-brutal-primary text-white'
+                        : 'bg-white dark:bg-gray-800 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700'
+                    }`}
+                  >
+                    <ViewColumnsIcon className="w-4 h-4" />
+                    Step
+                  </button>
+                  <button
+                    onClick={() => setViewMode('list')}
+                    className={`btn-brutal px-3 py-2 font-black uppercase text-xs flex-1 transition-all flex items-center justify-center gap-2 ${
+                      viewMode === 'list'
+                        ? 'bg-brutal-primary text-white'
+                        : 'bg-white dark:bg-gray-800 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700'
+                    }`}
+                  >
+                    <ListBulletIcon className="w-4 h-4" />
+                    List
+                  </button>
                 </div>
               </div>
-              
-              <div className="font-bold text-base sm:text-lg leading-relaxed">
-                {getStepExplanation()}
-              </div>
 
-              {/* Show LEFT and RIGHT with visual boxes */}
-              {currentStepData.left_part && currentStepData.right_part && (
-                <div className="mt-4 grid grid-cols-2 gap-4">
+              {/* Step Content - only show in step mode */}
+              {viewMode === 'step' && (
+                <>
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold uppercase text-sm opacity-70">
+                      Langkah {currentStep + 1} dari {steps.length}
+                    </span>
+                    <div className={`px-3 py-1 border-3 border-black dark:border-brutal-bg font-black text-lg ${
+                      currentStepData.action === 'divide' ? 'bg-brutal-warning text-black' :
+                      currentStepData.action?.startsWith('merge') ? 'bg-brutal-cyan text-black' :
+                      currentStepData.action === 'complete' ? 'bg-brutal-success text-white' :
+                      'bg-brutal-secondary text-black'
+                    }`}>
+                      {getStepTitle()}
+                    </div>
+                  </div>
+                  
+                  <div className="font-bold text-base sm:text-lg leading-relaxed">
+                    {getStepExplanation()}
+                  </div>
+
+                  {/* Show LEFT and RIGHT with visual boxes */}
+                  {currentStepData.left_part && currentStepData.right_part && (
+                    <div className="mt-4 grid grid-cols-2 gap-4">
                   <motion.div 
                     className="p-4 border-3 border-black dark:border-brutal-bg bg-brutal-warning"
                     initial={{ x: -20, opacity: 0 }}
@@ -433,10 +510,21 @@ export default function DivideConquerViz() {
                   </motion.div>
                 </div>
               )}
+                </>
+              )}
             </div>
           )}
 
           {/* All Steps List - Only shown in 'list' mode */}
+          {viewMode === 'list' && steps.length > 0 && (
+            <div className="mt-4">
+              <GenericStepsList 
+                steps={steps} 
+                animationCompleted={animationCompleted}
+                algorithmName="Merge Sort (Divide & Conquer)"
+              />
+            </div>
+          )}
           {viewMode === 'list' && (
             <div className="mt-4">
               <GenericStepsList 
@@ -449,38 +537,89 @@ export default function DivideConquerViz() {
         </div>
 
         {/* Sidebar */}
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-1 space-y-4">
+          {/* Stats */}
           <StatsPanel stats={{ 
             'kecepatan': 'O(n log n)',
             'memori': 'O(n)',
-            'cocok untuk': 'Array besar'
+            'terbaik': 'O(n log n)',
+            'terburuk': 'O(n log n)'
           }} />
           
-          <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-4 mt-4">
-            <h3 className="text-base font-black uppercase tracking-tight mb-3">📚 Cara Kerja</h3>
-            <ol className="text-sm space-y-3 font-bold">
+          {/* Cara Kerja */}
+          <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-4">
+            <h3 className="text-sm font-black uppercase tracking-tight mb-2 flex items-center gap-2">
+              <ChartBarIcon className="w-4 h-4 text-brutal-primary" />
+              Cara Kerja
+            </h3>
+            <ol className="text-xs space-y-2 font-bold">
               <li className="flex gap-2">
-                <span className="text-brutal-warning">1.</span>
-                <span>Pecah array jadi 2 bagian terus sampai tinggal 1 angka</span>
+                <span className="text-brutal-warning font-black min-w-[16px]">1.</span>
+                <span>Pecah array jadi 2 bagian</span>
               </li>
               <li className="flex gap-2">
-                <span className="text-brutal-cyan">2.</span>
-                <span>Gabungkan 2 bagian sambil mengurutkan</span>
+                <span className="text-brutal-warning font-black min-w-[16px]">2.</span>
+                <span>Pecah lagi sampai 1 elemen</span>
               </li>
               <li className="flex gap-2">
-                <span className="text-brutal-success">3.</span>
-                <span>Ulangi sampai semua bagian tergabung!</span>
+                <span className="text-brutal-cyan font-black min-w-[16px]">3.</span>
+                <span>Gabungkan sambil urutkan</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="text-brutal-success font-black min-w-[16px]">4.</span>
+                <span>Ulangi sampai semua gabung</span>
               </li>
             </ol>
           </div>
 
-          <div className="card-brutal bg-brutal-warning dark:bg-brutal-dark p-4 mt-4">
-            <h3 className="text-base font-black uppercase tracking-tight mb-2">💡 Tips</h3>
-            <p className="text-sm font-bold leading-relaxed">
-              Perhatikan warna bar! <span className="text-brutal-warning bg-black px-1">Kuning</span> = kiri, 
-              <span className="text-brutal-cyan bg-black px-1 mx-1">Biru</span> = kanan, 
-              <span className="text-brutal-success bg-black px-1">Hijau</span> = sudah terurut!
-            </p>
+          {/* Pros & Cons Combined */}
+          <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-4">
+            {/* Keuntungan */}
+            <div className="mb-3">
+              <h3 className="text-sm font-black uppercase tracking-tight mb-2 text-brutal-success flex items-center gap-2">
+                <CheckCircleIcon className="w-4 h-4" />
+                Keuntungan
+              </h3>
+              <ul className="text-xs space-y-1 font-bold">
+                <li className="flex items-center gap-1">
+                  <span className="text-brutal-success">✓</span>
+                  <span>Cepat O(n log n)</span>
+                </li>
+                <li className="flex items-center gap-1">
+                  <span className="text-brutal-success">✓</span>
+                  <span>Stabil (urutan relatif tetap)</span>
+                </li>
+                <li className="flex items-center gap-1">
+                  <span className="text-brutal-success">✓</span>
+                  <span>Cocok untuk data besar</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Divider */}
+            <div className="border-t-2 border-black dark:border-brutal-bg my-3"></div>
+
+            {/* Kekurangan */}
+            <div>
+              <h3 className="text-sm font-black uppercase tracking-tight mb-2 text-brutal-danger flex items-center gap-2">
+                <XCircleIcon className="w-4 h-4" />
+                Kekurangan
+              </h3>
+              <ul className="text-xs space-y-1 font-bold">
+                <li className="flex items-center gap-1">
+                  <span className="text-brutal-danger">✗</span>
+                  <span>Butuh memori ekstra O(n)</span>
+                </li>
+                <li className="flex items-center gap-1">
+                  <span className="text-brutal-danger">✗</span>
+                  <span>Lebih kompleks dari Bubble Sort</span>
+                </li>
+                <li className="flex items-center gap-1">
+                  <span className="text-brutal-danger">✗</span>
+                  <span>Tidak in-place sorting</span>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>

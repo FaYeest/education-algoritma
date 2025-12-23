@@ -14,7 +14,7 @@ export default function DPStepsList({ steps, animationCompleted }) {
   
   if (!animationCompleted) {
     return (
-      <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-8">
+      <div className="card-brutal bg-brutal-bg dark:bg-gray-900 p-8">
         <div className="text-center py-12">
           <PlayIcon className="w-16 h-16 mx-auto text-brutal-primary opacity-50 mb-4" />
           <p className="font-bold uppercase text-lg mb-4">

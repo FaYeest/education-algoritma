@@ -12,7 +12,10 @@ import {
   XCircleIcon,
   ExclamationTriangleIcon,
   LightBulbIcon,
-  PlusCircleIcon
+  PlusCircleIcon,
+  ViewColumnsIcon,
+  ListBulletIcon,
+  ChartBarIcon
 } from '@heroicons/react/24/solid'
 
 export default function GreedyViz() {
@@ -225,35 +228,6 @@ export default function GreedyViz() {
         </div>
       </div>
 
-      {/* View Mode Toggle */}
-      <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-4">
-        <div className="flex items-center gap-3">
-          <span className="font-black uppercase text-sm">Mode Tampilan:</span>
-          <div className="flex gap-2">
-            <button
-              onClick={() => setViewMode('step')}
-              className={`btn-brutal px-4 py-2 font-black uppercase text-sm ${
-                viewMode === 'step'
-                  ? 'bg-brutal-primary text-white'
-                  : 'bg-white dark:bg-brutal-dark text-black dark:text-white'
-              }`}
-            >
-              Step-by-Step
-            </button>
-            <button
-              onClick={() => setViewMode('list')}
-              className={`btn-brutal px-4 py-2 font-black uppercase text-sm ${
-                viewMode === 'list'
-                  ? 'bg-brutal-primary text-white'
-                  : 'bg-white dark:bg-brutal-dark text-black dark:text-white'
-              }`}
-            >
-              Lihat Semua Step
-            </button>
-          </div>
-        </div>
-      </div>
-
       <div className="grid lg:grid-cols-4 gap-6">
         <div className="lg:col-span-3">
           {/* Main Visualization */}
@@ -367,32 +341,66 @@ export default function GreedyViz() {
               </div>
             </div>
           ) : (
-            <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-6 mt-4">
-              <div className="flex items-center justify-between mb-4">
-                <span className="font-bold uppercase text-sm opacity-70">
-                  Langkah {currentStep + 1} dari {steps.length}
-                </span>
-                <div className={`px-3 py-1 border-3 border-black dark:border-brutal-bg font-black text-lg ${
-                  currentStepData.action === 'use' || currentStepData.action === 'take'
-                    ? 'bg-brutal-success text-white'
-                    : currentStepData.action === 'select'
-                    ? 'bg-brutal-warning text-black'
-                    : currentStepData.action === 'skip'
-                    ? 'bg-brutal-danger text-white'
-                    : 'bg-brutal-secondary text-black'
-                }`}>
-                  {getStepTitle()}
+            <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-6 mt-4 space-y-4">
+              {/* View Mode Toggle */}
+              <div className="flex items-center gap-3 pb-4 border-b-3 border-black dark:border-brutal-bg">
+                <span className="font-black uppercase text-sm whitespace-nowrap">Mode:</span>
+                <div className="flex gap-2 flex-1">
+                  <button
+                    onClick={() => setViewMode('step')}
+                    className={`btn-brutal px-3 py-2 font-black uppercase text-xs flex-1 transition-all flex items-center justify-center gap-2 ${
+                      viewMode === 'step'
+                        ? 'bg-brutal-primary text-white'
+                        : 'bg-white dark:bg-gray-800 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700'
+                    }`}
+                  >
+                    <ViewColumnsIcon className="w-4 h-4" />
+                    Step
+                  </button>
+                  <button
+                    onClick={() => setViewMode('list')}
+                    className={`btn-brutal px-3 py-2 font-black uppercase text-xs flex-1 transition-all flex items-center justify-center gap-2 ${
+                      viewMode === 'list'
+                        ? 'bg-brutal-primary text-white'
+                        : 'bg-white dark:bg-gray-800 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700'
+                    }`}
+                  >
+                    <ListBulletIcon className="w-4 h-4" />
+                    List
+                  </button>
                 </div>
               </div>
-              
-              <p className="font-bold text-base sm:text-lg leading-relaxed">
-                {getStepExplanation()}
-              </p>
+
+              {/* Step Content - only show in step mode */}
+              {viewMode === 'step' && (
+                <>
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold uppercase text-sm opacity-70">
+                      Langkah {currentStep + 1} dari {steps.length}
+                    </span>
+                    <div className={`px-3 py-1 border-3 border-black dark:border-brutal-bg font-black text-lg ${
+                      currentStepData.action === 'use' || currentStepData.action === 'take'
+                        ? 'bg-brutal-success text-white'
+                        : currentStepData.action === 'select'
+                        ? 'bg-brutal-warning text-black'
+                        : currentStepData.action === 'skip'
+                        ? 'bg-brutal-danger text-white'
+                        : 'bg-brutal-secondary text-black'
+                    }`}>
+                      {getStepTitle()}
+                    </div>
+                  </div>
+                  
+                  <p className="font-bold text-base sm:text-lg leading-relaxed">
+                    {getStepExplanation()}
+                  </p>
+                </>
+              )}
             </div>
           )}
 
           {/* All Steps List - Only shown in 'list' mode */}
-          {viewMode === 'list' && (
+          {viewMode === 'list' && steps.length > 0 && (
             <div className="mt-4">
               <GreedyStepsList 
                 steps={steps} 
