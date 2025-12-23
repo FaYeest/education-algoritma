@@ -102,6 +102,14 @@ const SCENARIOS = {
       { from: 'E', to: 'G', weight: 6 },
       { from: 'F', to: 'G', weight: 4 },
     ]
+  },
+  custom: {
+    name: 'CUSTOM - CUSTOM',
+    icon: '🎨',
+    unit: 'Unit',
+    color: 'brutal-success',
+    nodes: [],
+    edges: []
   }
 }
 
@@ -120,9 +128,27 @@ export default function MSTViz() {
   const [visitedNodes, setVisitedNodes] = useState(new Set())
   const [viewMode, setViewMode] = useState('step')
   const [animationCompleted, setAnimationCompleted] = useState(false)
+  
+  // Custom graph builder states
+  const [isEditMode, setIsEditMode] = useState(false)
+  const [editTool, setEditTool] = useState('node') // 'node', 'edge', 'delete'
+  const [selectedNode, setSelectedNode] = useState(null)
+  const [tempEdge, setTempEdge] = useState(null)
+  const [nodeCounter, setNodeCounter] = useState(0)
+  
+  // Weight input modal states
+  const [showWeightModal, setShowWeightModal] = useState(false)
+  const [weightInput, setWeightInput] = useState('5')
+  const [pendingEdge, setPendingEdge] = useState(null)
+  const [modalMode, setModalMode] = useState('create') // 'create' or 'edit'
 
   useEffect(() => {
     setConfig(SCENARIOS[scenario])
+    setIsEditMode(scenario === 'custom')
+    if (scenario !== 'custom') {
+      setSelectedNode(null)
+      setTempEdge(null)
+    }
     handleReset()
   }, [scenario, algorithm])
 
@@ -366,6 +392,171 @@ export default function MSTViz() {
     }
   }
 
+  // Custom graph builder functions
+  const handleCanvasClick = (e) => {
+    if (!isEditMode || isPlaying) return
+    
+    const rect = e.currentTarget.getBoundingClientRect()
+    const x = ((e.clientX - rect.left) / rect.width) * 100
+    const y = ((e.clientY - rect.top) / rect.height) * 100
+    
+    if (editTool === 'node') {
+      // Add new node
+      const newNode = {
+        id: String.fromCharCode(65 + nodeCounter), // A, B, C, ...
+        name: `Node ${String.fromCharCode(65 + nodeCounter)}`,
+        x: x,
+        y: y,
+        icon: '🔵'
+      }
+      
+      setConfig({
+        ...config,
+        nodes: [...config.nodes, newNode]
+      })
+      setNodeCounter(nodeCounter + 1)
+    }
+  }
+
+  const handleNodeClick = (nodeId, e) => {
+    if (!isEditMode || isPlaying) return
+    e.stopPropagation()
+    
+    if (editTool === 'edge') {
+      if (!selectedNode) {
+        // Select first node
+        setSelectedNode(nodeId)
+      } else if (selectedNode !== nodeId) {
+        // Open modal to create edge between selected node and clicked node
+        setPendingEdge({
+          from: selectedNode,
+          to: nodeId,
+          weight: 5
+        })
+        setWeightInput('5')
+        setModalMode('create')
+        setShowWeightModal(true)
+      } else {
+        // Clicked same node, cancel
+        setSelectedNode(null)
+      }
+    } else if (editTool === 'delete') {
+      // Delete node and all connected edges
+      setConfig({
+        ...config,
+        nodes: config.nodes.filter(n => n.id !== nodeId),
+        edges: config.edges.filter(e => e.from !== nodeId && e.to !== nodeId)
+      })
+    } else if (editTool === 'node') {
+      // Edit node name - keep using prompt for simplicity
+      const node = config.nodes.find(n => n.id === nodeId)
+      const newName = prompt(`Ubah nama node ${nodeId}:`, node.name)
+      if (newName) {
+        setConfig({
+          ...config,
+          nodes: config.nodes.map(n => 
+            n.id === nodeId ? { ...n, name: newName } : n
+          )
+        })
+      }
+    }
+  }
+
+  const handleEdgeClick = (edge, e) => {
+    if (!isEditMode || isPlaying) return
+    e.stopPropagation()
+    
+    if (editTool === 'delete') {
+      // Delete edge
+      setConfig({
+        ...config,
+        edges: config.edges.filter(e => 
+          !(e.from === edge.from && e.to === edge.to) &&
+          !(e.from === edge.to && e.to === edge.from)
+        )
+      })
+    } else if (editTool === 'edge') {
+      // Open modal to edit edge weight
+      setPendingEdge(edge)
+      setWeightInput(String(edge.weight))
+      setModalMode('edit')
+      setShowWeightModal(true)
+    }
+  }
+
+  const handleWeightSubmit = () => {
+    const weight = parseInt(weightInput)
+    if (isNaN(weight) || weight <= 0) {
+      alert('Weight harus berupa angka positif!')
+      return
+    }
+
+    if (modalMode === 'create') {
+      // Create new edge
+      const newEdge = {
+        from: pendingEdge.from,
+        to: pendingEdge.to,
+        weight: weight
+      }
+      setConfig({
+        ...config,
+        edges: [...config.edges, newEdge]
+      })
+      setSelectedNode(null)
+    } else if (modalMode === 'edit') {
+      // Edit existing edge
+      setConfig({
+        ...config,
+        edges: config.edges.map(e =>
+          (e.from === pendingEdge.from && e.to === pendingEdge.to) ||
+          (e.from === pendingEdge.to && e.to === pendingEdge.from)
+            ? { ...e, weight: weight }
+            : e
+        )
+      })
+    }
+
+    // Close modal
+    setShowWeightModal(false)
+    setPendingEdge(null)
+    setWeightInput('5')
+  }
+
+  const handleWeightCancel = () => {
+    setShowWeightModal(false)
+    setPendingEdge(null)
+    setWeightInput('5')
+    if (modalMode === 'create') {
+      setSelectedNode(null)
+    }
+  }
+
+  const handleClearGraph = () => {
+    setConfig({
+      ...config,
+      nodes: [],
+      edges: []
+    })
+    setNodeCounter(0)
+    setSelectedNode(null)
+    handleReset()
+  }
+
+  const handleAddSampleNodes = () => {
+    const sampleNodes = [
+      { id: 'A', name: 'Node A', x: 30, y: 30, icon: '🔵' },
+      { id: 'B', name: 'Node B', x: 70, y: 30, icon: '🔵' },
+      { id: 'C', name: 'Node C', x: 30, y: 70, icon: '🔵' },
+      { id: 'D', name: 'Node D', x: 70, y: 70, icon: '🔵' },
+    ]
+    setConfig({
+      ...config,
+      nodes: sampleNodes,
+      edges: []
+    })
+    setNodeCounter(4)
+  }
+
   useEffect(() => {
     if (isPlaying && currentStep < steps.length) {
       const timer = setTimeout(() => {
@@ -469,7 +660,7 @@ export default function MSTViz() {
         <div className="lg:col-span-2 space-y-6">
           {/* Scenario & Algorithm Selector */}
           <div className="grid sm:grid-cols-2 gap-4">
-            <div className="card-brutal bg-white dark:bg-gray-900 p-4">
+            <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-4">
               <h3 className="font-black uppercase text-sm mb-3">Pilih Skenario:</h3>
               <div className="grid grid-cols-1 gap-2">
                 {Object.entries(SCENARIOS).map(([key, data]) => (
@@ -489,7 +680,7 @@ export default function MSTViz() {
               </div>
             </div>
 
-            <div className="card-brutal bg-white dark:bg-gray-900 p-4">
+            <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-4">
               <h3 className="font-black uppercase text-sm mb-3">Algoritma:</h3>
               <div className="grid grid-cols-1 gap-2">
                 <button
@@ -518,18 +709,132 @@ export default function MSTViz() {
             </div>
           </div>
 
+          {/* Custom Graph Builder Controls */}
+          {isEditMode && (
+            <div className="card-brutal bg-green-600 text-white p-4">
+              <h3 className="font-black uppercase text-sm mb-3 flex items-center gap-2">
+                <SparklesIcon className="w-5 h-5" />
+                Mode: Buat Graph Sendiri
+              </h3>
+              
+              <div className="space-y-3">
+                {/* Tool Selection */}
+                <div>
+                  <label className="font-black uppercase text-xs block mb-2">Pilih Tool:</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    <button
+                      onClick={() => { setEditTool('node'); setSelectedNode(null); }}
+                      className={`btn-brutal px-3 py-2 text-xs font-black uppercase transition-all ${
+                        editTool === 'node' 
+                          ? 'bg-blue-500 text-white border-4 border-white shadow-lg' 
+                          : 'bg-blue-500 text-white opacity-60 hover:opacity-100'
+                      }`}
+                    >
+                      🔵 Node
+                    </button>
+                    <button
+                      onClick={() => setEditTool('edge')}
+                      className={`btn-brutal px-3 py-2 text-xs font-black uppercase transition-all ${
+                        editTool === 'edge' 
+                          ? 'bg-purple-500 text-white border-4 border-white shadow-lg' 
+                          : 'bg-purple-500 text-white opacity-60 hover:opacity-100'
+                      }`}
+                    >
+                      ➡️ Edge
+                    </button>
+                    <button
+                      onClick={() => { setEditTool('delete'); setSelectedNode(null); }}
+                      className={`btn-brutal px-3 py-2 text-xs font-black uppercase transition-all ${
+                        editTool === 'delete' 
+                          ? 'bg-red-500 text-white border-4 border-white shadow-lg' 
+                          : 'bg-red-500 text-white opacity-60 hover:opacity-100'
+                      }`}
+                    >
+                      🗑️ Delete
+                    </button>
+                  </div>
+                </div>
+
+                {/* Helper Buttons */}
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={handleClearGraph}
+                    className="btn-brutal px-3 py-2 bg-red-500 text-white font-black uppercase text-xs hover:bg-red-600 transition-colors"
+                  >
+                    🗑️ Clear All
+                  </button>
+                  <button
+                    onClick={handleAddSampleNodes}
+                    className="btn-brutal px-3 py-2 bg-blue-500 text-white font-black uppercase text-xs hover:bg-blue-600 transition-colors"
+                  >
+                    ➕ Sample Nodes
+                  </button>
+                </div>
+
+                {selectedNode && (
+                  <div className="bg-white bg-opacity-20 border-2 border-white p-2 rounded text-center">
+                    <p className="text-xs font-black">
+                      Node terpilih: <span className="text-yellow-300">{selectedNode}</span>
+                    </p>
+                    <p className="text-[10px] font-bold">Klik node lain untuk buat edge</p>
+                  </div>
+                )}
+
+                <div className="bg-white bg-opacity-20 border-2 border-white p-3 rounded">
+                  <p className="text-xs font-black mb-2">💡 CARA PAKAI:</p>
+                  <ul className="text-xs font-bold space-y-1 list-disc list-inside">
+                    <li><span className="text-blue-300">Node</span>: Klik canvas untuk tambah node</li>
+                    <li><span className="text-purple-300">Edge</span>: Klik 2 node untuk buat edge</li>
+                    <li><span className="text-red-300">Delete</span>: Klik node/edge untuk hapus</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Graph Visualization */}
-          <div className="card-brutal bg-white dark:bg-gray-900 p-4">
-            <h3 className="font-black uppercase text-sm mb-3">Jaringan Kota:</h3>
-            <div className="relative w-full" style={{ paddingBottom: '75%' }}>
-              <svg className="absolute inset-0 w-full h-full">
+          <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-4">
+            {isEditMode && (
+              <div className="mb-3 text-center">
+                <p className="font-black text-sm uppercase">
+                  Tool Aktif: 
+                  <span className={`ml-2 px-3 py-1 rounded ${
+                    editTool === 'node' ? 'bg-blue-500 text-white' :
+                    editTool === 'edge' ? 'bg-purple-500 text-white' :
+                    'bg-red-500 text-white'
+                  }`}>
+                    {editTool === 'node' ? '🔵 NODE' :
+                     editTool === 'edge' ? '➡️ EDGE' :
+                     '🗑️ DELETE'}
+                  </span>
+                </p>
+                <p className="text-xs mt-1 opacity-70">
+                  Nodes: {config.nodes.length} | Edges: {config.edges.length}
+                </p>
+              </div>
+            )}
+            <h3 className="font-black uppercase text-sm mb-3">
+              {isEditMode ? 'Canvas Graph:' : 'Jaringan Kota:'}
+            </h3>
+            <div 
+              className="relative w-full bg-white dark:bg-gray-800 rounded border-4 border-black dark:border-white" 
+              style={{ paddingBottom: '75%' }}
+              onClick={handleCanvasClick}
+            >
+              <svg className="absolute inset-0 w-full h-full pointer-events-none">
                 {/* Draw edges */}
                 {config.edges.map((edge, idx) => {
                   const fromNode = config.nodes.find(n => n.id === edge.from)
                   const toNode = config.nodes.find(n => n.id === edge.to)
                   
+                  if (!fromNode || !toNode) return null
+                  
                   return (
-                    <g key={idx}>
+                    <g 
+                      key={idx}
+                      className={isEditMode ? 'pointer-events-auto cursor-pointer' : ''}
+                      onClick={(e) => handleEdgeClick(edge, e)}
+                    >
                       <motion.line
                         x1={`${fromNode.x}%`}
                         y1={`${fromNode.y}%`}
@@ -549,12 +854,14 @@ export default function MSTViz() {
                       <text
                         x={`${(fromNode.x + toNode.x) / 2}%`}
                         y={`${(fromNode.y + toNode.y) / 2}%`}
-                        fill="white"
-                        className="text-[10px] font-black"
+                        fill="black"
+                        className="text-[10px] font-black dark:fill-white pointer-events-none"
                         textAnchor="middle"
                         dominantBaseline="middle"
                       >
-                        <tspan className="bg-black px-1">Rp{edge.weight}</tspan>
+                        <tspan className="bg-yellow-300 dark:bg-yellow-600 px-1 rounded">
+                          {isEditMode ? edge.weight : `Rp${edge.weight}`}
+                        </tspan>
                       </text>
                     </g>
                   )
@@ -562,23 +869,35 @@ export default function MSTViz() {
                 
                 {/* Draw nodes */}
                 {config.nodes.map((node, idx) => (
-                  <g key={node.id}>
+                  <g 
+                    key={node.id}
+                    className={isEditMode ? 'pointer-events-auto cursor-pointer' : ''}
+                    onClick={(e) => handleNodeClick(node.id, e)}
+                  >
                     <motion.circle
                       cx={`${node.x}%`}
                       cy={`${node.y}%`}
                       r="20"
-                      fill={isNodeVisited(node.id) ? '#10b981' : '#3b82f6'}
-                      stroke="#000"
-                      strokeWidth="3"
+                      fill={
+                        selectedNode === node.id 
+                          ? '#f59e0b' 
+                          : isNodeVisited(node.id) 
+                          ? '#10b981' 
+                          : '#3b82f6'
+                      }
+                      stroke={selectedNode === node.id ? '#fff' : '#000'}
+                      strokeWidth={selectedNode === node.id ? '4' : '3'}
                       initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
+                      animate={{ 
+                        scale: selectedNode === node.id ? 1.2 : 1
+                      }}
                       transition={{ delay: idx * 0.1 }}
                     />
                     <text
                       x={`${node.x}%`}
                       y={`${node.y}%`}
                       fill="white"
-                      className="text-lg font-black"
+                      className="text-lg font-black pointer-events-none"
                       textAnchor="middle"
                       dominantBaseline="middle"
                     >
@@ -588,7 +907,7 @@ export default function MSTViz() {
                       x={`${node.x}%`}
                       y={`${node.y + 8}%`}
                       fill="black"
-                      className="text-[10px] font-black dark:fill-white"
+                      className="text-[10px] font-black dark:fill-white pointer-events-none"
                       textAnchor="middle"
                     >
                       {node.name}
@@ -634,14 +953,14 @@ export default function MSTViz() {
           {/* View Mode Toggle */}
           <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-6 space-y-4">
             <div className="flex items-center gap-3 pb-4 border-b-3 border-black dark:border-brutal-bg">
-              <span className="font-black uppercase text-sm whitespace-nowrap">Mode:</span>
+              <span className="font-black uppercase text-sm whitespace-nowrap">Mode Tampilan:</span>
               <div className="flex gap-2 flex-1">
                 <button
                   onClick={() => setViewMode('step')}
                   className={`btn-brutal px-3 py-2 font-black uppercase text-xs flex-1 transition-all flex items-center justify-center gap-2 ${
                     viewMode === 'step'
                       ? 'bg-brutal-primary text-white'
-                      : 'bg-white dark:bg-gray-800 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700'
+                      : 'bg-brutal-bg dark:bg-brutal-dark text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700'
                   }`}
                 >
                   <ViewColumnsIcon className="w-4 h-4" />
@@ -652,7 +971,7 @@ export default function MSTViz() {
                   className={`btn-brutal px-3 py-2 font-black uppercase text-xs flex-1 transition-all flex items-center justify-center gap-2 ${
                     viewMode === 'list'
                       ? 'bg-brutal-primary text-white'
-                      : 'bg-white dark:bg-gray-800 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700'
+                      : 'bg-brutal-bg dark:bg-brutal-dark text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700'
                   }`}
                 >
                   <ListBulletIcon className="w-4 h-4" />
@@ -688,7 +1007,7 @@ export default function MSTViz() {
         {/* Sidebar Stats */}
         <div className="space-y-4">
           {/* Progress */}
-          <div className="card-brutal bg-white dark:bg-gray-900 p-4">
+          <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-4">
             <h3 className="font-black uppercase text-sm mb-3">Progress:</h3>
             <div className="space-y-3">
               <div>
@@ -818,6 +1137,79 @@ export default function MSTViz() {
               >
                 Coba Lagi!
               </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Weight Input Modal */}
+      <AnimatePresence>
+        {showWeightModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+            onClick={handleWeightCancel}
+          >
+            <motion.div
+              initial={{ scale: 0.8, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.8, y: 20 }}
+              className="card-brutal bg-brutal-bg dark:bg-gray-900 p-6 max-w-md w-full"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h3 className="text-2xl font-black uppercase mb-4 text-center">
+                {modalMode === 'create' ? '➕ Buat Edge' : '✏️ Edit Weight'}
+              </h3>
+              
+              <div className="mb-6">
+                <div className="flex items-center justify-center gap-2 mb-4">
+                  <div className="px-4 py-2 bg-blue-500 text-white rounded font-black text-lg">
+                    {pendingEdge?.from}
+                  </div>
+                  <span className="text-2xl font-black">→</span>
+                  <div className="px-4 py-2 bg-blue-500 text-white rounded font-black text-lg">
+                    {pendingEdge?.to}
+                  </div>
+                </div>
+                
+                <label className="block font-black uppercase text-sm mb-2">
+                  Weight / Bobot:
+                </label>
+                <input
+                  type="number"
+                  value={weightInput}
+                  onChange={(e) => setWeightInput(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      handleWeightSubmit()
+                    }
+                  }}
+                  className="w-full px-4 py-3 border-3 border-black dark:border-white font-black text-lg text-center rounded focus:outline-none focus:ring-4 focus:ring-brutal-primary"
+                  placeholder="Masukkan weight..."
+                  min="1"
+                  autoFocus
+                />
+                <p className="text-xs font-bold mt-2 opacity-70 text-center">
+                  💡 Tekan Enter untuk submit
+                </p>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={handleWeightCancel}
+                  className="flex-1 btn-brutal px-6 py-3 bg-brutal-secondary text-black font-black uppercase hover:bg-gray-300 transition-colors"
+                >
+                  ❌ Batal
+                </button>
+                <button
+                  onClick={handleWeightSubmit}
+                  className="flex-1 btn-brutal px-6 py-3 bg-brutal-success text-white font-black uppercase hover:bg-green-600 transition-colors"
+                >
+                  ✅ {modalMode === 'create' ? 'Buat' : 'Simpan'}
+                </button>
+              </div>
             </motion.div>
           </motion.div>
         )}

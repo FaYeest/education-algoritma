@@ -29,7 +29,6 @@ dist-ssr
 <<<<<<< HEAD
 # key files
 .env
-backend/.env
 
 __pycache__/
 *.pyc

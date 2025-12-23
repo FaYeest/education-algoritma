@@ -93,6 +93,13 @@ const MAZES = {
     ],
     start: { row: 1, col: 1 },
     goal: { row: 7, col: 7 }
+  },
+  custom: {
+    name: 'CUSTOM - Buat Sendiri',
+    size: 9,
+    grid: Array(9).fill(0).map(() => Array(9).fill(0)),
+    start: { row: 1, col: 1 },
+    goal: { row: 7, col: 7 }
   }
 }
 
@@ -114,6 +121,11 @@ export default function PathfindingViz() {
   const [totalCells, setTotalCells] = useState(0)
   const [viewMode, setViewMode] = useState('step')
   const [animationCompleted, setAnimationCompleted] = useState(false)
+  
+  // Custom maze builder states
+  const [isEditMode, setIsEditMode] = useState(false)
+  const [editTool, setEditTool] = useState('wall') // 'wall', 'start', 'goal'
+  const [isDrawing, setIsDrawing] = useState(false)
 
   const posToString = (pos) => `${pos.row},${pos.col}`
 
@@ -337,8 +349,8 @@ export default function PathfindingViz() {
       const prevStep = currentStep - 1
       setCurrentStep(prevStep)
       
-      if (prevStep > 0) {
-        const step = steps[prevStep - 1]
+      if (prevStep >= 0 && steps[prevStep]) {
+        const step = steps[prevStep]
         setVisited(step.visited)
         if (algorithm === 'bfs') {
           setQueue(step.queue || [])
@@ -368,7 +380,101 @@ export default function PathfindingViz() {
   const handleDifficultyChange = (newDifficulty) => {
     setDifficulty(newDifficulty)
     setMaze(MAZES[newDifficulty])
+    setIsEditMode(newDifficulty === 'custom')
     handleReset()
+  }
+
+  // Custom maze builder functions
+  const handleCellClick = (row, col) => {
+    if (!isEditMode || isPlaying) return
+    
+    const newMaze = { ...maze }
+    const newGrid = newMaze.grid.map(r => [...r])
+    
+    if (editTool === 'start') {
+      newMaze.start = { row, col }
+      // Make sure start is not a wall
+      newGrid[row][col] = 0
+    } else if (editTool === 'goal') {
+      newMaze.goal = { row, col }
+      // Make sure goal is not a wall
+      newGrid[row][col] = 0
+    } else if (editTool === 'wall') {
+      // Don't allow wall on start or goal
+      if ((row === maze.start.row && col === maze.start.col) ||
+          (row === maze.goal.row && col === maze.goal.col)) {
+        return
+      }
+      // Toggle wall
+      newGrid[row][col] = newGrid[row][col] === 1 ? 0 : 1
+    } else if (editTool === 'path') {
+      // Don't allow path on start or goal
+      if ((row === maze.start.row && col === maze.start.col) ||
+          (row === maze.goal.row && col === maze.goal.col)) {
+        return
+      }
+      newGrid[row][col] = 0
+    }
+    
+    newMaze.grid = newGrid
+    setMaze(newMaze)
+  }
+
+  const handleCellMouseEnter = (row, col) => {
+    if (!isEditMode || !isDrawing || isPlaying) return
+    
+    // Only allow drawing walls and paths when dragging
+    if (editTool === 'wall' || editTool === 'path') {
+      const newMaze = { ...maze }
+      const newGrid = newMaze.grid.map(r => [...r])
+      
+      // Don't allow on start or goal
+      if ((row === maze.start.row && col === maze.start.col) ||
+          (row === maze.goal.row && col === maze.goal.col)) {
+        return
+      }
+      
+      if (editTool === 'wall') {
+        newGrid[row][col] = 1
+      } else {
+        newGrid[row][col] = 0
+      }
+      
+      newMaze.grid = newGrid
+      setMaze(newMaze)
+    }
+  }
+
+  const handleClearMaze = () => {
+    const newMaze = {
+      ...maze,
+      grid: Array(maze.size).fill(0).map(() => Array(maze.size).fill(0)),
+      start: { row: 1, col: 1 },
+      goal: { row: maze.size - 2, col: maze.size - 2 }
+    }
+    setMaze(newMaze)
+    handleReset()
+  }
+
+  const handleFillBorder = () => {
+    const newMaze = { ...maze }
+    const newGrid = newMaze.grid.map(r => [...r])
+    const size = maze.size
+    
+    // Fill top and bottom borders
+    for (let col = 0; col < size; col++) {
+      newGrid[0][col] = 1
+      newGrid[size - 1][col] = 1
+    }
+    
+    // Fill left and right borders
+    for (let row = 0; row < size; row++) {
+      newGrid[row][0] = 1
+      newGrid[row][size - 1] = 1
+    }
+    
+    newMaze.grid = newGrid
+    setMaze(newMaze)
   }
 
   useEffect(() => {
@@ -399,36 +505,43 @@ export default function PathfindingViz() {
     }
   }, [isPlaying, currentStep, steps, speed, algorithm, totalCells])
 
-  const currentStepData = steps[currentStep] || {}
+  const currentStepData = currentStep > 0 && steps[currentStep - 1] ? steps[currentStep - 1] : {}
 
   const getCellColor = (row, col) => {
     const cell = maze.grid[row][col]
     
-    if (cell === 1) return 'bg-black dark:bg-gray-900'
+    // Wall - Dark gray/black
+    if (cell === 1) return 'bg-gray-800 dark:bg-gray-900 border-gray-700'
     
+    // Start position - Cyan
     if (row === maze.start.row && col === maze.start.col) {
-      return 'bg-brutal-cyan border-4 border-white'
+      return 'bg-brutal-cyan border-4 border-white shadow-lg'
     }
     
+    // Goal position - Yellow
     if (row === maze.goal.row && col === maze.goal.col) {
-      return 'bg-brutal-warning border-4 border-white'
+      return 'bg-yellow-400 border-4 border-white shadow-lg'
     }
     
+    // Current position during algorithm - Purple with pulse
     if (currentPos && row === currentPos.row && col === currentPos.col) {
-      return 'bg-brutal-primary animate-pulse'
+      return 'bg-purple-500 animate-pulse border-white'
     }
     
+    // Final path - Green
     const isInPath = path.some(p => p.row === row && p.col === col)
     if (isInPath && isComplete) {
-      return 'bg-brutal-success'
+      return 'bg-green-500 border-green-600'
     }
     
+    // Visited cells - Light blue
     const posStr = posToString({ row, col })
     if (visited.has(posStr)) {
-      return 'bg-brutal-secondary'
+      return 'bg-blue-200 dark:bg-blue-900 border-blue-300'
     }
     
-    return 'bg-white dark:bg-gray-800'
+    // Empty path - White/Light
+    return 'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600'
   }
 
   const getCellIcon = (row, col) => {
@@ -481,7 +594,7 @@ export default function PathfindingViz() {
             className={`btn-brutal px-6 py-3 text-sm font-black uppercase transition-colors ${
               algorithm === 'dfs'
                 ? 'bg-brutal-primary text-white'
-                : 'bg-white dark:bg-black hover:bg-brutal-secondary'
+                : 'bg-brutal-bg dark:bg-brutal-dark hover:bg-brutal-secondary'
             }`}
           >
             DFS (Depth-First)
@@ -525,26 +638,131 @@ export default function PathfindingViz() {
             </p>
           </div>
 
+          {/* Custom Maze Builder Controls */}
+          {isEditMode && (
+            <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark text-black p-4">
+              <h3 className="font-black uppercase text-sm mb-3 flex items-center gap-2">
+                <SparklesIcon className="w-5 h-5" />
+                Mode: Buat Labirin Sendiri
+              </h3>
+              
+              <div className="space-y-3">
+                {/* Tool Selection */}
+                <div>
+                  <label className="font-black uppercase text-xs block mb-2">Pilih Tool:</label>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    <button
+                      onClick={() => setEditTool('start')}
+                      className={`btn-brutal px-3 py-2 text-xs font-black uppercase transition-all ${
+                        editTool === 'start' 
+                          ? 'bg-brutal-cyan text-white border-4 border-white shadow-lg' 
+                          : 'bg-brutal-cyan text-white opacity-60 hover:opacity-100'
+                      }`}
+                    >
+                      🎯 Start
+                    </button>
+                    <button
+                      onClick={() => setEditTool('goal')}
+                      className={`btn-brutal px-3 py-2 text-xs font-black uppercase transition-all ${
+                        editTool === 'goal' 
+                          ? 'bg-yellow-400 text-black border-4 border-white shadow-lg' 
+                          : 'bg-yellow-400 text-black opacity-60 hover:opacity-100'
+                      }`}
+                    >
+                      🏁 Goal
+                    </button>
+                    <button
+                      onClick={() => setEditTool('wall')}
+                      className={`btn-brutal px-3 py-2 text-xs font-black uppercase transition-all ${
+                        editTool === 'wall' 
+                          ? 'bg-gray-800 text-white border-4 border-white shadow-lg' 
+                          : 'bg-gray-800 text-white opacity-60 hover:opacity-100'
+                      }`}
+                    >
+                      🧱 Wall
+                    </button>
+                    <button
+                      onClick={() => setEditTool('path')}
+                      className={`btn-brutal px-3 py-2 text-xs font-black uppercase transition-all ${
+                        editTool === 'path' 
+                          ? 'bg-white text-black border-4 border-brutal-primary shadow-lg' 
+                          : 'bg-white text-black opacity-60 hover:opacity-100'
+                      }`}
+                    >
+                      ⬜ Path
+                    </button>
+                  </div>
+                </div>
+
+                {/* Helper Buttons */}
+                <div className="flex gap-2 flex-wrap">
+                  <button
+                    onClick={handleClearMaze}
+                    className="btn-brutal px-4 py-2 bg-brutal-secondary text-black font-black uppercase text-xs flex-1 hover:bg-red-400 transition-colors"
+                  >
+                    🗑️ Clear All
+                  </button>
+                  <button
+                    onClick={handleFillBorder}
+                    className="btn-brutal px-4 py-2 bg-gray-800 text-white font-black uppercase text-xs flex-1 hover:bg-gray-700 transition-colors"
+                  >
+                    ⬛ Fill Border
+                  </button>
+                </div>
+
+                <div className="bg-white border-3 border-black p-3 rounded">
+                  <p className="text-xs font-black mb-2">💡 CARA PAKAI:</p>
+                  <ul className="text-xs font-bold space-y-1 list-disc list-inside">
+                    <li><span className="text-brutal-cyan">Start/Goal</span>: Klik sekali pada grid</li>
+                    <li><span className="text-gray-800">Wall/Path</span>: Klik & drag untuk menggambar</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Maze Grid */}
-          <div className="card-brutal bg-black p-4 sm:p-6">
+          <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-4 sm:p-6">
+            {isEditMode && (
+              <div className="mb-3 text-center">
+                <p className="font-black text-sm uppercase">
+                  Tool Aktif: 
+                  <span className={`ml-2 px-3 py-1 rounded ${
+                    editTool === 'start' ? 'bg-brutal-cyan text-white' :
+                    editTool === 'goal' ? 'bg-yellow-400 text-black' :
+                    editTool === 'wall' ? 'bg-gray-800 text-white' :
+                    'bg-white text-black border-2 border-black'
+                  }`}>
+                    {editTool === 'start' ? '🎯 START' :
+                     editTool === 'goal' ? '🏁 GOAL' :
+                     editTool === 'wall' ? '🧱 WALL' :
+                     '⬜ PATH'}
+                  </span>
+                </p>
+              </div>
+            )}
             <div 
-              className="grid gap-1 sm:gap-2 mx-auto"
+              className="bg-brutal-bg dark:bg-brutal-dark grid gap-1 sm:gap-2 mx-auto"
               style={{
                 gridTemplateColumns: `repeat(${maze.size}, minmax(0, 1fr))`,
                 maxWidth: `${maze.size * 60}px`
               }}
+              onMouseLeave={() => setIsDrawing(false)}
             >
               {maze.grid.map((row, rowIdx) =>
                 row.map((cell, colIdx) => (
                   <motion.div
                     key={`${rowIdx}-${colIdx}`}
-                    className={`aspect-square border-2 border-gray-700 flex items-center justify-center transition-all duration-300 ${getCellColor(
-                      rowIdx,
-                      colIdx
-                    )}`}
+                    className={`aspect-square border-2 flex items-center justify-center transition-all duration-200 ${
+                      isEditMode ? 'cursor-pointer hover:scale-110 hover:shadow-lg' : ''
+                    } ${getCellColor(rowIdx, colIdx)}`}
                     initial={{ scale: 0.8, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ delay: (rowIdx + colIdx) * 0.02 }}
+                    onClick={() => handleCellClick(rowIdx, colIdx)}
+                    onMouseDown={() => setIsDrawing(true)}
+                    onMouseUp={() => setIsDrawing(false)}
+                    onMouseEnter={() => handleCellMouseEnter(rowIdx, colIdx)}
                   >
                     {getCellIcon(rowIdx, colIdx)}
                   </motion.div>
@@ -561,7 +779,7 @@ export default function PathfindingViz() {
             onReset={handleReset}
             onStepForward={handleStepForward}
             onStepBackward={handleStepBackward}
-            disabled={isComplete}
+            disabled={false}
           />
 
           {/* Speed Control */}
@@ -588,14 +806,14 @@ export default function PathfindingViz() {
           {/* View Mode Toggle */}
           <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-6 space-y-4">
             <div className="flex items-center gap-3 pb-4 border-b-3 border-black dark:border-brutal-bg">
-              <span className="font-black uppercase text-sm whitespace-nowrap">Mode:</span>
+              <span className="font-black uppercase text-sm whitespace-nowrap">Mode Tampilan:</span>
               <div className="flex gap-2 flex-1">
                 <button
                   onClick={() => setViewMode('step')}
                   className={`btn-brutal px-3 py-2 font-black uppercase text-xs flex-1 transition-all flex items-center justify-center gap-2 ${
                     viewMode === 'step'
                       ? 'bg-brutal-primary text-white'
-                      : 'bg-white dark:bg-gray-800 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700'
+                      : 'bg-brutal-bg dark:bg-brutal-dark text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700'
                   }`}
                 >
                   <ViewColumnsIcon className="w-4 h-4" />
@@ -606,7 +824,7 @@ export default function PathfindingViz() {
                   className={`btn-brutal px-3 py-2 font-black uppercase text-xs flex-1 transition-all flex items-center justify-center gap-2 ${
                     viewMode === 'list'
                       ? 'bg-brutal-primary text-white'
-                      : 'bg-white dark:bg-gray-800 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700'
+                      : 'bg-brutal-bg dark:bg-brutal-dark text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700'
                   }`}
                 >
                   <ListBulletIcon className="w-4 h-4" />
@@ -693,31 +911,35 @@ export default function PathfindingViz() {
 
           {/* Legend */}
           <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-4">
-            <h3 className="text-sm font-black uppercase mb-3">Legenda:</h3>
+            <h3 className="text-sm font-black uppercase mb-3">Penjelasan Warna:</h3>
             <div className="space-y-2 text-xs font-bold">
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 bg-brutal-cyan border-2 border-black"></div>
-                <span>Start</span>
+                <div className="w-6 h-6 bg-brutal-cyan border-2 border-white shadow"></div>
+                <span>🎯 Start (Titik Mulai)</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 bg-brutal-warning border-2 border-black"></div>
-                <span>Goal</span>
+                <div className="w-6 h-6 bg-yellow-400 border-2 border-white shadow"></div>
+                <span>🏁 Goal (Tujuan)</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 bg-brutal-primary border-2 border-black"></div>
-                <span>Posisi Saat Ini</span>
+                <div className="w-6 h-6 bg-white border-2 border-gray-300"></div>
+                <span>⬜ Jalan (Path)</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 bg-brutal-secondary border-2 border-black"></div>
-                <span>Sudah Dikunjungi</span>
+                <div className="w-6 h-6 bg-gray-800 border-2 border-gray-700"></div>
+                <span>🧱 Tembok (Wall)</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 bg-brutal-success border-2 border-black"></div>
-                <span>Jalur Solusi</span>
+                <div className="w-6 h-6 bg-purple-500 border-2 border-black"></div>
+                <span>📍 Posisi Saat Ini</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 bg-black border-2 border-gray-700"></div>
-                <span>Tembok</span>
+                <div className="w-6 h-6 bg-blue-200 border-2 border-blue-300"></div>
+                <span>👣 Sudah Dikunjungi</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 bg-green-500 border-2 border-green-600"></div>
+                <span>✅ Jalur Solusi</span>
               </div>
             </div>
           </div>

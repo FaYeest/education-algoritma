@@ -520,7 +520,7 @@ export default function SortingViz() {
                         ? 'bg-brutal-warning text-black'
                         : 'bg-brutal-secondary text-black'
                     }`}>
-                      {currentStep === steps.length - 1 ? 'SELESAI' : swapped.length > 0 ? 'SWAP' : comparing.length > 0 ? 'COMPARE' : 'IDLE'}
+                      {currentStep === steps.length - 1 ? 'SELESAI' : swapped.length > 0 ? 'MENUKAR' : comparing.length > 0 ? 'MEMBANDINGKAN' : 'LEWATI'}
                     </div>
                   </div>
                   

@@ -202,23 +202,23 @@ export default function AllStepsList({ steps, onGenerateSteps, isLoading, animat
 
       {/* Legend */}
       <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-4">
-        <p className="font-black uppercase text-sm mb-3">Legend:</p>
+        <p className="font-black uppercase text-sm mb-3">Penjelasan Warna:</p>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 bg-brutal-warning border-2 border-black"></div>
-            <span className="text-xs font-bold">Comparing</span>
+            <span className="text-xs font-bold">Membandingkan</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 bg-brutal-danger border-2 border-black"></div>
-            <span className="text-xs font-bold">Swapping</span>
+            <span className="text-xs font-bold">Menukar</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 bg-brutal-success border-2 border-black"></div>
-            <span className="text-xs font-bold">Sorted</span>
+            <span className="text-xs font-bold">Terurut</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 bg-brutal-primary border-2 border-black"></div>
-            <span className="text-xs font-bold">Unsorted</span>
+            <span className="text-xs font-bold">Belum Terurut</span>
           </div>
         </div>
       </div>

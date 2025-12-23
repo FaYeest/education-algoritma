@@ -77,6 +77,22 @@ const SCENARIOS = {
       coin: '💰',
       path: '🔥'
     }
+  },
+  customDungeon: {
+    name: 'CUSTOM - Buat Dungeon Sendiri',
+    type: 'grid',
+    size: 6,
+    grid: Array(6).fill(0).map(() => Array(6).fill(0)),
+    walls: [],
+    startPos: { row: 0, col: 0 },
+    endPos: { row: 5, col: 5 },
+    icons: {
+      start: '🧙',
+      end: '👑',
+      coin: '💰',
+      wall: '🧱',
+      path: '🔥'
+    }
   }
 }
 
@@ -96,9 +112,16 @@ export default function DPViz() {
   const [viewMode, setViewMode] = useState('step')
   const [animationCompleted, setAnimationCompleted] = useState(false)
   const [path, setPath] = useState([])
+  
+  // Custom dungeon builder states
+  const [isEditMode, setIsEditMode] = useState(false)
+  const [editTool, setEditTool] = useState('treasure') // 'treasure', 'wall', 'start', 'end', 'erase'
+  const [isDrawing, setIsDrawing] = useState(false)
+  const [dungeonWalls, setDungeonWalls] = useState(new Set())
 
   useEffect(() => {
     setConfig(SCENARIOS[scenario])
+    setIsEditMode(scenario === 'customDungeon')
     handleReset()
   }, [scenario])
 
@@ -210,7 +233,21 @@ export default function DPViz() {
     const steps = []
     
     // Initialize DP table for max coins
-    const dp = Array(n).fill(0).map(() => Array(m).fill(0))
+    const dp = Array(n).fill(0).map(() => Array(m).fill(-Infinity))
+    
+    // Check if start position has wall
+    const startKey = '0,0'
+    if (dungeonWalls.has(startKey)) {
+      steps.push({
+        action: 'init',
+        table: dp.map(row => [...row]),
+        cell: { i: 0, j: 0 },
+        path: [],
+        message: '❌ Start position tidak bisa dimulai dari wall! Hapus wall terlebih dahulu.'
+      })
+      return { steps }
+    }
+    
     dp[0][0] = grid[0][0]
     
     steps.push({
@@ -223,33 +260,99 @@ export default function DPViz() {
 
     // Fill first row - only can go right
     for (let j = 1; j < m; j++) {
-      dp[0][j] = dp[0][j-1] + grid[0][j]
-      steps.push({
-        action: 'fill_row',
-        table: dp.map(row => [...row]),
-        cell: { i: 0, j },
-        path: [],
-        message: `➡️ Gerak ke kanan (0,${j}). Total koin: ${dp[0][j]} 💰`
-      })
+      const cellKey = `0,${j}`
+      if (dungeonWalls.has(cellKey)) {
+        steps.push({
+          action: 'wall',
+          table: dp.map(row => [...row]),
+          cell: { i: 0, j },
+          path: [],
+          message: `🧱 (0,${j}) adalah wall! Tidak bisa dilewati.`
+        })
+      } else if (dp[0][j-1] === -Infinity) {
+        // Previous cell was blocked
+        steps.push({
+          action: 'blocked',
+          table: dp.map(row => [...row]),
+          cell: { i: 0, j },
+          path: [],
+          message: `⛔ (0,${j}) tidak dapat dicapai karena jalur sebelumnya terblokir.`
+        })
+      } else {
+        dp[0][j] = dp[0][j-1] + grid[0][j]
+        steps.push({
+          action: 'fill_row',
+          table: dp.map(row => [...row]),
+          cell: { i: 0, j },
+          path: [],
+          message: `➡️ Gerak ke kanan (0,${j}). Total koin: ${dp[0][j]} 💰`
+        })
+      }
     }
 
     // Fill first column - only can go down
     for (let i = 1; i < n; i++) {
-      dp[i][0] = dp[i-1][0] + grid[i][0]
-      steps.push({
-        action: 'fill_col',
-        table: dp.map(row => [...row]),
-        cell: { i, j: 0 },
-        path: [],
-        message: `⬇️ Gerak ke bawah (${i},0). Total koin: ${dp[i][0]} 💰`
-      })
+      const cellKey = `${i},0`
+      if (dungeonWalls.has(cellKey)) {
+        steps.push({
+          action: 'wall',
+          table: dp.map(row => [...row]),
+          cell: { i, j: 0 },
+          path: [],
+          message: `🧱 (${i},0) adalah wall! Tidak bisa dilewati.`
+        })
+      } else if (dp[i-1][0] === -Infinity) {
+        // Previous cell was blocked
+        steps.push({
+          action: 'blocked',
+          table: dp.map(row => [...row]),
+          cell: { i, j: 0 },
+          path: [],
+          message: `⛔ (${i},0) tidak dapat dicapai karena jalur sebelumnya terblokir.`
+        })
+      } else {
+        dp[i][0] = dp[i-1][0] + grid[i][0]
+        steps.push({
+          action: 'fill_col',
+          table: dp.map(row => [...row]),
+          cell: { i, j: 0 },
+          path: [],
+          message: `⬇️ Gerak ke bawah (${i},0). Total koin: ${dp[i][0]} 💰`
+        })
+      }
     }
 
     // Fill rest of table
     for (let i = 1; i < n; i++) {
       for (let j = 1; j < m; j++) {
+        const cellKey = `${i},${j}`
+        
+        if (dungeonWalls.has(cellKey)) {
+          steps.push({
+            action: 'wall',
+            table: dp.map(row => [...row]),
+            cell: { i, j },
+            path: [],
+            message: `🧱 (${i},${j}) adalah wall! Tidak bisa dilewati.`
+          })
+          continue
+        }
+        
         const fromTop = dp[i-1][j]
         const fromLeft = dp[i][j-1]
+        
+        // Both paths are blocked
+        if (fromTop === -Infinity && fromLeft === -Infinity) {
+          steps.push({
+            action: 'blocked',
+            table: dp.map(row => [...row]),
+            cell: { i, j },
+            path: [],
+            message: `⛔ (${i},${j}) tidak dapat dicapai! Jalur terblokir.`
+          })
+          continue
+        }
+        
         const maxPrev = Math.max(fromTop, fromLeft)
         dp[i][j] = maxPrev + grid[i][j]
         
@@ -379,6 +482,153 @@ export default function DPViz() {
     }
   }
 
+  // Custom dungeon builder functions
+  const handleDungeonCellClick = (row, col) => {
+    if (!isEditMode || isPlaying || config.type !== 'grid') return
+    
+    const newConfig = { ...config }
+    const newGrid = newConfig.grid.map(r => [...r])
+    const cellKey = `${row},${col}`
+    
+    if (editTool === 'start') {
+      // Set new start position (top-left default)
+      newConfig.startPos = { row, col }
+      // Remove wall if exists
+      const newWalls = new Set(dungeonWalls)
+      newWalls.delete(cellKey)
+      setDungeonWalls(newWalls)
+    } else if (editTool === 'end') {
+      // Set new end position (bottom-right default)
+      newConfig.endPos = { row, col }
+      // Remove wall if exists
+      const newWalls = new Set(dungeonWalls)
+      newWalls.delete(cellKey)
+      setDungeonWalls(newWalls)
+    } else if (editTool === 'treasure') {
+      // Don't allow treasure on walls or start/end positions
+      if (!dungeonWalls.has(cellKey) && 
+          !(row === (config.startPos?.row ?? 0) && col === (config.startPos?.col ?? 0)) &&
+          !(row === (config.endPos?.row ?? config.size - 1) && col === (config.endPos?.col ?? config.size - 1))) {
+        // Cycle treasure value 1-10, then reset to 1
+        const currentValue = newGrid[row][col]
+        newGrid[row][col] = currentValue >= 10 ? 1 : currentValue + 1
+      }
+    } else if (editTool === 'wall') {
+      // Toggle wall
+      const newWalls = new Set(dungeonWalls)
+      if (newWalls.has(cellKey)) {
+        newWalls.delete(cellKey)
+        newGrid[row][col] = 0 // Reset to empty
+      } else {
+        newWalls.add(cellKey)
+        newGrid[row][col] = 0 // Wall has no treasure
+      }
+      setDungeonWalls(newWalls)
+    } else if (editTool === 'erase') {
+      // Erase treasure (set to 0) - don't erase walls, start, or end
+      if (!dungeonWalls.has(cellKey) &&
+          !(row === (config.startPos?.row ?? 0) && col === (config.startPos?.col ?? 0)) &&
+          !(row === (config.endPos?.row ?? config.size - 1) && col === (config.endPos?.col ?? config.size - 1))) {
+        newGrid[row][col] = 0
+      }
+    }
+    
+    newConfig.grid = newGrid
+    setConfig(newConfig)
+  }
+
+  const handleDungeonCellMouseEnter = (row, col) => {
+    if (!isEditMode || !isDrawing || isPlaying || config.type !== 'grid') return
+    
+    const cellKey = `${row},${col}`
+    
+    // Only allow drawing for wall, treasure, and erase
+    if (editTool === 'wall') {
+      const newConfig = { ...config }
+      const newGrid = newConfig.grid.map(r => [...r])
+      const newWalls = new Set(dungeonWalls)
+      
+      newWalls.add(cellKey)
+      newGrid[row][col] = 0
+      
+      setDungeonWalls(newWalls)
+      newConfig.grid = newGrid
+      setConfig(newConfig)
+    } else if (editTool === 'treasure') {
+      if (!dungeonWalls.has(cellKey) &&
+          !(row === (config.startPos?.row ?? 0) && col === (config.startPos?.col ?? 0)) &&
+          !(row === (config.endPos?.row ?? config.size - 1) && col === (config.endPos?.col ?? config.size - 1))) {
+        const newConfig = { ...config }
+        const newGrid = newConfig.grid.map(r => [...r])
+        const currentValue = newGrid[row][col]
+        newGrid[row][col] = currentValue >= 10 ? 1 : currentValue + 1
+        newConfig.grid = newGrid
+        setConfig(newConfig)
+      }
+    } else if (editTool === 'erase') {
+      if (!dungeonWalls.has(cellKey) &&
+          !(row === (config.startPos?.row ?? 0) && col === (config.startPos?.col ?? 0)) &&
+          !(row === (config.endPos?.row ?? config.size - 1) && col === (config.endPos?.col ?? config.size - 1))) {
+        const newConfig = { ...config }
+        const newGrid = newConfig.grid.map(r => [...r])
+        newGrid[row][col] = 0
+        newConfig.grid = newGrid
+        setConfig(newConfig)
+      }
+    }
+  }
+
+  const handleClearDungeon = () => {
+    const newConfig = {
+      ...config,
+      grid: Array(config.size).fill(0).map(() => Array(config.size).fill(0)),
+      startPos: { row: 0, col: 0 },
+      endPos: { row: config.size - 1, col: config.size - 1 }
+    }
+    setConfig(newConfig)
+    setDungeonWalls(new Set())
+    handleReset()
+  }
+
+  const handleRandomTreasure = () => {
+    const newConfig = { ...config }
+    const newGrid = newConfig.grid.map((row, i) => 
+      row.map((cell, j) => {
+        const cellKey = `${i},${j}`
+        if (dungeonWalls.has(cellKey)) return 0
+        return Math.floor(Math.random() * 10) + 1
+      })
+    )
+    newConfig.grid = newGrid
+    setConfig(newConfig)
+  }
+
+  const handleFillBorderWalls = () => {
+    const size = config.size
+    const newWalls = new Set(dungeonWalls)
+    const newConfig = { ...config }
+    const newGrid = newConfig.grid.map(r => [...r])
+    
+    // Fill borders with walls
+    for (let i = 0; i < size; i++) {
+      // Top and bottom
+      newWalls.add(`0,${i}`)
+      newWalls.add(`${size - 1},${i}`)
+      newGrid[0][i] = 0
+      newGrid[size - 1][i] = 0
+      
+      // Left and right
+      newWalls.add(`${i},0`)
+      newWalls.add(`${i},${size - 1}`)
+      newGrid[i][0] = 0
+      newGrid[i][size - 1] = 0
+    }
+    
+    setDungeonWalls(newWalls)
+    newConfig.grid = newGrid
+    setConfig(newConfig)
+  }
+
   useEffect(() => {
     if (isPlaying && currentStep < steps.length) {
       const timer = setTimeout(() => {
@@ -414,8 +664,13 @@ export default function DPViz() {
       if (currentStepData.action === 'include') return 'bg-brutal-success text-white animate-pulse'
       if (currentStepData.action === 'exclude') return 'bg-brutal-warning text-black'
       if (currentStepData.action === 'skip') return 'bg-brutal-danger text-white'
+      if (currentStepData.action === 'wall') return 'bg-gray-800 text-white animate-pulse'
+      if (currentStepData.action === 'blocked') return 'bg-red-600 text-white animate-pulse'
       return 'bg-brutal-primary text-white animate-pulse'
     }
+
+    // Cell with wall or blocked
+    if (value === -Infinity) return 'bg-gray-900 text-gray-500 opacity-50'
     
     if (value > 0) return 'bg-brutal-cyan/30 text-black dark:text-white'
     return 'bg-white dark:bg-gray-800 text-black dark:text-white'
@@ -502,19 +757,146 @@ export default function DPViz() {
             )}
           </div>
 
+          {/* Custom Dungeon Builder Controls */}
+          {isEditMode && config.type === 'grid' && (
+            <div className="card-brutal bg-purple-600 text-white p-4">
+              <h3 className="font-black uppercase text-sm mb-3 flex items-center gap-2">
+                <SparklesIcon className="w-5 h-5" />
+                Mode: Buat Dungeon Sendiri
+              </h3>
+              
+              <div className="space-y-3">
+                {/* Tool Selection */}
+                <div>
+                  <label className="font-black uppercase text-xs block mb-2">Pilih Tool:</label>
+                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                    <button
+                      onClick={() => setEditTool('start')}
+                      className={`btn-brutal px-3 py-2 text-xs font-black uppercase transition-all ${
+                        editTool === 'start' 
+                          ? 'bg-brutal-cyan text-white border-4 border-white shadow-lg' 
+                          : 'bg-brutal-cyan text-white opacity-60 hover:opacity-100'
+                      }`}
+                    >
+                      🧙 Start
+                    </button>
+                    <button
+                      onClick={() => setEditTool('end')}
+                      className={`btn-brutal px-3 py-2 text-xs font-black uppercase transition-all ${
+                        editTool === 'end' 
+                          ? 'bg-yellow-400 text-black border-4 border-white shadow-lg' 
+                          : 'bg-yellow-400 text-black opacity-60 hover:opacity-100'
+                      }`}
+                    >
+                      👑 End
+                    </button>
+                    <button
+                      onClick={() => setEditTool('treasure')}
+                      className={`btn-brutal px-3 py-2 text-xs font-black uppercase transition-all ${
+                        editTool === 'treasure' 
+                          ? 'bg-yellow-600 text-white border-4 border-white shadow-lg' 
+                          : 'bg-yellow-600 text-white opacity-60 hover:opacity-100'
+                      }`}
+                    >
+                      💰 Treasure
+                    </button>
+                    <button
+                      onClick={() => setEditTool('wall')}
+                      className={`btn-brutal px-3 py-2 text-xs font-black uppercase transition-all ${
+                        editTool === 'wall' 
+                          ? 'bg-gray-800 text-white border-4 border-white shadow-lg' 
+                          : 'bg-gray-800 text-white opacity-60 hover:opacity-100'
+                      }`}
+                    >
+                      🧱 Wall
+                    </button>
+                    <button
+                      onClick={() => setEditTool('erase')}
+                      className={`btn-brutal px-3 py-2 text-xs font-black uppercase transition-all ${
+                        editTool === 'erase' 
+                          ? 'bg-red-500 text-white border-4 border-white shadow-lg' 
+                          : 'bg-red-500 text-white opacity-60 hover:opacity-100'
+                      }`}
+                    >
+                      🧹 Erase
+                    </button>
+                  </div>
+                </div>
+
+                {/* Helper Buttons */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  <button
+                    onClick={handleClearDungeon}
+                    className="btn-brutal px-3 py-2 bg-red-500 text-white font-black uppercase text-xs hover:bg-red-600 transition-colors"
+                  >
+                    🗑️ Clear
+                  </button>
+                  <button
+                    onClick={handleRandomTreasure}
+                    className="btn-brutal px-3 py-2 bg-yellow-500 text-black font-black uppercase text-xs hover:bg-yellow-600 transition-colors"
+                  >
+                    🎲 Random
+                  </button>
+                  <button
+                    onClick={handleFillBorderWalls}
+                    className="btn-brutal px-3 py-2 bg-gray-800 text-white font-black uppercase text-xs hover:bg-gray-700 transition-colors"
+                  >
+                    ⬛ Border
+                  </button>
+                </div>
+
+                <div className="bg-white bg-opacity-20 border-2 border-white p-3 rounded">
+                  <p className="text-xs font-black mb-2">💡 CARA PAKAI:</p>
+                  <ul className="text-xs font-bold space-y-1 list-disc list-inside">
+                    <li><span className="text-yellow-300">Start/End</span>: Klik untuk set posisi</li>
+                    <li><span className="text-yellow-300">Treasure</span>: Klik berulang (cycle 1-10, reset ke 1)</li>
+                    <li><span className="text-gray-200">Wall</span>: Klik/drag untuk gambar dinding</li>
+                    <li><span className="text-red-300">Erase</span>: Klik/drag untuk hapus treasure</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Dungeon Grid Visualization */}
           {config.type === 'grid' && (
-            <div className="card-brutal bg-black p-4">
-              <h3 className="font-black uppercase text-sm mb-3 text-white">Dungeon Maze:</h3>
-              <div className="grid gap-1" style={{
-                gridTemplateColumns: `repeat(${config.size}, 1fr)`,
-                maxWidth: '600px',
-                margin: '0 auto'
-              }}>
+            <div className="card-brutal bg-brutal-bg dark:bg-gray-900 p-4">
+              {isEditMode && (
+                <div className="mb-3 text-center">
+                  <p className="font-black text-sm uppercase">
+                    Tool Aktif: 
+                    <span className={`ml-2 px-3 py-1 rounded ${
+                      editTool === 'start' ? 'bg-brutal-cyan text-white' :
+                      editTool === 'end' ? 'bg-yellow-400 text-black' :
+                      editTool === 'treasure' ? 'bg-yellow-600 text-white' :
+                      editTool === 'erase' ? 'bg-red-500 text-white' :
+                      'bg-gray-800 text-white'
+                    }`}>
+                      {editTool === 'start' ? '🧙 START' :
+                       editTool === 'end' ? '👑 END' :
+                       editTool === 'treasure' ? '💰 TREASURE' :
+                       editTool === 'erase' ? '🧹 ERASE' :
+                       '🧱 WALL'}
+                    </span>
+                  </p>
+                </div>
+              )}
+              <h3 className="font-black uppercase text-sm mb-3">Dungeon Maze:</h3>
+              <div 
+                className="grid gap-1" 
+                style={{
+                  gridTemplateColumns: `repeat(${config.size}, 1fr)`,
+                  maxWidth: '600px',
+                  margin: '0 auto'
+                }}
+                onMouseLeave={() => setIsDrawing(false)}
+              >
                 {config.grid.map((row, i) => 
                   row.map((coins, j) => {
-                    const isStart = i === 0 && j === 0
-                    const isEnd = i === config.size - 1 && j === config.size - 1
+                    const cellKey = `${i},${j}`
+                    const isWall = dungeonWalls.has(cellKey)
+                    const isStart = (config.startPos?.row === i && config.startPos?.col === j) || (i === 0 && j === 0 && !config.startPos)
+                    const isEnd = (config.endPos?.row === i && config.endPos?.col === j) || (i === config.size - 1 && j === config.size - 1 && !config.endPos)
                     const isCurrent = currentCell.i === i && currentCell.j === j
                     const isInPath = path.some(p => p.i === i && p.j === j)
                     const cellValue = dpTable[i]?.[j] || 0
@@ -522,27 +904,43 @@ export default function DPViz() {
                     return (
                       <motion.div
                         key={`${i}-${j}`}
-                        className={`aspect-square border-2 border-gray-700 flex flex-col items-center justify-center text-xs font-black transition-all ${
-                          isCurrent
-                            ? 'bg-brutal-primary text-white scale-110 z-10'
+                        className={`aspect-square border-2 flex flex-col items-center justify-center text-xs font-black transition-all ${
+                          isEditMode ? 'cursor-pointer hover:scale-110 hover:shadow-lg' : ''
+                        } ${
+                          isWall
+                            ? 'bg-gray-800 dark:bg-gray-900 border-gray-600 dark:border-gray-700 text-gray-400'
+                            : isCurrent
+                            ? 'bg-brutal-primary text-white scale-110 z-10 border-brutal-primary'
                             : isInPath
-                            ? 'bg-brutal-success text-white'
+                            ? 'bg-green-500 dark:bg-green-600 text-white border-green-600 dark:border-green-400'
                             : isStart
-                            ? 'bg-brutal-cyan text-white'
+                            ? 'bg-brutal-cyan text-white border-brutal-cyan'
                             : isEnd
-                            ? 'bg-brutal-warning text-black'
-                            : 'bg-gray-800 text-white'
+                            ? 'bg-yellow-400 text-black border-yellow-500'
+                            : 'bg-brutal-bg dark:bg-gray-800 text-black dark:text-white border-gray-300 dark:border-gray-600'
                         }`}
                         animate={{
                           scale: isCurrent ? 1.1 : 1
                         }}
+                        onClick={() => handleDungeonCellClick(i, j)}
+                        onMouseDown={() => setIsDrawing(true)}
+                        onMouseUp={() => setIsDrawing(false)}
+                        onMouseEnter={() => handleDungeonCellMouseEnter(i, j)}
                       >
                         <span className="text-2xl">
-                          {isStart ? config.icons.start : isEnd ? config.icons.end : isInPath ? config.icons.path : config.icons.coin}
+                          {isWall 
+                            ? config.icons.wall 
+                            : isStart 
+                            ? config.icons.start 
+                            : isEnd 
+                            ? config.icons.end 
+                            : isInPath 
+                            ? config.icons.path 
+                            : config.icons.coin}
                         </span>
-                        <span className="text-[10px] mt-1">{coins}</span>
-                        {cellValue > 0 && (
-                          <span className="text-[8px] font-black text-brutal-warning">{cellValue}</span>
+                        {!isWall && <span className="text-[10px] mt-1">{coins}</span>}
+                        {!isWall && cellValue > 0 && (
+                          <span className="text-[8px] font-black text-yellow-600 dark:text-yellow-400">{cellValue}</span>
                         )}
                       </motion.div>
                     )
@@ -654,18 +1052,28 @@ export default function DPViz() {
                           <td className="border-2 border-black dark:border-white p-1 bg-brutal-secondary text-center">
                             Row {i}
                           </td>
-                          {row.map((value, j) => (
-                            <td
-                              key={j}
-                              className={`border-2 border-black dark:border-white p-1 text-center transition-all ${getCellColor(
-                                i,
-                                j,
-                                value
-                              )}`}
-                            >
-                              💰{value}
-                            </td>
-                          ))}
+                          {row.map((value, j) => {
+                            const cellKey = `${i},${j}`
+                            const isWall = dungeonWalls.has(cellKey)
+                            const displayValue = value === -Infinity 
+                              ? (isWall ? '🧱' : '-') 
+                              : value
+                            
+                            return (
+                              <td
+                                key={j}
+                                className={`border-2 border-black dark:border-white p-1 text-center transition-all ${getCellColor(
+                                  i,
+                                  j,
+                                  value
+                                )}`}
+                              >
+                                {value === -Infinity 
+                                  ? (isWall ? '🧱' : '✖') 
+                                  : `💰${value}`}
+                              </td>
+                            )
+                          })}
                         </tr>
                       ))}
                     </tbody>
@@ -677,6 +1085,27 @@ export default function DPViz() {
                 Tabel akan muncul saat simulasi dimulai
               </div>
             )}
+          </div>
+
+          {/* Speed Control */}
+          <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-4">
+            <div className="flex items-center gap-4">
+              <label className="font-black uppercase text-sm whitespace-nowrap flex items-center gap-2">
+                <BoltIcon className="w-5 h-5 text-brutal-primary" />
+                Kecepatan:
+              </label>
+              <input
+                type="range"
+                min="1"
+                max="10"
+                value={speed}
+                onChange={(e) => setSpeed(Number(e.target.value))}
+                className="slider-brutal flex-1"
+              />
+              <span className="font-black text-brutal-primary text-lg min-w-[60px] text-center">
+                {speed === 1 ? 'Lambat' : speed <= 3 ? 'Sedang' : speed <= 7 ? 'Cepat' : 'Kilat'}
+              </span>
+            </div>
           </div>
 
           {/* Controls */}
@@ -823,6 +1252,14 @@ export default function DPViz() {
               <p>✓ Hindari perhitungan berulang</p>
               <p>✓ Optimal substructure</p>
               <p>✓ Build solution bottom-up</p>
+              {config.type === 'grid' && (
+                <div className="mt-3 pt-3 border-t-2 border-black">
+                  <p className="font-black mb-2">LEGEND TABEL:</p>
+                  <p className="text-[10px]">💰 = Nilai koin yang dikumpulkan</p>
+                  <p className="text-[10px]">🧱 = Wall (tidak bisa dilewati)</p>
+                  <p className="text-[10px]">✖ = Jalur terblokir</p>
+                </div>
+              )}
               <p className="text-[10px] opacity-80 mt-2">
                 Complexity: O(n × W)
               </p>

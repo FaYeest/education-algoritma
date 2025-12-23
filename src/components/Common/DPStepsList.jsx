@@ -187,23 +187,23 @@ export default function DPStepsList({ steps, animationCompleted }) {
 
       {/* Legend */}
       <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-4">
-        <p className="font-black uppercase text-sm mb-3">Legend:</p>
+        <p className="font-black uppercase text-sm mb-3">Penjelasan Warna:</p>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 bg-brutal-success border-2 border-black"></div>
-            <span className="text-xs font-bold">Include</span>
+            <span className="text-xs font-bold">Ambil</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 bg-brutal-warning border-2 border-black"></div>
-            <span className="text-xs font-bold">Exclude</span>
+            <span className="text-xs font-bold">Lewati</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 bg-brutal-danger border-2 border-black"></div>
             <span className="text-xs font-bold">Skip</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-brutal-primary border-2 border-black"></div>
-            <span className="text-xs font-bold">Checking</span>
+            <div className="w-6 h-6 bg-brutal-cyan border-2 border-black"></div>
+            <span className="text-xs font-bold">Cek</span>
           </div>
         </div>
       </div>
