@@ -1,7 +1,7 @@
 # 🎯 Fitur AlgoViz - Platform Visualisasi Algoritma
 
 > **Status Implementasi**: ✅ Production Ready  
-> **Last Updated**: 2025-12-15
+> **Last Updated**: 2025-12-23
 
 ---
 
@@ -13,7 +13,7 @@
 | 📊 Algoritma Sorting | ✅ | 5 |
 | 🌲 Graph Traversal | ✅ | 2 |
 | 🎯 Optimization | ✅ | 3 |
-| 🎮 Gamifikasi | ✅ | 1 |
+| 🎮 Gamifikasi | ✅ | 2 |
 | **Total Algoritma** | ✅ | **13** |
 
 ---
@@ -191,12 +191,23 @@
 
 ## 🎮 Gamifikasi - Quiz System
 
-### Fitur Quiz ✅
+### 1. Classic Quiz ✅
 - **Path**: `/quiz`
+- **Source**: Static database (`quizData.js`)
 - **Level Kesulitan**:
   - 🟢 Mudah: 10 pertanyaan (basic concepts)
   - 🟡 Sedang: 10 pertanyaan (intermediate)
   - 🔴 Sulit: 10 pertanyaan (advanced)
+
+### 2. AI-Powered Quiz ✅
+- **Path**: `/quiz-ai`
+- **Source**: LLM Generated (Llama 3.1 via Hugging Face)
+- **Fitur Khusus**:
+  - ✅ **Unlimited Questions**: Tidak akan kehabisan soal
+  - ✅ **Daily Pool**: 90 pertanyaan baru setiap hari (30/level)
+  - ✅ **Random Selection**: Soal selalu fresh
+  - ✅ **Smart Caching**: Performa cepat meski pakai AI
+  - ✅ **Fallback Mechanism**: Tetap jalan meski API down
 
 ### Mekanik Game
 - ⏱️ **Timer**: 30 detik per pertanyaan
@@ -303,12 +314,17 @@
 ✅ POST /api/algorithms/mst/kruskal
 ✅ POST /api/algorithms/mst/prim
 ✅ POST /api/algorithms/divide-conquer/binary-search
+✅ GET  /api/quiz/{difficulty}
+✅ GET  /api/quiz/status
+✅ POST /api/quiz/regenerate
 ```
 
 ### Features
 - ✅ CORS configured
 - ✅ Pydantic validation
 - ✅ Step-by-step algorithm execution
+- ✅ AI-Powered Question Generation
+- ✅ Background Scheduler (APScheduler)
 - ✅ Error handling
 - ✅ Auto-generated docs (`/docs`)
 

@@ -50,7 +50,9 @@
 - **Minimum Spanning Tree** - Kruskal's & Prim's Algorithm with city network visualization
 
 ### 🎮 Fitur Gamifikasi
-- **Quiz System** dengan 3 level kesulitan (Mudah, Sedang, Sulit)
+- **Classic Quiz System** dengan database statis
+- **AI-Powered Quiz** menggunakan LLM (Llama 3.1) untuk pertanyaan tak terbatas
+- **Daily Quiz Pool** dengan 90+ pertanyaan baru setiap hari
 - **Score & Streak System** untuk memotivasi belajar
 - **Real-time Feedback** dengan penjelasan detail
 - **Interactive Controls** dengan PlaybackControls (Play, Pause, Reset, Next, Prev)
@@ -72,6 +74,8 @@
 ### Backend
 - 🚀 **FastAPI** - Modern Python Web Framework
 - 🐍 **Python 3.8+** - Programming Language
+- 🤖 **Hugging Face API** - LLM Integration (Llama 3.1)
+- ⏰ **APScheduler** - Background Task Scheduling
 - 📦 **Pydantic** - Data Validation
 - 🔄 **CORS Middleware** - Cross-Origin Resource Sharing
 - 📝 **Uvicorn** - ASGI Server
@@ -236,6 +240,7 @@ Purple:    #8b5cf6 (Purple)
 ## 📚 Dokumentasi
 
 - 📘 [RUNNING.md](./RUNNING.md) - Panduan menjalankan aplikasi
+- 🤖 [LLM-QUIZ-SETUP.md](./LLM-QUIZ-SETUP.md) - Setup Quiz AI dengan Hugging Face
 - 🎨 [BRUTALISM-STYLE-GUIDE.md](./BRUTALISM-STYLE-GUIDE.md) - Panduan desain brutalism
 - 🔧 [BACKEND-PLAN.md](./BACKEND-PLAN.md) - Dokumentasi backend
 - 🎭 [VISUALIZATION-DESIGN.md](./VISUALIZATION-DESIGN.md) - Desain visualisasi
@@ -285,6 +290,17 @@ Response: {
   "total_value": 1000,
   "total_weight": 9
 }
+```
+
+### AI Quiz
+```
+GET /api/quiz/{difficulty}
+Query: ?count=10
+```
+
+```
+GET /api/quiz/status
+Response: { "status": "ready", "questions_count": {...} }
 ```
 
 **Scenarios Available:**
@@ -367,6 +383,13 @@ Jika ada pertanyaan atau masalah:
 ---
 
 ## 🆕 Latest Updates
+
+### Version 1.3 (December 2025)
+- ✅ **AI-Powered Quiz** - Quiz generator menggunakan Llama 3.1 LLM
+- ✅ **Daily Quiz Pool** - Pertanyaan baru setiap hari secara otomatis
+- ✅ **Backend Scheduler** - Auto-update quiz pool setiap midnight
+- ✅ **Dual Quiz Mode** - Pilihan antara Classic (Static) dan AI (Dynamic) Quiz
+- ✅ **Enhanced Gamification** - Quiz dengan variasi tak terbatas
 
 ### Version 1.2 (December 2024)
 - ✅ **PlaybackControls Component** - Universal playback controls across all algorithms

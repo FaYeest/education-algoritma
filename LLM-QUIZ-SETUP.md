@@ -5,7 +5,7 @@
 ✅ **Daily Quiz Pool** - Generate 30 pertanyaan per difficulty setiap hari (90 total)
 ✅ **Random Selection** - User dapat 10 pertanyaan random, tidak akan sama
 ✅ **3 Difficulty Levels** - Easy, Medium, Hard dengan gamifikasi
-✅ **AI-Generated** - Pertanyaan bervariasi menggunakan Mistral-7B-Instruct
+✅ **AI-Generated** - Pertanyaan bervariasi menggunakan Llama-3.1-8B-Instruct
 ✅ **Auto Scheduling** - Regenerate otomatis setiap midnight
 ✅ **Caching** - Pertanyaan disimpan untuk efisiensi
 ✅ **Fallback** - Jika LLM gagal, ada fallback questions
@@ -160,11 +160,12 @@ quiz_pool = generator.generate_daily_quiz_pool(questions_per_difficulty=30)  # U
 Edit `backend/utils/llm_quiz_generator.py`:
 
 ```python
-self.api_url = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2"
+self.api_url = "https://router.huggingface.co/v1/chat/completions"
+self.model_name = "meta-llama/Llama-3.1-8B-Instruct"
 ```
 
 Model alternatif:
-- `meta-llama/Llama-2-7b-chat-hf`
+- `mistralai/Mistral-7B-Instruct-v0.2`
 - `HuggingFaceH4/zephyr-7b-beta`
 - `google/flan-t5-xxl`
 
