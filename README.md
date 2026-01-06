@@ -1,4 +1,4 @@
-# 🎓 ALGOVIZ - Platform Visualisasi Algoritma Interaktif
+# ALGOVIZ - Platform Visualisasi Algoritma Interaktif
 
 <div align="center">
 
@@ -15,11 +15,12 @@
 
 ---
 
-## 📖 Tentang Proyek
+## Tentang Proyek
 
 **AlgoViz** adalah platform edukasi interaktif yang dirancang untuk membantu mahasiswa dan pengembang memahami algoritma fundamental melalui visualisasi yang menarik. Dibangun dengan **React + Vite** untuk frontend dan **FastAPI** untuk backend, platform ini menyediakan pengalaman belajar yang intuitif dengan desain brutalism yang unik.
 
-### 🎯 Tujuan
+### Tujuan
+
 - **Visualisasi Interaktif**: Melihat algoritma bekerja secara real-time
 - **Pembelajaran Aktif**: Kontrol kecepatan dan observasi setiap langkah
 - **Gamifikasi**: Sistem kuis untuk menguji pemahaman
@@ -27,29 +28,34 @@
 
 ---
 
-## ✨ Fitur
+## Fitur
 
-### 🔍 Algoritma Pencarian
+### Algoritma Pencarian
+
 - **Brute Force Search** - Pencarian ekshaustif dengan visualisasi step-by-step
 - **Binary Search (Divide & Conquer)** - Pencarian dengan pembagian array
 
-### 📊 Algoritma Sorting
+### Algoritma Sorting
+
 - **Bubble Sort** - Sorting dengan pertukaran bersebelahan
 - **Selection Sort** - Sorting dengan pemilihan elemen terkecil
 - **Insertion Sort** - Sorting dengan penyisipan
 - **Merge Sort** - Sorting dengan divide-and-conquer
 - **Quick Sort** - Sorting dengan pivot
 
-### 🌲 Graph Traversal
+### Graph Traversal
+
 - **BFS (Breadth-First Search)** - Penjelajahan level per level
 - **DFS (Depth-First Search)** - Penjelajahan sedalam mungkin
 
-### 🎯 Algoritma Optimization
+### Algoritma Optimization
+
 - **Greedy Algorithm** - Coin Change Problem
 - **Dynamic Programming** - 0/1 Knapsack with interactive scenarios & Dungeon Maze pathfinding
 - **Minimum Spanning Tree** - Kruskal's & Prim's Algorithm with city network visualization
 
-### 🎮 Fitur Gamifikasi
+### Fitur Gamifikasi
+
 - **Classic Quiz System** dengan database statis
 - **AI-Powered Quiz** menggunakan LLM (Llama 3.1) untuk pertanyaan tak terbatas
 - **Daily Quiz Pool** dengan 90+ pertanyaan baru setiap hari
@@ -61,9 +67,10 @@
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 ### Frontend
+
 - ⚛️ **React 18.3** - UI Library
 - ⚡ **Vite** - Build Tool & Dev Server
 - 🎨 **TailwindCSS** - Utility-first CSS
@@ -72,6 +79,7 @@
 - 🎨 **Heroicons** - Icon Library
 
 ### Backend
+
 - 🚀 **FastAPI** - Modern Python Web Framework
 - 🐍 **Python 3.8+** - Programming Language
 - 🤖 **Hugging Face API** - LLM Integration (Llama 3.1)
@@ -82,9 +90,10 @@
 
 ---
 
-## 📦 Instalasi
+## Instalasi
 
 ### Prerequisites
+
 - Node.js v16 atau lebih tinggi
 - Python 3.8 atau lebih tinggi
 - npm atau yarn
@@ -92,46 +101,54 @@
 ### Langkah Instalasi
 
 1. **Clone Repository**
+
 ```bash
 git clone <repository-url>
 cd education-algoritma
 ```
 
-2. **Install Dependencies Frontend**
+1. **Install Dependencies Frontend**
+
 ```bash
 npm install
 ```
 
-3. **Install Dependencies Backend**
+1. **Install Dependencies Backend**
+
 ```bash
 cd backend
 pip install -r requirements.txt
 cd ..
 ```
 
-4. **Jalankan Backend** (Terminal 1)
+1. **Jalankan Backend** (Terminal 1)
+
 ```bash
 cd backend
 python main.py
 ```
+
 Backend akan berjalan di: `http://localhost:8000`
 
-5. **Jalankan Frontend** (Terminal 2)
+1. **Jalankan Frontend** (Terminal 2)
+
 ```bash
 npm run dev
 ```
+
 Frontend akan berjalan di: `http://localhost:5173` (atau port lain jika 5173 sedang digunakan)
 
-6. **Buka Browser**
+1. **Buka Browser**
+
 ```
 http://localhost:5173
 ```
 
-📘 **Lihat [RUNNING.md](./RUNNING.md) untuk panduan lengkap**
+**Lihat [RUNNING.md](./RUNNING.md) untuk panduan lengkap**
 
 ---
 
-## 📁 Struktur Proyek
+## Struktur Proyek
 
 ```
 education-algoritma/
@@ -187,9 +204,10 @@ education-algoritma/
 
 ---
 
-## 🎮 Cara Menggunakan
+## Cara Menggunakan
 
 ### 1. Eksplorasi Algoritma
+
 1. Pilih algoritma dari halaman beranda
 2. Klik **MULAI** untuk memulai visualisasi
 3. Gunakan **PlaybackControls** untuk kontrol penuh:
@@ -203,6 +221,7 @@ education-algoritma/
 6. Amati setiap langkah dengan indikator visual dan penjelasan detail
 
 ### 2. Ikuti Kuis
+
 1. Klik tombol **KUIS** di navbar
 2. Pilih level kesulitan (Mudah, Sedang, Sulit)
 3. Jawab pertanyaan dalam 30 detik
@@ -210,14 +229,17 @@ education-algoritma/
 5. Bangun streak untuk multiplier poin
 
 ### 3. Dark Mode
+
 - Klik ikon ☾/☀ di navbar untuk toggle dark mode
 
 ---
 
-## 🎨 Desain System
+## Desain System
 
 ### Brutalism Design Style
+
 AlgoViz menggunakan desain brutalism dengan karakteristik:
+
 - **Bold Typography** - Font tebal dan uppercase
 - **High Contrast** - Kontras warna yang kuat
 - **Thick Borders** - Border tebal (3-4px)
@@ -225,6 +247,7 @@ AlgoViz menggunakan desain brutalism dengan karakteristik:
 - **Shadow Effects** - Shadow brutal untuk depth
 
 ### Color Palette
+
 ```css
 Primary:   #2563eb (Blue)
 Success:   #10b981 (Green)
@@ -237,7 +260,7 @@ Purple:    #8b5cf6 (Purple)
 
 ---
 
-## 📚 Dokumentasi
+## Dokumentasi
 
 - 📘 [RUNNING.md](./RUNNING.md) - Panduan menjalankan aplikasi
 - 🤖 [LLM-QUIZ-SETUP.md](./LLM-QUIZ-SETUP.md) - Setup Quiz AI dengan Hugging Face
@@ -247,41 +270,46 @@ Purple:    #8b5cf6 (Purple)
 
 ---
 
-## 🔌 API Endpoints
+## API Endpoints
 
 Backend menyediakan REST API untuk semua algoritma:
 
 ### Sorting
+
 ```
 POST /api/algorithms/sorting
 Body: { "algorithm": "bubble", "array": [5,3,8,2,7] }
 ```
 
 ### Search
+
 ```
 POST /api/algorithms/search
 Body: { "algorithm": "brute_force", "array": [5,3,8,2,7], "target": 8 }
 ```
 
 ### Graph (BFS/DFS)
+
 ```
 POST /api/algorithms/graph/bfs
 Body: { "nodes": [...], "edges": [...], "start": "A" }
 ```
 
 ### Greedy
+
 ```
 POST /api/algorithms/greedy/coin-change
 Body: { "amount": 63, "coins": [1,5,10,25] }
 ```
 
 ### Dynamic Programming
+
 ```
 POST /api/algorithms/dp/knapsack
-Body: { 
-  "weights": [4,3,2,5,1], 
-  "values": [500,400,150,100,50], 
-  "capacity": 10 
+Body: {
+  "weights": [4,3,2,5,1],
+  "values": [500,400,150,100,50],
+  "capacity": 10
 }
 
 Response: {
@@ -293,6 +321,7 @@ Response: {
 ```
 
 ### AI Quiz
+
 ```
 GET /api/quiz/{difficulty}
 Query: ?count=10
@@ -304,36 +333,40 @@ Response: { "status": "ready", "questions_count": {...} }
 ```
 
 **Scenarios Available:**
+
 - Traveling (Nyusun Tas)
 - Treasure Hunt (Cari Harta)
 - Shopping (Belanja Hemat)
 - **Dungeon Maze** (Cari Jalur Terbaik) - Grid-based pathfinding with max coin collection
 
-📄 **Full API Documentation**: http://localhost:8000/docs
+**Full API Documentation**: <http://localhost:8000/docs>
 
 ---
 
-## 🧪 Testing
+## Testing
 
 ### Backend Testing
+
 ```bash
 cd backend
 pytest
 ```
 
 ### Frontend Testing
+
 ```bash
 npm run test
 ```
 
 ### E2E Testing
+
 ```bash
 npm run test:e2e
 ```
 
 ---
 
-## 🤝 Kontribusi
+## Kontribusi
 
 Kontribusi sangat diterima! Berikut cara berkontribusi:
 
@@ -344,6 +377,7 @@ Kontribusi sangat diterima! Berikut cara berkontribusi:
 5. Buat Pull Request
 
 ### Guidelines
+
 - Ikuti style guide yang ada
 - Tulis commit message yang jelas
 - Tambahkan tests untuk fitur baru
@@ -351,19 +385,19 @@ Kontribusi sangat diterima! Berikut cara berkontribusi:
 
 ---
 
-## 📝 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## 👨‍💻 Author
+## Author
 
 **Farras**
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Heroicons untuk icon library
 - Framer Motion untuk animation library
@@ -373,18 +407,20 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-## 📞 Support
+## Support
 
 Jika ada pertanyaan atau masalah:
+
 1. Buka [Issues](../../issues)
 2. Cek [Discussions](../../discussions)
 3. Baca [FAQ](#-faq)
 
 ---
 
-## 🆕 Latest Updates
+## Latest Updates
 
 ### Version 1.3 (December 2025)
+
 - ✅ **AI-Powered Quiz** - Quiz generator menggunakan Llama 3.1 LLM
 - ✅ **Daily Quiz Pool** - Pertanyaan baru setiap hari secara otomatis
 - ✅ **Backend Scheduler** - Auto-update quiz pool setiap midnight
@@ -392,6 +428,7 @@ Jika ada pertanyaan atau masalah:
 - ✅ **Enhanced Gamification** - Quiz dengan variasi tak terbatas
 
 ### Version 1.2 (December 2024)
+
 - ✅ **PlaybackControls Component** - Universal playback controls across all algorithms
 - ✅ **Dungeon Maze Visualization** - Interactive grid-based DP pathfinding
 - ✅ **MST Node Names** - Display actual city names instead of IDs
@@ -400,15 +437,17 @@ Jika ada pertanyaan atau masalah:
 - ✅ **Consistent UI/UX** - Unified controls and styling across all visualizations
 
 ### Version 1.1 (November 2024)
+
 - ✅ BFS & DFS implementation with unified visualization
 - ✅ Enhanced graph traversal with city/location themes
 - ✅ MST algorithms with Kruskal's and Prim's visualization
 
 ---
 
-## 🗺️ Roadmap
+## Roadmap
 
 ### Version 1.0 (Current)
+
 - ✅ Basic algorithm visualizations
 - ✅ BFS & DFS implementation
 - ✅ Quiz system
@@ -418,7 +457,8 @@ Jika ada pertanyaan atau masalah:
 - ✅ Multiple scenarios for each algorithm
 
 ### Version 2.0 (Planned)
-- [ ] More algorithms (A*, Dijkstra, Floyd-Warshall)
+
+- [ ] More algorithms (A\*, Dijkstra, Floyd-Warshall)
 - [ ] User authentication
 - [ ] Save progress & bookmarks
 - [ ] Leaderboard system
@@ -428,10 +468,12 @@ Jika ada pertanyaan atau masalah:
 
 ---
 
-## ❓ FAQ
+## FAQ
 
 ### Q: Bagaimana cara menambah algoritma baru?
-**A:** 
+
+**A:**
+
 1. Tambahkan implementasi di `backend/algorithms/`
 2. Buat komponen visualisasi di `src/components/Visualizations/`
 3. Gunakan `PlaybackControls` component untuk konsistensi
@@ -440,15 +482,18 @@ Jika ada pertanyaan atau masalah:
 6. Tambahkan card di `Home.jsx`
 
 ### Q: Bagaimana cara menggunakan PlaybackControls?
+
 **A:** PlaybackControls adalah komponen reusable yang menyediakan:
+
 - Play/Pause toggle
 - Reset button
 - Next/Previous step navigation
 - Automatic disable saat animasi selesai
 
 Import dan gunakan seperti ini:
+
 ```jsx
-import PlaybackControls from '../../Common/PlaybackControls'
+import PlaybackControls from "../../Common/PlaybackControls";
 
 <PlaybackControls
   isPlaying={isPlaying}
@@ -458,23 +503,26 @@ import PlaybackControls from '../../Common/PlaybackControls'
   onStepForward={handleStepForward}
   onStepBackward={handleStepBackward}
   disabled={isComplete}
-/>
+/>;
 ```
 
 ### Q: Kenapa visualisasi lambat?
+
 **A:** Atur kecepatan menggunakan slider kecepatan di setiap halaman algoritma.
 
 ### Q: Bagaimana cara menambah pertanyaan kuis?
+
 **A:** Edit file `src/utils/quizData.js` dan tambahkan pertanyaan di level yang sesuai.
 
 ### Q: API tidak bisa diakses dari frontend?
+
 **A:** Pastikan backend berjalan di port 8000 dan CORS sudah dikonfigurasi dengan benar di `backend/main.py`.
 
 ---
 
 <div align="center">
 
-**Made with ❤️ for Computer Science Education**
+**Made with love for Computer Science Education**
 
 ⭐ Star this repo if you find it helpful!
 

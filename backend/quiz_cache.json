@@ -1,444 +1,8 @@
 {
-  "date": "2025-12-23",
+  "date": "2025-12-24",
   "easy": [
     {
-      "question": "Apa yang dilakukan dalam algoritma LCS (Longest Common Subsequence)?",
-      "answers": [
-        "Menghitung panjang string yang paling singgung",
-        "Menghitung panjang string yang paling panjang",
-        "Menghitung jarak antara dua string",
-        "Menghitung panjang string yang paling pendek"
-      ],
-      "correctAnswer": 0,
-      "explanation": "Algoritma LCS (Longest Common Subsequence) digunakan untuk menemukan panjang string yang paling singgung (longest common subsequence) antara dua string. Ini berarti menemukan subset string yang memiliki panjang maksimal dan identik pada kedua string.",
-      "topic": "dp",
-      "algorithm": "LCS",
-      "difficulty": "easy"
-    },
-    {
-      "question": "Apa yang dilakukan Search Jump jika nilai tengah dari array tidak lebih besar dari nilai terbesar dalam array?",
-      "answers": [
-        "Mengulang proses pencarian",
-        "Mengubah tanda arah pencarian",
-        "Mengurangi ukuran array",
-        "Mengubah algoritma menjadi Linear Search"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Dalam Search Jump, jika nilai tengah dari array tidak lebih besar dari nilai terbesar dalam array, maka algoritma akan mengubah tanda arah pencarian. Hal ini dilakukan untuk mempercepat proses pencarian dan mengurangi waktu eksekusi.",
-      "topic": "search",
-      "algorithm": "Jump Search",
-      "difficulty": "easy"
-    },
-    {
-      "question": "Apa tujuan utama dari Search Jump dalam algoritma pencarian?",
-      "answers": [
-        "Mengurangi kompleksitas waktu",
-        "Mengurangi kompleksitas ruang",
-        "Mengurangi jumlah perbandingan",
-        "Mengurangi kompleksitas ruang dan waktu"
-      ],
-      "correctAnswer": 0,
-      "explanation": "Tujuan utama dari Search Jump adalah mengurangi kompleksitas waktu untuk mencari elemen dalam sebuah array. Algoritma ini bekerja dengan cara melewati blok-blok data yang lebih besar daripada elemen tunggal, sehingga mengurangi jumlah perbandingan yang dibutuhkan.",
-      "topic": "search",
-      "algorithm": "Jump Search",
-      "difficulty": "easy"
-    },
-    {
-      "question": "Apa algoritma pencarian yang dapat digunakan jika kita memiliki informasi tentang ukuran data yang akan dicari?",
-      "answers": [
-        "Algoritma Linear",
-        "Algoritma Binary Search",
-        "Algoritma Interpolation Search",
-        "Algoritma Hashing"
-      ],
-      "correctAnswer": 2,
-      "explanation": "Algoritma Interpolation Search adalah jenis algoritma pencarian yang dapat digunakan jika kita memiliki informasi tentang ukuran data yang akan dicari. Algoritma ini dapat meningkatkan kinerja pencarian dibandingkan dengan algoritma binary search jika data yang dicari berada di posisi tertentu.",
-      "topic": "search",
-      "algorithm": "Interpolation Search",
-      "difficulty": "easy"
-    },
-    {
-      "question": "Apa strategi yang digunakan dalam Algoritma Greedy untuk memilih aktivitas yang paling menguntungkan?",
-      "answers": [
-        "Memilih aktivitas dengan waktu mulai yang paling cepat",
-        "Memilih aktivitas dengan waktu selesai yang paling cepat",
-        "Memilih aktivitas dengan waktu mulai dan selesai yang paling berdekatan",
-        "Memilih aktivitas dengan waktu mulai dan selesai yang paling jauh"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Dalam Algoritma Greedy untuk memilih aktivitas yang paling menguntungkan, strategi yang digunakan adalah memilih aktivitas dengan waktu selesai yang paling cepat. Hal ini karena kita ingin memilih aktivitas yang dapat diselesaikan dalam waktu yang lebih singkat untuk mendapatkan hasil yang lebih baik.",
-      "topic": "greedy",
-      "algorithm": "Activity Selection",
-      "difficulty": "easy"
-    },
-    {
-      "question": "Apa yang dilakukan algoritma Knapsack pada masalah pembungkusan?",
-      "answers": [
-        "Menghitung nilai maksimum yang dapat diambil",
-        "Menghitung waktu maksimum yang dibutuhkan",
-        "Menghitung biaya maksimum yang dapat dikeluarkan",
-        "Menghitung berat maksimum yang dapat dibawa"
-      ],
-      "correctAnswer": 0,
-      "explanation": "Algoritma Knapsack digunakan untuk menyelesaikan masalah pembungkusan, yaitu menghitung nilai maksimum yang dapat diambil dengan memenuhi batasan berat. Algoritma ini menggunakan Dynamic Programming untuk mencari solusi optimal.",
-      "topic": "dp",
-      "algorithm": "Knapsack",
-      "difficulty": "easy"
-    },
-    {
-      "question": "Apa yang dilakukan Binary Search ketika mencari nilai yang tidak ada dalam daftar?",
-      "answers": [
-        "Mengembalikan -1",
-        "Mengembalikan index terakhir",
-        "Mengembalikan nilai tertinggi",
-        "Mengembalikan -1 jika tidak ada"
-      ],
-      "correctAnswer": 3,
-      "explanation": "Binary Search adalah algoritma pencarian yang menggunakan prinsip pembagian daftar menjadi dua bagian. Ketika mencari nilai yang tidak ada dalam daftar, Binary Search akan mengembalikan -1 untuk menunjukkan bahwa nilai tersebut tidak ditemukan. Ini adalah contoh penerapan Binary Search yang tepat untuk mencari nilai yang tidak ada dalam daftar.",
-      "topic": "search",
-      "algorithm": "Binary Search",
-      "difficulty": "easy"
-    },
-    {
-      "question": "Apa yang dilakukan oleh Linear Search ketika mencari nilai yang tidak ada di dalam array?",
-      "answers": [
-        "Mencari nilai selanjutnya",
-        "Menghentikan pencarian dan mengembalikan -1",
-        "Mengulang pencarian dari awal",
-        "Mengubah nilai array"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Linear Search akan menghentikan pencarian dan mengembalikan -1 jika nilai yang dicari tidak ada di dalam array.",
-      "topic": "search",
-      "algorithm": "Linear Search",
-      "difficulty": "easy"
-    },
-    {
-      "question": "Apa jenis pencarian yang dapat memanfaatkan informasi tentang distribusi data untuk mempercepat proses pencarian?",
-      "answers": [
-        "Pencarian Linier",
-        "Pencarian Interpolasi",
-        "Pencarian Binary",
-        "Pencarian Depth-First"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Interpolasi Search adalah jenis pencarian yang dapat memanfaatkan informasi tentang distribusi data untuk mempercepat proses pencarian. Jika data terdistribusi secara merata, Interpolasi Search dapat mencapai waktu pengambilan data yang lebih cepat dibandingkan dengan Pencarian Linier.",
-      "topic": "search",
-      "algorithm": "Interpolation Search",
-      "difficulty": "easy"
-    },
-    {
-      "question": "Apa tujuan utama dari Huffman Coding dalam algoritma greedy?",
-      "answers": [
-        "Mengurangi ukuran file dengan mengompresi data secara efektif",
-        "Mengurangi kompleksitas algoritma dengan cara sederhana",
-        "Mengoptimalkan penggunaan memori komputer dengan cara cerdas",
-        "Mengurangi waktu eksekusi program dengan cara pintar"
-      ],
-      "correctAnswer": 0,
-      "explanation": "Huffman Coding adalah algoritma pengompresan data yang menggunakan kode biner yang lebih singkat untuk karakter yang lebih sering muncul dalam teks. Tujuan utama dari Huffman Coding adalah mengurangi ukuran file dengan mengompresi data secara efektif, sehingga memungkinkan penyimpanan dan pengiriman file yang lebih cepat dan efisien.",
-      "topic": "greedy",
-      "algorithm": "Huffman Coding",
-      "difficulty": "easy"
-    },
-    {
-      "question": "Dalam masalah Knapsack, bagaimana cara kita menghitung nilai maksimum yang dapat dibawa oleh tas?",
-      "answers": [
-        "Menggunakan rumus untuk menghitung nilai maksimum langsung",
-        "Menggunakan Dynamic Programming untuk menghitung nilai maksimum yang dapat dibawa",
-        "Menggunakan Algoritma Genetika untuk menghitung nilai maksimum yang dapat dibawa",
-        "Menggunakan Brute Force untuk menghitung nilai maksimum yang dapat dibawa"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Dalam masalah Knapsack, kita menggunakan Dynamic Programming untuk menghitung nilai maksimum yang dapat dibawa oleh tas. Ini karena masalah Knapsack memiliki sifat optimsasi, yaitu kita ingin mencari nilai maksimum yang dapat dibawa oleh tas. Dynamic Programming dapat membantu kita menghitung nilai maksimum yang dapat dibawa dengan cara memecah masalah menjadi submasalah yang lebih kecil dan menghitung nilai maksimum untuk setiap submasalah tersebut.",
-      "topic": "dp",
-      "algorithm": "Knapsack",
-      "difficulty": "easy"
-    },
-    {
-      "question": "Apa yang dilakukan oleh algoritma Fractional Knapsack dalam menyelesaikan masalah pengisian tas?",
-      "answers": [
-        "Menggunakan metode backtracking",
-        "Menggunakan metode force field",
-        "Menggunakan metode memilih item dengan nilai tertinggi terlebih dahulu",
-        "Menggunakan metode brute force"
-      ],
-      "correctAnswer": 2,
-      "explanation": "Algoritma Fractional Knapsack menggunakan metode greedy untuk menyelesaikan masalah pengisian tas. Dalam metode ini, kita memilih item dengan nilai tertinggi terlebih dahulu dan kemudian membagi item lainnya secara proporsional. Ini memungkinkan kita untuk memaksimalkan nilai total yang dapat diambil dalam tas.",
-      "topic": "greedy",
-      "algorithm": "Fractional Knapsack",
-      "difficulty": "easy"
-    },
-    {
-      "question": "Dalam algoritma Greedy, Fractional Knapsack digunakan untuk memaksimalkan nilai dari barang-barang yang dimasukkan ke dalam tas. Berikut ini adalah strategi yang digunakan dalam Fractional Knapsack:",
-      "answers": [
-        "Mengambil barang dengan nilai tertinggi terlebih dahulu",
-        "Mengambil barang dengan berat minimum terlebih dahulu",
-        "Mengambil barang dengan nilai tertinggi dan kemudian membagi barang yang tidak dapat dimasukkan secara keseluruhan",
-        "Mengambil barang secara acak"
-      ],
-      "correctAnswer": 2,
-      "explanation": "Fractional Knapsack menggunakan strategi greedy untuk memaksimalkan nilai dari barang-barang yang dimasukkan ke dalam tas. Strategi ini melibatkan perhitungan nilai yang diperoleh dari setiap barang dan kemudian membagi barang yang tidak dapat dimasukkan secara keseluruhan untuk meningkatkan nilai total.",
-      "topic": "greedy",
-      "algorithm": "Fractional Knapsack",
-      "difficulty": "easy"
-    },
-    {
-      "question": "Apa yang dilakukan oleh algoritma Merge Sort saat melakukan pembagian (divide) pada array yang akan disortir?",
-      "answers": [
-        "Mengurutkan array secara langsung",
-        "Membagi array menjadi dua bagian yang sama besar",
-        "Menggabungkan dua bagian array yang sudah terurut",
-        "Mengurutkan array dengan metode Bubble Sort"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Pada algoritma Merge Sort, pembagian (divide) dilakukan dengan cara membagi array yang akan disortir menjadi dua bagian yang sama besar. Hal ini memungkinkan algoritma untuk memproses array secara lebih efisien dan efektif.",
-      "topic": "divide_conquer",
-      "algorithm": "Merge Sort",
-      "difficulty": "easy"
-    },
-    {
-      "question": "Apa yang dilakukan Quick Sort pada suatu array data dalam proses pengurutannya?",
-      "answers": [
-        "Mengurutkan array dari kecil ke besar secara langsung",
-        "Menggunakan pivot sebagai titik acuan pengurutan",
-        "Mengulangi array sampai terurut",
-        "Menggunakan bubble sort"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Quick Sort adalah algoritma pengurutan yang menggunakan pivot sebagai titik acuan untuk membagi array menjadi dua bagian. Kemudian, proses pengurutan dilakukan rekursif pada kedua bagian tersebut.",
-      "topic": "sorting",
-      "algorithm": "Quick Sort",
-      "difficulty": "easy"
-    },
-    {
-      "question": "Apa itu algoritma Fibonacci dalam DP (Dynamic Programming)?",
-      "answers": [
-        "Algoritma untuk menyelesaikan masalah optimal dengan menggunakan memoisasi.",
-        "Algoritma untuk menyelesaikan masalah dengan menggunakan rekursif.",
-        "Algoritma untuk menyelesaikan masalah optimal dengan menggunakan pemecahan masalah sub.",
-        "Algoritma untuk menyelesaikan masalah dengan menggunakan heuristik."
-      ],
-      "correctAnswer": 2,
-      "explanation": "Algoritma Fibonacci dalam DP adalah suatu teknik untuk menyelesaikan masalah optimal dengan memecahkannya menjadi beberapa sub-masalah yang lebih kecil, kemudian menyimpan hasilnya untuk menghindari pemrosesan yang berulang.",
-      "topic": "dp",
-      "algorithm": "Fibonacci",
-      "difficulty": "easy"
-    },
-    {
-      "question": "Apa itu tujuan utama dari Merge Sort dalam algoritma pengurutan?",
-      "answers": [
-        "Mengurutkan data secara acak",
-        "Mengurutkan data dalam urutan ascending",
-        "Mengurutkan data dalam urutan descending",
-        "Mengurutkan data dalam waktu yang lama"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Tujuan utama dari Merge Sort adalah mengurutkan data dalam urutan ascending secara efisien dan stabil. Algoritma ini bekerja dengan cara membagi data menjadi dua bagian yang lebih kecil, kemudian mengurutkan setiap bagian secara rekursif dan akhirnya menggabungkan kembali bagian-bagian yang telah diurutkan untuk mendapatkan hasil akhir yang diinginkan.",
-      "topic": "sorting",
-      "algorithm": "Merge Sort",
-      "difficulty": "easy"
-    },
-    {
-      "question": "Apa yang dilakukan oleh algoritma Jump Search dalam mencari elemen dalam sebuah array?",
-      "answers": [
-        "Mencari elemen secara sequential",
-        "Mencari elemen dengan membagi array menjadi blok-blok",
-        "Mencari elemen secara random",
-        "Mencari elemen dengan memanfaatkan informasi dari array yang sudah diurutkan"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Jump Search adalah algoritma pencarian yang bekerja dengan membagi array menjadi blok-blok yang lebih besar dari sequential search. Algoritma ini kemudian melompat ke blok yang paling mungkin berisi elemen yang dicari, sehingga meningkatkan efisiensi pencarian.",
-      "topic": "search",
-      "algorithm": "Jump Search",
-      "difficulty": "easy"
-    },
-    {
-      "question": "Apa strategi yang digunakan dalam Algoritma Greedy Activity Selection?",
-      "answers": [
-        "Memilih aktivitas dengan durasi terlama terlebih dahulu",
-        "Memilih aktivitas dengan durasi paling singkat terlebih dahulu",
-        "Memilih aktivitas yang tidak berkonflik waktu terlebih dahulu",
-        "Memilih aktivitas yang memiliki prioritas tertinggi terlebih dahulu"
-      ],
-      "correctAnswer": 2,
-      "explanation": "Algoritma Greedy Activity Selection menggunakan strategi pemilihan aktivitas yang tidak berkonflik waktu. Strategi ini dimaksudkan untuk memilih aktivitas yang dapat diselesaikan dalam waktu yang lebih singkat dan tidak menimbulkan konflik waktu dengan aktivitas lainnya.",
-      "topic": "greedy",
-      "algorithm": "Activity Selection",
-      "difficulty": "easy"
-    },
-    {
-      "question": "Algoritma Greedy Fractional Knapsack digunakan untuk memaksimalkan nilai total dari barang yang dimasukkan ke dalam tas, dengan syarat bahwa total berat barang tidak melebihi berat maksimal tas. Pada contoh di atas, kita memiliki dua barang dengan nilai dan berat masing-masing. Bagaimana algoritma Greedy Fractional Knapsack akan memilih barang untuk dimasukkan ke dalam tas?",
-      "answers": [
-        "Memilih barang dengan nilai tertinggi terlebih dahulu",
-        "Memilih barang dengan berat terkecil terlebih dahulu",
-        "Memilih barang dengan nilai tertinggi dan kemudian membagi beratnya jika berat maksimal tas belum tercapai",
-        "Memilih barang secara acak"
-      ],
-      "correctAnswer": 2,
-      "explanation": "Algoritma Greedy Fractional Knapsack bekerja dengan memilih barang yang memiliki nilai tertinggi terlebih dahulu. Namun, jika berat maksimal tas belum tercapai, maka algoritma akan membagi berat barang tersebut untuk memaksimalkan nilai total.",
-      "topic": "greedy",
-      "algorithm": "Fractional Knapsack",
-      "difficulty": "easy"
-    },
-    {
-      "question": "Apa yang dilakukan Strassen's Algorithm dalam mengoptimalisasi proses perkalian dua matrix?",
-      "answers": [
-        "Menggunakan metode naive untuk mengalikan matrix",
-        "Menggunakan pembagian dan penggabungan sub-matrix",
-        "Menggunakan algoritma regresi linier",
-        "Menggunakan algoritma brute force"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Strassen's Algorithm menggunakan teknik pembagian dan penggabungan sub-matrix untuk mengoptimalkan proses perkalian dua matrix. Algoritma ini bekerja dengan cara membagi matrix menjadi 7 sub-matrix kecil dan kemudian menggabungkannya kembali untuk mendapatkan hasil perkalian matrix.",
-      "topic": "divide_conquer",
-      "algorithm": "Strassen's Algorithm",
-      "difficulty": "easy"
-    },
-    {
-      "question": "Apa yang dimaksud dengan algoritma Fibonacci dalam Dynamic Programming?",
-      "answers": [
-        "Menghitung nilai tertinggi dalam suatu masalah",
-        "Menghitung deret bilangan yang memiliki hubungan rekursif",
-        "Menghitung nilai minimum dalam suatu masalah",
-        "Menghitung hasil dari suatu operasi matematika"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Algoritma Fibonacci adalah teknik Dynamic Programming yang digunakan untuk menyelesaikan masalah yang memiliki hubungan rekursif, seperti deret bilangan yang memiliki hubungan F(n) = F(n-1) + F(n-2).",
-      "topic": "dp",
-      "algorithm": "Fibonacci",
-      "difficulty": "easy"
-    },
-    {
-      "question": "Apa tujuan utama algoritma Bellman-Ford dalam menganalisis graf?",
-      "answers": [
-        "Mencari jarak terpendek antar semua nodus",
-        "Mengidentifikasi siklus negatif",
-        "Menghitung topologi graf",
-        "Mencari arah terpendek dari sumber ke tujuan"
-      ],
-      "correctAnswer": 0,
-      "explanation": "Algoritma Bellman-Ford digunakan untuk mencari jarak terpendek dari sumber ke semua nodus lain dalam graf, serta mendeteksi adanya siklus negatif.",
-      "topic": "graph",
-      "algorithm": "Bellman-Ford",
-      "difficulty": "easy"
-    },
-    {
-      "question": "Pada algoritma greedy, metode Fractional Knapsack digunakan untuk memaksimalkan nilai barang yang dapat dimasukkan ke dalam tas. Apakah yang benar tentang Fractional Knapsack?",
-      "answers": [
-        "Mengabaikan nilai barang yang tidak dapat dimasukkan",
-        "Mengabaikan nilai barang dengan nilai terendah",
-        "Memilih barang dengan nilai tertinggi terlebih dahulu",
-        "Memilih barang dengan nilai tertinggi setelah memilih barang dengan nilai terendah"
-      ],
-      "correctAnswer": 2,
-      "explanation": "Fractional Knapsack menggunakan prinsip memilih barang dengan nilai tertinggi terlebih dahulu, tetapi jika ada ruang yang tersisa, maka memilih barang dengan nilai tertinggi berikutnya dan seterusnya. Ini memastikan bahwa nilai total barang yang dimasukkan ke dalam tas ditingkatkan.",
-      "topic": "greedy",
-      "algorithm": "Fractional Knapsack",
-      "difficulty": "easy"
-    },
-    {
-      "question": "Apa yang dilakukan oleh algoritma LCS (Longest Common Subsequence) dalam DP?",
-      "answers": [
-        "Mencari subsekuen terpanjang dalam dua string yang tidak seharusnya sama",
-        "Menghitung jarak antara dua string",
-        "Mengidentifikasi karakter yang sama dalam dua string",
-        "Membuat salinan string yang sama"
-      ],
-      "correctAnswer": 0,
-      "explanation": "Algoritma LCS digunakan untuk mencari subsekuen terpanjang yang ada dalam dua string, tidak peduli apakah karakter-karakternya sama atau tidak. Ini berbeda dengan algoritma substring yang mencari substring yang ada dalam sebuah string.",
-      "topic": "dp",
-      "algorithm": "LCS",
-      "difficulty": "easy"
-    },
-    {
-      "question": "Apa itu sifat dasar dari deretan Fibonacci dalam algoritma dinamik (DP)?",
-      "answers": [
-        "Deretan Fibonacci merupakan deretan yang terus meningkat",
-        "Deretan Fibonacci merupakan deretan yang terus menurun",
-        "Deretan Fibonacci merupakan deretan yang memiliki nilai yang sama",
-        "Deretan Fibonacci merupakan deretan yang memiliki perbandingan nilai yang sama"
-      ],
-      "correctAnswer": 3,
-      "explanation": "Deretan Fibonacci merupakan deretan angka yang memiliki perbandingan antara dua nilai berurutan yang sama, yaitu 1, 1, 2, 3, 5, 8, dan seterusnya.",
-      "topic": "dp",
-      "algorithm": "Fibonacci",
-      "difficulty": "easy"
-    },
-    {
-      "question": "Apa tujuan utama dari Huffman Coding dalam algoritma greedy?",
-      "answers": [
-        "Mengurangi kompleksitas algoritma",
-        "Mengurangi ukuran file",
-        "Mengurangi waktu eksekusi",
-        "Mengurangi kebutuhan memori"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Huffman Coding bertujuan untuk mengurangi ukuran file dengan menggantikan kode biner yang panjang dengan kode biner yang lebih pendek.",
-      "topic": "greedy",
-      "algorithm": "Huffman Coding",
-      "difficulty": "easy"
-    },
-    {
-      "question": "Apa yang dilakukan algoritma Prim dalam menemukan jaringan minimum sederhana?",
-      "answers": [
-        "Menghitung jarak terjauh antara semua nodus",
-        "Menghubungkan nodus dengan biaya minimum",
-        "Menghitung jaringan minimum sederhana",
-        "Mengurutkan semua biaya antar nodus"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Algoritma Prim digunakan untuk menemukan jaringan minimum sederhana dalam graf. Algoritma ini bekerja dengan memilih nodus acak sebagai titik awal, kemudian menambahkan nodus lainnya ke dalam jaringan dengan biaya minimum.",
-      "topic": "graph",
-      "algorithm": "Prim",
-      "difficulty": "easy"
-    },
-    {
-      "question": "Apa jenis operasi yang dilakukan oleh algoritma Quick Sort saat memproses daftar data?",
-      "answers": [
-        "Pemilihan elemen acak",
-        "Pemilihan elemen tengah sebagai pivot",
-        "Pengurutan data secara ascending",
-        "Pengurutan data secara descending"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Algoritma Quick Sort bekerja dengan memilih salah satu elemen dari daftar data sebagai pivot, lalu membaginya menjadi dua bagian berdasarkan nilai pivot. Elemen-elemen yang lebih kecil dari pivot akan berada di satu sisi, sedangkan elemen-elemen yang lebih besar akan berada di sisi lain.",
-      "topic": "sorting",
-      "algorithm": "Quick Sort",
-      "difficulty": "easy"
-    },
-    {
-      "question": "Apa yang dilakukan algoritma Kruskal dalam analisis graf?",
-      "answers": [
-        "Menghitung jarak antar nodus",
-        "Menghasilkan MST (Minimal Spanning Tree) dari graf",
-        "Menghitung algoritma Dijkstra",
-        "Menghitung algoritma Bellman-Ford"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Algoritma Kruskal adalah suatu algoritma yang digunakan untuk menemukan Minimal Spanning Tree (MST) dari graf, yaitu subgraf yang menghubungkan semua nodus dengan biaya minimum.",
-      "topic": "graph",
-      "algorithm": "Kruskal",
-      "difficulty": "easy"
-    }
-  ],
-  "medium": [
-    {
-      "question": "Apa yang dilakukan oleh algoritma Kruskal dalam analisis graf?",
-      "answers": [
-        "Menghitung jarak antar node",
-        "Menghubungkan node dengan biaya minimum",
-        "Menghitung topologi graf",
-        "Mengidentifikasi siklus dalam graf"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Algoritma Kruskal adalah salah satu algoritma yang digunakan untuk membuat Minimum Spanning Tree (MST) dari graf. Algoritma ini bekerja dengan cara memilih setiap edge dengan biaya minimum yang tidak menciptakan siklus dalam graf.",
-      "topic": "graph",
-      "algorithm": "Kruskal",
-      "difficulty": "medium"
-    },
-    {
-      "question": "Apa kompleksitas waktu rata-rata dari algoritma Huffman Coding?",
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma Activity Selection?",
       "answers": [
         "O(1)",
         "O(n)",
@@ -446,10 +10,175 @@
         "O(n²)"
       ],
       "correctAnswer": 2,
+      "explanation": "Ini adalah pertanyaan fallback tentang Activity Selection. Sistem LLM sedang dalam perbaikan.",
+      "topic": "greedy",
+      "algorithm": "Activity Selection",
+      "difficulty": "easy",
+      "is_fallback": true
+    },
+    {
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma Insertion Sort?",
+      "answers": [
+        "O(1)",
+        "O(n)",
+        "O(n log n)",
+        "O(n²)"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Ini adalah pertanyaan fallback tentang Insertion Sort. Sistem LLM sedang dalam perbaikan.",
+      "topic": "sorting",
+      "algorithm": "Insertion Sort",
+      "difficulty": "easy",
+      "is_fallback": true
+    },
+    {
+      "question": "Kategori algoritma apa yang digunakan oleh Fractional Knapsack?",
+      "answers": [
+        "Greedy",
+        "Divide & Conquer",
+        "Dynamic Programming",
+        "Brute Force"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Ini adalah pertanyaan fallback tentang Fractional Knapsack. Sistem LLM sedang dalam perbaikan.",
+      "topic": "greedy",
+      "algorithm": "Fractional Knapsack",
+      "difficulty": "easy",
+      "is_fallback": true
+    },
+    {
+      "question": "Kategori algoritma apa yang digunakan oleh Heap Sort?",
+      "answers": [
+        "Greedy",
+        "Divide & Conquer",
+        "Dynamic Programming",
+        "Brute Force"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Ini adalah pertanyaan fallback tentang Heap Sort. Sistem LLM sedang dalam perbaikan.",
+      "topic": "sorting",
+      "algorithm": "Heap Sort",
+      "difficulty": "easy",
+      "is_fallback": true
+    },
+    {
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma Floyd-Warshall?",
+      "answers": [
+        "O(1)",
+        "O(n)",
+        "O(n log n)",
+        "O(n²)"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Ini adalah pertanyaan fallback tentang Floyd-Warshall. Sistem LLM sedang dalam perbaikan.",
+      "topic": "graph",
+      "algorithm": "Floyd-Warshall",
+      "difficulty": "easy",
+      "is_fallback": true
+    },
+    {
+      "question": "Kategori algoritma apa yang digunakan oleh Quick Sort?",
+      "answers": [
+        "Greedy",
+        "Divide & Conquer",
+        "Dynamic Programming",
+        "Brute Force"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Ini adalah pertanyaan fallback tentang Quick Sort. Sistem LLM sedang dalam perbaikan.",
+      "topic": "divide_conquer",
+      "algorithm": "Quick Sort",
+      "difficulty": "easy",
+      "is_fallback": true
+    },
+    {
+      "question": "Kategori algoritma apa yang digunakan oleh Fibonacci?",
+      "answers": [
+        "Greedy",
+        "Divide & Conquer",
+        "Dynamic Programming",
+        "Brute Force"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Ini adalah pertanyaan fallback tentang Fibonacci. Sistem LLM sedang dalam perbaikan.",
+      "topic": "dp",
+      "algorithm": "Fibonacci",
+      "difficulty": "easy",
+      "is_fallback": true
+    },
+    {
+      "question": "Kategori algoritma apa yang digunakan oleh Coin Change?",
+      "answers": [
+        "Greedy",
+        "Divide & Conquer",
+        "Dynamic Programming",
+        "Brute Force"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Ini adalah pertanyaan fallback tentang Coin Change. Sistem LLM sedang dalam perbaikan.",
+      "topic": "dp",
+      "algorithm": "Coin Change",
+      "difficulty": "easy",
+      "is_fallback": true
+    },
+    {
+      "question": "Kategori algoritma apa yang digunakan oleh Binary Search?",
+      "answers": [
+        "Greedy",
+        "Divide & Conquer",
+        "Dynamic Programming",
+        "Brute Force"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Ini adalah pertanyaan fallback tentang Binary Search. Sistem LLM sedang dalam perbaikan.",
+      "topic": "search",
+      "algorithm": "Binary Search",
+      "difficulty": "easy",
+      "is_fallback": true
+    },
+    {
+      "question": "Berapa kompleksitas waktu rata-rata Quick Sort?",
+      "answers": [
+        "O(n)",
+        "O(n log n)",
+        "O(n²)",
+        "O(log n)"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Quick Sort memiliki kompleksitas waktu rata-rata O(n log n) dengan pembagian yang seimbang.",
+      "topic": "sorting",
+      "algorithm": "Quick Sort",
+      "difficulty": "easy",
+      "is_fallback": true
+    },
+    {
+      "question": "Kategori algoritma apa yang digunakan oleh Huffman Coding?",
+      "answers": [
+        "Greedy",
+        "Divide & Conquer",
+        "Dynamic Programming",
+        "Brute Force"
+      ],
+      "correctAnswer": 1,
       "explanation": "Ini adalah pertanyaan fallback tentang Huffman Coding. Sistem LLM sedang dalam perbaikan.",
       "topic": "greedy",
       "algorithm": "Huffman Coding",
-      "difficulty": "medium",
+      "difficulty": "easy",
+      "is_fallback": true
+    },
+    {
+      "question": "Kategori algoritma apa yang digunakan oleh Dijkstra?",
+      "answers": [
+        "Greedy",
+        "Divide & Conquer",
+        "Dynamic Programming",
+        "Brute Force"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Ini adalah pertanyaan fallback tentang Dijkstra. Sistem LLM sedang dalam perbaikan.",
+      "topic": "graph",
+      "algorithm": "Dijkstra",
+      "difficulty": "easy",
       "is_fallback": true
     },
     {
@@ -464,6 +193,293 @@
       "explanation": "Ini adalah pertanyaan fallback tentang Linear Search. Sistem LLM sedang dalam perbaikan.",
       "topic": "search",
       "algorithm": "Linear Search",
+      "difficulty": "easy",
+      "is_fallback": true
+    },
+    {
+      "question": "Kategori algoritma apa yang digunakan oleh LCS?",
+      "answers": [
+        "Greedy",
+        "Divide & Conquer",
+        "Dynamic Programming",
+        "Brute Force"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Ini adalah pertanyaan fallback tentang LCS. Sistem LLM sedang dalam perbaikan.",
+      "topic": "dp",
+      "algorithm": "LCS",
+      "difficulty": "easy",
+      "is_fallback": true
+    },
+    {
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma LCS?",
+      "answers": [
+        "O(1)",
+        "O(n)",
+        "O(n log n)",
+        "O(n²)"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Ini adalah pertanyaan fallback tentang LCS. Sistem LLM sedang dalam perbaikan.",
+      "topic": "dp",
+      "algorithm": "LCS",
+      "difficulty": "easy",
+      "is_fallback": true
+    },
+    {
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma Insertion Sort?",
+      "answers": [
+        "O(1)",
+        "O(n)",
+        "O(n log n)",
+        "O(n²)"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Ini adalah pertanyaan fallback tentang Insertion Sort. Sistem LLM sedang dalam perbaikan.",
+      "topic": "sorting",
+      "algorithm": "Insertion Sort",
+      "difficulty": "easy",
+      "is_fallback": true
+    },
+    {
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma Interpolation Search?",
+      "answers": [
+        "O(1)",
+        "O(n)",
+        "O(n log n)",
+        "O(n²)"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Ini adalah pertanyaan fallback tentang Interpolation Search. Sistem LLM sedang dalam perbaikan.",
+      "topic": "search",
+      "algorithm": "Interpolation Search",
+      "difficulty": "easy",
+      "is_fallback": true
+    },
+    {
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma Kruskal?",
+      "answers": [
+        "O(1)",
+        "O(n)",
+        "O(n log n)",
+        "O(n²)"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Ini adalah pertanyaan fallback tentang Kruskal. Sistem LLM sedang dalam perbaikan.",
+      "topic": "graph",
+      "algorithm": "Kruskal",
+      "difficulty": "easy",
+      "is_fallback": true
+    },
+    {
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma Linear Search?",
+      "answers": [
+        "O(1)",
+        "O(n)",
+        "O(n log n)",
+        "O(n²)"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Ini adalah pertanyaan fallback tentang Linear Search. Sistem LLM sedang dalam perbaikan.",
+      "topic": "search",
+      "algorithm": "Linear Search",
+      "difficulty": "easy",
+      "is_fallback": true
+    },
+    {
+      "question": "Kategori algoritma apa yang digunakan oleh Merge Sort?",
+      "answers": [
+        "Greedy",
+        "Divide & Conquer",
+        "Dynamic Programming",
+        "Brute Force"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Ini adalah pertanyaan fallback tentang Merge Sort. Sistem LLM sedang dalam perbaikan.",
+      "topic": "divide_conquer",
+      "algorithm": "Merge Sort",
+      "difficulty": "easy",
+      "is_fallback": true
+    },
+    {
+      "question": "Kategori algoritma apa yang digunakan oleh Jump Search?",
+      "answers": [
+        "Greedy",
+        "Divide & Conquer",
+        "Dynamic Programming",
+        "Brute Force"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Ini adalah pertanyaan fallback tentang Jump Search. Sistem LLM sedang dalam perbaikan.",
+      "topic": "search",
+      "algorithm": "Jump Search",
+      "difficulty": "easy",
+      "is_fallback": true
+    },
+    {
+      "question": "Kategori algoritma apa yang digunakan oleh Heap Sort?",
+      "answers": [
+        "Greedy",
+        "Divide & Conquer",
+        "Dynamic Programming",
+        "Brute Force"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Ini adalah pertanyaan fallback tentang Heap Sort. Sistem LLM sedang dalam perbaikan.",
+      "topic": "sorting",
+      "algorithm": "Heap Sort",
+      "difficulty": "easy",
+      "is_fallback": true
+    },
+    {
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma Jump Search?",
+      "answers": [
+        "O(1)",
+        "O(n)",
+        "O(n log n)",
+        "O(n²)"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Ini adalah pertanyaan fallback tentang Jump Search. Sistem LLM sedang dalam perbaikan.",
+      "topic": "search",
+      "algorithm": "Jump Search",
+      "difficulty": "easy",
+      "is_fallback": true
+    },
+    {
+      "question": "Kategori algoritma apa yang digunakan oleh Fractional Knapsack?",
+      "answers": [
+        "Greedy",
+        "Divide & Conquer",
+        "Dynamic Programming",
+        "Brute Force"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Ini adalah pertanyaan fallback tentang Fractional Knapsack. Sistem LLM sedang dalam perbaikan.",
+      "topic": "greedy",
+      "algorithm": "Fractional Knapsack",
+      "difficulty": "easy",
+      "is_fallback": true
+    },
+    {
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma LCS?",
+      "answers": [
+        "O(1)",
+        "O(n)",
+        "O(n log n)",
+        "O(n²)"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Ini adalah pertanyaan fallback tentang LCS. Sistem LLM sedang dalam perbaikan.",
+      "topic": "dp",
+      "algorithm": "LCS",
+      "difficulty": "easy",
+      "is_fallback": true
+    },
+    {
+      "question": "Kategori algoritma apa yang digunakan oleh Quick Sort?",
+      "answers": [
+        "Greedy",
+        "Divide & Conquer",
+        "Dynamic Programming",
+        "Brute Force"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Ini adalah pertanyaan fallback tentang Quick Sort. Sistem LLM sedang dalam perbaikan.",
+      "topic": "divide_conquer",
+      "algorithm": "Quick Sort",
+      "difficulty": "easy",
+      "is_fallback": true
+    },
+    {
+      "question": "Kategori algoritma apa yang digunakan oleh Fractional Knapsack?",
+      "answers": [
+        "Greedy",
+        "Divide & Conquer",
+        "Dynamic Programming",
+        "Brute Force"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Ini adalah pertanyaan fallback tentang Fractional Knapsack. Sistem LLM sedang dalam perbaikan.",
+      "topic": "greedy",
+      "algorithm": "Fractional Knapsack",
+      "difficulty": "easy",
+      "is_fallback": true
+    },
+    {
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma Fractional Knapsack?",
+      "answers": [
+        "O(1)",
+        "O(n)",
+        "O(n log n)",
+        "O(n²)"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Ini adalah pertanyaan fallback tentang Fractional Knapsack. Sistem LLM sedang dalam perbaikan.",
+      "topic": "greedy",
+      "algorithm": "Fractional Knapsack",
+      "difficulty": "easy",
+      "is_fallback": true
+    },
+    {
+      "question": "Kategori algoritma apa yang digunakan oleh Merge Sort?",
+      "answers": [
+        "Greedy",
+        "Divide & Conquer",
+        "Dynamic Programming",
+        "Brute Force"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Ini adalah pertanyaan fallback tentang Merge Sort. Sistem LLM sedang dalam perbaikan.",
+      "topic": "sorting",
+      "algorithm": "Merge Sort",
+      "difficulty": "easy",
+      "is_fallback": true
+    },
+    {
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma Quick Sort?",
+      "answers": [
+        "O(1)",
+        "O(n)",
+        "O(n log n)",
+        "O(n²)"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Ini adalah pertanyaan fallback tentang Quick Sort. Sistem LLM sedang dalam perbaikan.",
+      "topic": "divide_conquer",
+      "algorithm": "Quick Sort",
+      "difficulty": "easy",
+      "is_fallback": true
+    }
+  ],
+  "medium": [
+    {
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma Binary Search?",
+      "answers": [
+        "O(1)",
+        "O(n)",
+        "O(n log n)",
+        "O(n²)"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Ini adalah pertanyaan fallback tentang Binary Search. Sistem LLM sedang dalam perbaikan.",
+      "topic": "search",
+      "algorithm": "Binary Search",
+      "difficulty": "medium",
+      "is_fallback": true
+    },
+    {
+      "question": "Kategori algoritma apa yang digunakan oleh Fibonacci?",
+      "answers": [
+        "Greedy",
+        "Divide & Conquer",
+        "Dynamic Programming",
+        "Brute Force"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Ini adalah pertanyaan fallback tentang Fibonacci. Sistem LLM sedang dalam perbaikan.",
+      "topic": "dp",
+      "algorithm": "Fibonacci",
       "difficulty": "medium",
       "is_fallback": true
     },
@@ -483,7 +499,7 @@
       "is_fallback": true
     },
     {
-      "question": "Apa kompleksitas waktu rata-rata dari algoritma Fractional Knapsack?",
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma Activity Selection?",
       "answers": [
         "O(1)",
         "O(n)",
@@ -491,29 +507,14 @@
         "O(n²)"
       ],
       "correctAnswer": 2,
-      "explanation": "Ini adalah pertanyaan fallback tentang Fractional Knapsack. Sistem LLM sedang dalam perbaikan.",
+      "explanation": "Ini adalah pertanyaan fallback tentang Activity Selection. Sistem LLM sedang dalam perbaikan.",
       "topic": "greedy",
-      "algorithm": "Fractional Knapsack",
+      "algorithm": "Activity Selection",
       "difficulty": "medium",
       "is_fallback": true
     },
     {
-      "question": "Kategori algoritma apa yang digunakan oleh Coin Change?",
-      "answers": [
-        "Greedy",
-        "Divide & Conquer",
-        "Dynamic Programming",
-        "Brute Force"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Ini adalah pertanyaan fallback tentang Coin Change. Sistem LLM sedang dalam perbaikan.",
-      "topic": "dp",
-      "algorithm": "Coin Change",
-      "difficulty": "medium",
-      "is_fallback": true
-    },
-    {
-      "question": "Apa kompleksitas waktu rata-rata dari algoritma Kruskal?",
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma Floyd-Warshall?",
       "answers": [
         "O(1)",
         "O(n)",
@@ -521,14 +522,14 @@
         "O(n²)"
       ],
       "correctAnswer": 2,
-      "explanation": "Ini adalah pertanyaan fallback tentang Kruskal. Sistem LLM sedang dalam perbaikan.",
+      "explanation": "Ini adalah pertanyaan fallback tentang Floyd-Warshall. Sistem LLM sedang dalam perbaikan.",
       "topic": "graph",
-      "algorithm": "Kruskal",
+      "algorithm": "Floyd-Warshall",
       "difficulty": "medium",
       "is_fallback": true
     },
     {
-      "question": "Kategori algoritma apa yang digunakan oleh Coin Change?",
+      "question": "Kategori algoritma apa yang digunakan oleh Binary Search?",
       "answers": [
         "Greedy",
         "Divide & Conquer",
@@ -536,29 +537,14 @@
         "Brute Force"
       ],
       "correctAnswer": 1,
-      "explanation": "Ini adalah pertanyaan fallback tentang Coin Change. Sistem LLM sedang dalam perbaikan.",
-      "topic": "dp",
-      "algorithm": "Coin Change",
+      "explanation": "Ini adalah pertanyaan fallback tentang Binary Search. Sistem LLM sedang dalam perbaikan.",
+      "topic": "divide_conquer",
+      "algorithm": "Binary Search",
       "difficulty": "medium",
       "is_fallback": true
     },
     {
-      "question": "Kategori algoritma apa yang digunakan oleh Fractional Knapsack?",
-      "answers": [
-        "Greedy",
-        "Divide & Conquer",
-        "Dynamic Programming",
-        "Brute Force"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Ini adalah pertanyaan fallback tentang Fractional Knapsack. Sistem LLM sedang dalam perbaikan.",
-      "topic": "greedy",
-      "algorithm": "Fractional Knapsack",
-      "difficulty": "medium",
-      "is_fallback": true
-    },
-    {
-      "question": "Apa kompleksitas waktu rata-rata dari algoritma Insertion Sort?",
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma Activity Selection?",
       "answers": [
         "O(1)",
         "O(n)",
@@ -566,9 +552,24 @@
         "O(n²)"
       ],
       "correctAnswer": 2,
-      "explanation": "Ini adalah pertanyaan fallback tentang Insertion Sort. Sistem LLM sedang dalam perbaikan.",
-      "topic": "sorting",
-      "algorithm": "Insertion Sort",
+      "explanation": "Ini adalah pertanyaan fallback tentang Activity Selection. Sistem LLM sedang dalam perbaikan.",
+      "topic": "greedy",
+      "algorithm": "Activity Selection",
+      "difficulty": "medium",
+      "is_fallback": true
+    },
+    {
+      "question": "Kategori algoritma apa yang digunakan oleh DFS?",
+      "answers": [
+        "Greedy",
+        "Divide & Conquer",
+        "Dynamic Programming",
+        "Brute Force"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Ini adalah pertanyaan fallback tentang DFS. Sistem LLM sedang dalam perbaikan.",
+      "topic": "graph",
+      "algorithm": "DFS",
       "difficulty": "medium",
       "is_fallback": true
     },
@@ -588,7 +589,22 @@
       "is_fallback": true
     },
     {
-      "question": "Kategori algoritma apa yang digunakan oleh Binary Search?",
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma BFS?",
+      "answers": [
+        "O(1)",
+        "O(n)",
+        "O(n log n)",
+        "O(n²)"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Ini adalah pertanyaan fallback tentang BFS. Sistem LLM sedang dalam perbaikan.",
+      "topic": "graph",
+      "algorithm": "BFS",
+      "difficulty": "medium",
+      "is_fallback": true
+    },
+    {
+      "question": "Kategori algoritma apa yang digunakan oleh LCS?",
       "answers": [
         "Greedy",
         "Divide & Conquer",
@@ -596,9 +612,204 @@
         "Brute Force"
       ],
       "correctAnswer": 1,
-      "explanation": "Ini adalah pertanyaan fallback tentang Binary Search. Sistem LLM sedang dalam perbaikan.",
+      "explanation": "Ini adalah pertanyaan fallback tentang LCS. Sistem LLM sedang dalam perbaikan.",
+      "topic": "dp",
+      "algorithm": "LCS",
+      "difficulty": "medium",
+      "is_fallback": true
+    },
+    {
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma Linear Search?",
+      "answers": [
+        "O(1)",
+        "O(n)",
+        "O(n log n)",
+        "O(n²)"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Ini adalah pertanyaan fallback tentang Linear Search. Sistem LLM sedang dalam perbaikan.",
       "topic": "search",
-      "algorithm": "Binary Search",
+      "algorithm": "Linear Search",
+      "difficulty": "medium",
+      "is_fallback": true
+    },
+    {
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma Jump Search?",
+      "answers": [
+        "O(1)",
+        "O(n)",
+        "O(n log n)",
+        "O(n²)"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Ini adalah pertanyaan fallback tentang Jump Search. Sistem LLM sedang dalam perbaikan.",
+      "topic": "search",
+      "algorithm": "Jump Search",
+      "difficulty": "medium",
+      "is_fallback": true
+    },
+    {
+      "question": "Kategori algoritma apa yang digunakan oleh Jump Search?",
+      "answers": [
+        "Greedy",
+        "Divide & Conquer",
+        "Dynamic Programming",
+        "Brute Force"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Ini adalah pertanyaan fallback tentang Jump Search. Sistem LLM sedang dalam perbaikan.",
+      "topic": "search",
+      "algorithm": "Jump Search",
+      "difficulty": "medium",
+      "is_fallback": true
+    },
+    {
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma Fractional Knapsack?",
+      "answers": [
+        "O(1)",
+        "O(n)",
+        "O(n log n)",
+        "O(n²)"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Ini adalah pertanyaan fallback tentang Fractional Knapsack. Sistem LLM sedang dalam perbaikan.",
+      "topic": "greedy",
+      "algorithm": "Fractional Knapsack",
+      "difficulty": "medium",
+      "is_fallback": true
+    },
+    {
+      "question": "Kategori algoritma apa yang digunakan oleh Huffman Coding?",
+      "answers": [
+        "Greedy",
+        "Divide & Conquer",
+        "Dynamic Programming",
+        "Brute Force"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Ini adalah pertanyaan fallback tentang Huffman Coding. Sistem LLM sedang dalam perbaikan.",
+      "topic": "greedy",
+      "algorithm": "Huffman Coding",
+      "difficulty": "medium",
+      "is_fallback": true
+    },
+    {
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma Huffman Coding?",
+      "answers": [
+        "O(1)",
+        "O(n)",
+        "O(n log n)",
+        "O(n²)"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Ini adalah pertanyaan fallback tentang Huffman Coding. Sistem LLM sedang dalam perbaikan.",
+      "topic": "greedy",
+      "algorithm": "Huffman Coding",
+      "difficulty": "medium",
+      "is_fallback": true
+    },
+    {
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma LCS?",
+      "answers": [
+        "O(1)",
+        "O(n)",
+        "O(n log n)",
+        "O(n²)"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Ini adalah pertanyaan fallback tentang LCS. Sistem LLM sedang dalam perbaikan.",
+      "topic": "dp",
+      "algorithm": "LCS",
+      "difficulty": "medium",
+      "is_fallback": true
+    },
+    {
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma Knapsack?",
+      "answers": [
+        "O(1)",
+        "O(n)",
+        "O(n log n)",
+        "O(n²)"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Ini adalah pertanyaan fallback tentang Knapsack. Sistem LLM sedang dalam perbaikan.",
+      "topic": "dp",
+      "algorithm": "Knapsack",
+      "difficulty": "medium",
+      "is_fallback": true
+    },
+    {
+      "question": "Apa yang terjadi pada Quick Sort jika pivot selalu elemen terkecil atau terbesar?",
+      "answers": [
+        "Tetap O(n log n)",
+        "Menjadi O(n²)",
+        "Menjadi O(n)",
+        "Error"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Jika pivot selalu ekstrem, Quick Sort menghasilkan partisi tidak seimbang, degradasi ke O(n²) worst case.",
+      "topic": "sorting",
+      "algorithm": "Quick Sort",
+      "difficulty": "medium",
+      "is_fallback": true
+    },
+    {
+      "question": "Apa yang terjadi pada Quick Sort jika pivot selalu elemen terkecil atau terbesar?",
+      "answers": [
+        "Tetap O(n log n)",
+        "Menjadi O(n²)",
+        "Menjadi O(n)",
+        "Error"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Jika pivot selalu ekstrem, Quick Sort menghasilkan partisi tidak seimbang, degradasi ke O(n²) worst case.",
+      "topic": "sorting",
+      "algorithm": "Quick Sort",
+      "difficulty": "medium",
+      "is_fallback": true
+    },
+    {
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma Huffman Coding?",
+      "answers": [
+        "O(1)",
+        "O(n)",
+        "O(n log n)",
+        "O(n²)"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Ini adalah pertanyaan fallback tentang Huffman Coding. Sistem LLM sedang dalam perbaikan.",
+      "topic": "greedy",
+      "algorithm": "Huffman Coding",
+      "difficulty": "medium",
+      "is_fallback": true
+    },
+    {
+      "question": "Kategori algoritma apa yang digunakan oleh LCS?",
+      "answers": [
+        "Greedy",
+        "Divide & Conquer",
+        "Dynamic Programming",
+        "Brute Force"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Ini adalah pertanyaan fallback tentang LCS. Sistem LLM sedang dalam perbaikan.",
+      "topic": "dp",
+      "algorithm": "LCS",
+      "difficulty": "medium",
+      "is_fallback": true
+    },
+    {
+      "question": "Kategori algoritma apa yang digunakan oleh Linear Search?",
+      "answers": [
+        "Greedy",
+        "Divide & Conquer",
+        "Dynamic Programming",
+        "Brute Force"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Ini adalah pertanyaan fallback tentang Linear Search. Sistem LLM sedang dalam perbaikan.",
+      "topic": "search",
+      "algorithm": "Linear Search",
       "difficulty": "medium",
       "is_fallback": true
     },
@@ -618,247 +829,84 @@
       "is_fallback": true
     },
     {
-      "question": "Apa tujuan utama algoritma Dijkstra dalam menganalisis graf?",
+      "question": "Kategori algoritma apa yang digunakan oleh BFS?",
       "answers": [
-        "Menghitung jarak terpendek antar semua nodus",
-        "Mengidentifikasi siklus terpendek dalam graf",
-        "Mengoptimalkan penggunaan sumber daya dalam graf",
-        "Mengenali komponen terhubung dalam graf"
-      ],
-      "correctAnswer": 0,
-      "explanation": "Algoritma Dijkstra dirancang untuk menemukan jarak terpendek dari suatu nodus sumber ke semua nodus lain dalam graf yang tidak mengandung siklus negatif. Tujuan utama dari algoritma ini adalah menghitung jarak terpendek antar semua nodus dalam graf.",
-      "topic": "graph",
-      "algorithm": "Dijkstra",
-      "difficulty": "medium"
-    },
-    {
-      "question": "Dalam algoritma DP, bagaimana cara memanfaatkan sifat rekursif Fibonacci untuk mempercepat proses penghitungan?",
-      "answers": [
-        "Menggunakan array dinamis untuk menyimpan hasil rekursif sebelumnya",
-        "Menggunakan memoisasi untuk menyimpan hasil rekursif sebelumnya dan menghindari perhitungan ulang",
-        "Menggunakan algoritma greedy untuk memilih nilai terkecil",
-        "Menggunakan algoritma backtracking untuk mencari solusi"
+        "Greedy",
+        "Divide & Conquer",
+        "Dynamic Programming",
+        "Brute Force"
       ],
       "correctAnswer": 1,
-      "explanation": "Dalam algoritma DP, kita dapat memanfaatkan sifat rekursif Fibonacci untuk mempercepat proses penghitungan dengan menggunakan memoisasi. Dengan cara ini, kita dapat menyimpan hasil rekursif sebelumnya dan menghindari perhitungan ulang, sehingga meningkatkan efisiensi algoritma.",
-      "topic": "dp",
-      "algorithm": "Fibonacci",
-      "difficulty": "medium"
-    },
-    {
-      "question": "Algoritma greedy yang digunakan untuk memilih aktivitas yang dapat diselesaikan dalam waktu tertentu adalah...",
-      "answers": [
-        "Activity Selection menggunakan Algoritma Dinamis",
-        "Activity Selection menggunakan Algoritma Greedy",
-        "Activity Selection menggunakan Algoritma Divide and Conquer",
-        "Activity Selection menggunakan Algoritma Brute Force"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Activity Selection adalah contoh algoritma greedy yang digunakan untuk memilih aktivitas yang dapat diselesaikan dalam waktu tertentu. Algoritma ini bekerja dengan memilih aktivitas yang memiliki waktu akhir paling awal dan waktu mulai paling awal.",
-      "topic": "greedy",
-      "algorithm": "Activity Selection",
-      "difficulty": "medium"
-    },
-    {
-      "question": "Apa yang terjadi pada proses Jump Search jika nilai target tidak ada di dalam array?",
-      "answers": [
-        "Mencari nilai target selanjutnya",
-        "Mengembalikan nilai -1",
-        "Mengembalikan nilai -2",
-        "Mengembalikan nilai -3"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Pada proses Jump Search, jika nilai target tidak ada di dalam array, maka algoritma akan mengembalikan nilai -1. Ini karena Jump Search tidak memiliki kemampuan untuk mencari nilai target yang tidak ada di dalam array.",
-      "topic": "search",
-      "algorithm": "Jump Search",
-      "difficulty": "medium"
-    },
-    {
-      "question": "Dalam proses Matrix Chain Multiplication, berikut adalah langkah-langkah yang digunakan dalam Dynamic Programming untuk mencari solusi optimum. Berikut adalah kode pseudocode yang digunakan:",
-      "answers": [
-        "Memulai dari atas ke bawah (Top-Down)",
-        "Memulai dari bawah ke atas (Bottom-Up)",
-        "Menggunakan memoization untuk menyimpan hasil submasalah",
-        "Menggunakan tabulation untuk menyimpan hasil submasalah"
-      ],
-      "correctAnswer": 3,
-      "explanation": "Dalam Dynamic Programming, kita dapat menggunakan dua pendekatan, yaitu Top-Down dan Bottom-Up. Namun, dalam kasus Matrix Chain Multiplication, kita menggunakan tabulation untuk menyimpan hasil submasalah, sehingga kita dapat menghindari pengulangan komputasi dan meningkatkan efisiensi.",
-      "topic": "dp",
-      "algorithm": "Matrix Chain Multiplication",
-      "difficulty": "medium"
-    },
-    {
-      "question": "Apa algoritma pencarian yang paling sesuai digunakan ketika kita tidak tahu apakah elemen yang dicari ada di dalam array atau tidak?",
-      "answers": [
-        "Algoritma Binari",
-        "Algoritma Pencarian Linier",
-        "Algoritma Pencarian Berbasis Graf",
-        "Algoritma Pencarian Heuristik"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Algoritma pencarian linier adalah algoritma yang cocok digunakan ketika kita tidak tahu apakah elemen yang dicari ada di dalam array atau tidak. Hal ini karena algoritma linier akan memeriksa setiap elemen di dalam array secara berurutan sampai elemen yang dicari ditemukan atau array telah habis diperiksa.",
-      "topic": "search",
-      "algorithm": "Linear Search",
-      "difficulty": "medium"
-    },
-    {
-      "question": "Dalam algoritma greedy Activity Selection, bagaimana caranya untuk memilih aktivitas yang optimal?",
-      "answers": [
-        "Pilih aktivitas dengan durasi paling lama terlebih dahulu",
-        "Pilih aktivitas yang dimulai pada waktu paling awal",
-        "Pilih aktivitas dengan durasi paling singkat terlebih dahulu",
-        "Pilih aktivitas yang berakhir pada waktu paling akhir"
-      ],
-      "correctAnswer": 2,
-      "explanation": "Algoritma greedy Activity Selection bekerja dengan memilih aktivitas dengan durasi paling singkat terlebih dahulu yang tidak bersentuhan dengan aktivitas lain yang telah dipilih sebelumnya. Ini dilakukan untuk memaksimalkan jumlah aktivitas yang dapat dipilih.",
-      "topic": "greedy",
-      "algorithm": "Activity Selection",
-      "difficulty": "medium"
-    },
-    {
-      "question": "Apa yang terjadi dalam tahap pencarian di Algoritma Jump Search?",
-      "answers": [
-        "Mencari elemen secara linear",
-        "Mencari elemen dengan cara melompati elemen lainnya",
-        "Mengurutkan array terlebih dahulu",
-        "Menggunakan algoritma biner untuk pencarian"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Di tahap pencarian, algoritma Jump Search melompati beberapa elemen secara bersamaan untuk mencari elemen yang dicari. Ini memungkinkan algoritma untuk meningkatkan kecepatan pencarian dibandingkan dengan pencarian linear. Algoritma Jump Search menentukan jumlah langkah yang akan dilompati berdasarkan ukuran array dan elemen yang dicari.",
-      "topic": "search",
-      "algorithm": "Jump Search",
-      "difficulty": "medium"
-    },
-    {
-      "question": "Apa yang terjadi jika ada siklus negatif dalam graf yang diuji menggunakan algoritma Bellman-Ford?",
-      "answers": [
-        "Algoritma akan menghasilkan hasil yang tidak akurat",
-        "Algoritma akan menghasilkan kesalahan",
-        "Algoritma akan terus berjalan tanpa henti",
-        "Algoritma akan menghentikan eksekusinya"
-      ],
-      "correctAnswer": 3,
-      "explanation": "Algoritma Bellman-Ford dirancang untuk mendeteksi siklus negatif dalam graf. Jika ada siklus negatif, algoritma akan menghentikan eksekusinya dan menghasilkan hasil yang tidak akurat tidak akan terjadi. Algoritma akan melaporkan adanya siklus negatif.",
-      "topic": "graph",
-      "algorithm": "Bellman-Ford",
-      "difficulty": "medium"
-    },
-    {
-      "question": "Dalam algoritma greedy, strategi Activity Selection digunakan untuk memilih aktivitas mana yang akan dilakukan berdasarkan waktu mulai dan selesai. Berikut adalah contoh aktivitas dengan waktu mulai dan selesai: (0, 6), (1, 3), (2, 4), (3, 5), (5, 7). Aktivitas mana yang akan dipilih jika kita memilih aktivitas dengan waktu mulai paling awal dan selesai paling cepat?",
-      "answers": [
-        "Aktivitas (0, 6) saja",
-        "Aktivitas (1, 3) dan (2, 4) saja",
-        "Aktivitas (3, 5) dan (5, 7) saja",
-        "Aktivitas (0, 6) dan (3, 5) saja"
-      ],
-      "correctAnswer": 0,
-      "explanation": "Jawaban yang benar adalah (0, 6) saja karena memiliki waktu mulai paling awal dan selesai paling cepat dibandingkan dengan aktivitas lain. Strategi ini menggunakan prinsip bahwa aktivitas dengan waktu mulai paling awal dan selesai paling cepat akan meminimalkan konflik dengan aktivitas lain.",
-      "topic": "greedy",
-      "algorithm": "Activity Selection",
-      "difficulty": "medium"
-    },
-    {
-      "question": "Dalam algoritma pencarian Binary Search, apa yang akan terjadi jika array yang dicari tidak terurut dalam urutan ascending?",
-      "answers": [
-        "Algoritma akan menghasilkan hasil yang salah",
-        "Algoritma akan terus mencari hingga menemukan hasil",
-        "Algoritma akan menghasilkan hasil yang tepat",
-        "Algoritma akan berhenti dan memberitahu bahwa array tidak terurut"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Jika array yang dicari tidak terurut dalam urutan ascending, maka Binary Search tidak akan berfungsi dengan benar. Algoritma akan terus mencari hingga menemukan hasil, tetapi hal ini dapat memakan waktu yang lama jika array besar. Oleh karena itu, penting untuk memastikan bahwa array yang dicari telah terurut dalam urutan ascending sebelum menggunakan Binary Search.",
-      "topic": "search",
-      "algorithm": "Binary Search",
-      "difficulty": "medium"
-    },
-    {
-      "question": "Algoritma Merge Sort merupakan algoritma pengurutan yang menggunakan teknik apa untuk membagi daftar yang diurutkan?",
-      "answers": [
-        "Teknik Pembagian Kedua",
-        "Teknik Pembagian Tengah",
-        "Teknik Pembagian Kedua dan Tengah",
-        "Teknik Pembagian Akhir"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Algoritma Merge Sort menggunakan teknik pembagian tengah untuk membagi daftar yang diurutkan menjadi dua bagian yang lebih kecil. Ini adalah salah satu ciri khas algoritma ini.",
-      "topic": "sorting",
-      "algorithm": "Merge Sort",
-      "difficulty": "medium"
-    },
-    {
-      "question": "Apa yang menjadi kelebihan dari Interpolation Search dibandingkan dengan pencarian biner?",
-      "answers": [
-        "Waktu kompleksitasnya lebih tinggi",
-        "Waktu kompleksitasnya lebih rendah",
-        "Sistemnya lebih kompleks",
-        "Sistemnya lebih sederhana"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Interpolation Search memiliki waktu kompleksitas yang lebih rendah dibandingkan dengan pencarian biner karena dapat memprediksi posisi elemen yang dicari lebih akurat berdasarkan nilai-nilai lain di sekitarnya.",
-      "topic": "search",
-      "algorithm": "Interpolation Search",
-      "difficulty": "medium"
-    },
-    {
-      "question": "Dalam algoritma greedy, Activity Selection digunakan untuk memilih kegiatan mana yang dapat dilakukan berdasarkan batas waktu yang tersedia. Berikut adalah contoh kegiatan dengan durasi dan batas waktu: { (1, 4), (3, 5), (0, 6), (5, 7), (3, 8), (5, 9), (6, 10), (8, 11), (8, 12), (2, 13), (12, 14) }. Apakah algoritma Activity Selection akan memilih kegiatan (5, 9) jika kegiatan (3, 5) dipilih?",
-      "answers": [
-        "Ya, karena kegiatan (5, 9) berada di luar batas waktu kegiatan (3, 5)",
-        "Tidak, karena kegiatan (5, 9) memiliki batas waktu yang sama dengan kegiatan (3, 5)",
-        "Ya, karena kegiatan (5, 9) memiliki batas waktu yang lebih lama",
-        "Tidak, karena kegiatan (5, 9) tidak memiliki batas waktu yang lebih singkat"
-      ],
-      "correctAnswer": 2,
-      "explanation": "Algoritma Activity Selection bekerja dengan memilih kegiatan yang memiliki batas waktu yang lebih lama dari kegiatan sebelumnya. Jadi, jika kegiatan (3, 5) dipilih, maka kegiatan (5, 9) juga dapat dipilih karena memiliki batas waktu yang lebih lama.",
-      "topic": "greedy",
-      "algorithm": "Activity Selection",
-      "difficulty": "medium"
-    },
-    {
-      "question": "Apa yang terjadi jika kita melakukan BFS pada sebuah graf yang memiliki graf yang tidak terhubung?",
-      "answers": [
-        "BFS akan menemukan semua node dalam graf",
-        "BFS akan berhenti di node pertama yang tidak terhubung",
-        "BFS akan menemukan semua node dalam subgraf terkecil yang terhubung",
-        "BFS akan menghasilkan hasil yang tidak lengkap"
-      ],
-      "correctAnswer": 2,
-      "explanation": "Pada BFS, kita memulai dari node tertentu dan menambahkan semua node tetangga ke dalam antrian. Jika kita melakukan BFS pada graf yang tidak terhubung, maka BFS hanya akan menemukan node dalam subgraf terkecil yang terhubung, karena tidak ada jalan untuk mencapai node lain dalam graf lain.",
+      "explanation": "Ini adalah pertanyaan fallback tentang BFS. Sistem LLM sedang dalam perbaikan.",
       "topic": "graph",
       "algorithm": "BFS",
-      "difficulty": "medium"
+      "difficulty": "medium",
+      "is_fallback": true
     },
     {
-      "question": "Algoritma Binary Search menggunakan teknik apa untuk mempercepat pencarian elemen dalam sebuah array yang telah diurutkan?",
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma Matrix Chain Multiplication?",
       "answers": [
-        "Menggunakan Algoritma Linear",
-        "Menggunakan Kueri SQL",
-        "Menggunakan Pembagian dan Pencarian",
-        "Menggunakan Algoritma Greedy"
+        "O(1)",
+        "O(n)",
+        "O(n log n)",
+        "O(n²)"
       ],
       "correctAnswer": 2,
-      "explanation": "Algoritma Binary Search bekerja dengan cara membagi array menjadi dua bagian yang sama besar dan kemudian mencari elemen yang dicari di salah satu bagian tersebut. Hal ini memungkinkan algoritma untuk mengefisiensi waktu pencarian dengan menggunakan pembagian dan pencarian.",
-      "topic": "search",
-      "algorithm": "Binary Search",
-      "difficulty": "medium"
+      "explanation": "Ini adalah pertanyaan fallback tentang Matrix Chain Multiplication. Sistem LLM sedang dalam perbaikan.",
+      "topic": "dp",
+      "algorithm": "Matrix Chain Multiplication",
+      "difficulty": "medium",
+      "is_fallback": true
     },
     {
-      "question": "Diberikan jadwal aktivitas dengan waktu mulai dan berakhirnya. Aktivitas apa yang harus dipilih untuk memaksimalkan kegunaan waktu? Contoh jadwal aktivitas:",
+      "question": "Apa yang terjadi pada Quick Sort jika pivot selalu elemen terkecil atau terbesar?",
       "answers": [
-        "Aktivitas dengan waktu mulai paling awal",
-        "Aktivitas dengan waktu berakhir paling lambat",
-        "Aktivitas dengan durasi paling lama",
-        "Aktivitas yang tidak berkonflik dengan aktivitas lain"
+        "Tetap O(n log n)",
+        "Menjadi O(n²)",
+        "Menjadi O(n)",
+        "Error"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Jika pivot selalu ekstrem, Quick Sort menghasilkan partisi tidak seimbang, degradasi ke O(n²) worst case.",
+      "topic": "sorting",
+      "algorithm": "Quick Sort",
+      "difficulty": "medium",
+      "is_fallback": true
+    },
+    {
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma Floyd-Warshall?",
+      "answers": [
+        "O(1)",
+        "O(n)",
+        "O(n log n)",
+        "O(n²)"
       ],
       "correctAnswer": 2,
-      "explanation": "Dalam masalah aktivitas pilihan, kita harus memilih aktivitas yang memiliki durasi paling lama yang tidak berkonflik dengan aktivitas lain. Hal ini dapat dilakukan dengan menggunakan algoritma greedy, yaitu memilih aktivitas dengan durasi paling lama setelah memilih aktivitas lain yang tidak berkonflik.",
-      "topic": "greedy",
-      "algorithm": "Activity Selection",
-      "difficulty": "medium"
+      "explanation": "Ini adalah pertanyaan fallback tentang Floyd-Warshall. Sistem LLM sedang dalam perbaikan.",
+      "topic": "graph",
+      "algorithm": "Floyd-Warshall",
+      "difficulty": "medium",
+      "is_fallback": true
+    },
+    {
+      "question": "Kategori algoritma apa yang digunakan oleh Floyd-Warshall?",
+      "answers": [
+        "Greedy",
+        "Divide & Conquer",
+        "Dynamic Programming",
+        "Brute Force"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Ini adalah pertanyaan fallback tentang Floyd-Warshall. Sistem LLM sedang dalam perbaikan.",
+      "topic": "graph",
+      "algorithm": "Floyd-Warshall",
+      "difficulty": "medium",
+      "is_fallback": true
     }
   ],
   "hard": [
     {
-      "question": "Apa kompleksitas waktu rata-rata dari algoritma Quick Sort?",
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma Fibonacci?",
       "answers": [
         "O(1)",
         "O(n)",
@@ -866,39 +914,9 @@
         "O(n²)"
       ],
       "correctAnswer": 2,
-      "explanation": "Ini adalah pertanyaan fallback tentang Quick Sort. Sistem LLM sedang dalam perbaikan.",
-      "topic": "divide_conquer",
-      "algorithm": "Quick Sort",
-      "difficulty": "hard",
-      "is_fallback": true
-    },
-    {
-      "question": "Apa kompleksitas waktu rata-rata dari algoritma Insertion Sort?",
-      "answers": [
-        "O(1)",
-        "O(n)",
-        "O(n log n)",
-        "O(n²)"
-      ],
-      "correctAnswer": 2,
-      "explanation": "Ini adalah pertanyaan fallback tentang Insertion Sort. Sistem LLM sedang dalam perbaikan.",
-      "topic": "sorting",
-      "algorithm": "Insertion Sort",
-      "difficulty": "hard",
-      "is_fallback": true
-    },
-    {
-      "question": "Apa kompleksitas waktu rata-rata dari algoritma Interpolation Search?",
-      "answers": [
-        "O(1)",
-        "O(n)",
-        "O(n log n)",
-        "O(n²)"
-      ],
-      "correctAnswer": 2,
-      "explanation": "Ini adalah pertanyaan fallback tentang Interpolation Search. Sistem LLM sedang dalam perbaikan.",
-      "topic": "search",
-      "algorithm": "Interpolation Search",
+      "explanation": "Ini adalah pertanyaan fallback tentang Fibonacci. Sistem LLM sedang dalam perbaikan.",
+      "topic": "dp",
+      "algorithm": "Fibonacci",
       "difficulty": "hard",
       "is_fallback": true
     },
@@ -918,37 +936,22 @@
       "is_fallback": true
     },
     {
-      "question": "Apa kompleksitas waktu rata-rata dari algoritma Insertion Sort?",
+      "question": "Strategi pemilihan pivot mana yang paling efektif untuk menghindari worst case?",
       "answers": [
-        "O(1)",
-        "O(n)",
-        "O(n log n)",
-        "O(n²)"
+        "Selalu elemen pertama",
+        "Selalu elemen terakhir",
+        "Median-of-three",
+        "Random"
       ],
       "correctAnswer": 2,
-      "explanation": "Ini adalah pertanyaan fallback tentang Insertion Sort. Sistem LLM sedang dalam perbaikan.",
+      "explanation": "Median-of-three (mengambil median dari elemen pertama, tengah, terakhir) memberikan partisi lebih seimbang dan menghindari worst case.",
       "topic": "sorting",
-      "algorithm": "Insertion Sort",
+      "algorithm": "Quick Sort",
       "difficulty": "hard",
       "is_fallback": true
     },
     {
-      "question": "Apa kompleksitas waktu rata-rata dari algoritma Bellman-Ford?",
-      "answers": [
-        "O(1)",
-        "O(n)",
-        "O(n log n)",
-        "O(n²)"
-      ],
-      "correctAnswer": 2,
-      "explanation": "Ini adalah pertanyaan fallback tentang Bellman-Ford. Sistem LLM sedang dalam perbaikan.",
-      "topic": "graph",
-      "algorithm": "Bellman-Ford",
-      "difficulty": "hard",
-      "is_fallback": true
-    },
-    {
-      "question": "Kategori algoritma apa yang digunakan oleh Heap Sort?",
+      "question": "Kategori algoritma apa yang digunakan oleh Floyd-Warshall?",
       "answers": [
         "Greedy",
         "Divide & Conquer",
@@ -956,24 +959,9 @@
         "Brute Force"
       ],
       "correctAnswer": 1,
-      "explanation": "Ini adalah pertanyaan fallback tentang Heap Sort. Sistem LLM sedang dalam perbaikan.",
-      "topic": "sorting",
-      "algorithm": "Heap Sort",
-      "difficulty": "hard",
-      "is_fallback": true
-    },
-    {
-      "question": "Apa kompleksitas waktu rata-rata dari algoritma Bubble Sort?",
-      "answers": [
-        "O(1)",
-        "O(n)",
-        "O(n log n)",
-        "O(n²)"
-      ],
-      "correctAnswer": 2,
-      "explanation": "Ini adalah pertanyaan fallback tentang Bubble Sort. Sistem LLM sedang dalam perbaikan.",
-      "topic": "sorting",
-      "algorithm": "Bubble Sort",
+      "explanation": "Ini adalah pertanyaan fallback tentang Floyd-Warshall. Sistem LLM sedang dalam perbaikan.",
+      "topic": "graph",
+      "algorithm": "Floyd-Warshall",
       "difficulty": "hard",
       "is_fallback": true
     },
@@ -993,37 +981,7 @@
       "is_fallback": true
     },
     {
-      "question": "Apa kompleksitas waktu rata-rata dari algoritma Binary Search?",
-      "answers": [
-        "O(1)",
-        "O(n)",
-        "O(n log n)",
-        "O(n²)"
-      ],
-      "correctAnswer": 2,
-      "explanation": "Ini adalah pertanyaan fallback tentang Binary Search. Sistem LLM sedang dalam perbaikan.",
-      "topic": "divide_conquer",
-      "algorithm": "Binary Search",
-      "difficulty": "hard",
-      "is_fallback": true
-    },
-    {
-      "question": "Apa kompleksitas waktu rata-rata dari algoritma Activity Selection?",
-      "answers": [
-        "O(1)",
-        "O(n)",
-        "O(n log n)",
-        "O(n²)"
-      ],
-      "correctAnswer": 2,
-      "explanation": "Ini adalah pertanyaan fallback tentang Activity Selection. Sistem LLM sedang dalam perbaikan.",
-      "topic": "greedy",
-      "algorithm": "Activity Selection",
-      "difficulty": "hard",
-      "is_fallback": true
-    },
-    {
-      "question": "Kategori algoritma apa yang digunakan oleh Coin Change?",
+      "question": "Kategori algoritma apa yang digunakan oleh Quick Sort?",
       "answers": [
         "Greedy",
         "Divide & Conquer",
@@ -1031,9 +989,9 @@
         "Brute Force"
       ],
       "correctAnswer": 1,
-      "explanation": "Ini adalah pertanyaan fallback tentang Coin Change. Sistem LLM sedang dalam perbaikan.",
-      "topic": "dp",
-      "algorithm": "Coin Change",
+      "explanation": "Ini adalah pertanyaan fallback tentang Quick Sort. Sistem LLM sedang dalam perbaikan.",
+      "topic": "divide_conquer",
+      "algorithm": "Quick Sort",
       "difficulty": "hard",
       "is_fallback": true
     },
@@ -1053,7 +1011,7 @@
       "is_fallback": true
     },
     {
-      "question": "Apa kompleksitas waktu rata-rata dari algoritma Quick Sort?",
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma Heap Sort?",
       "answers": [
         "O(1)",
         "O(n)",
@@ -1061,74 +1019,29 @@
         "O(n²)"
       ],
       "correctAnswer": 2,
-      "explanation": "Ini adalah pertanyaan fallback tentang Quick Sort. Sistem LLM sedang dalam perbaikan.",
-      "topic": "divide_conquer",
-      "algorithm": "Quick Sort",
-      "difficulty": "hard",
-      "is_fallback": true
-    },
-    {
-      "question": "Apa kompleksitas waktu rata-rata dari algoritma Floyd-Warshall?",
-      "answers": [
-        "O(1)",
-        "O(n)",
-        "O(n log n)",
-        "O(n²)"
-      ],
-      "correctAnswer": 2,
-      "explanation": "Ini adalah pertanyaan fallback tentang Floyd-Warshall. Sistem LLM sedang dalam perbaikan.",
-      "topic": "graph",
-      "algorithm": "Floyd-Warshall",
-      "difficulty": "hard",
-      "is_fallback": true
-    },
-    {
-      "question": "Apa kompleksitas waktu rata-rata dari algoritma Binary Search?",
-      "answers": [
-        "O(1)",
-        "O(n)",
-        "O(n log n)",
-        "O(n²)"
-      ],
-      "correctAnswer": 2,
-      "explanation": "Ini adalah pertanyaan fallback tentang Binary Search. Sistem LLM sedang dalam perbaikan.",
-      "topic": "divide_conquer",
-      "algorithm": "Binary Search",
-      "difficulty": "hard",
-      "is_fallback": true
-    },
-    {
-      "question": "Kategori algoritma apa yang digunakan oleh Binary Search?",
-      "answers": [
-        "Greedy",
-        "Divide & Conquer",
-        "Dynamic Programming",
-        "Brute Force"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Ini adalah pertanyaan fallback tentang Binary Search. Sistem LLM sedang dalam perbaikan.",
-      "topic": "divide_conquer",
-      "algorithm": "Binary Search",
-      "difficulty": "hard",
-      "is_fallback": true
-    },
-    {
-      "question": "Strategi pemilihan pivot mana yang paling efektif untuk menghindari worst case?",
-      "answers": [
-        "Selalu elemen pertama",
-        "Selalu elemen terakhir",
-        "Median-of-three",
-        "Random"
-      ],
-      "correctAnswer": 2,
-      "explanation": "Median-of-three (mengambil median dari elemen pertama, tengah, terakhir) memberikan partisi lebih seimbang dan menghindari worst case.",
+      "explanation": "Ini adalah pertanyaan fallback tentang Heap Sort. Sistem LLM sedang dalam perbaikan.",
       "topic": "sorting",
-      "algorithm": "Quick Sort",
+      "algorithm": "Heap Sort",
       "difficulty": "hard",
       "is_fallback": true
     },
     {
-      "question": "Kategori algoritma apa yang digunakan oleh Activity Selection?",
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma Strassen's Algorithm?",
+      "answers": [
+        "O(1)",
+        "O(n)",
+        "O(n log n)",
+        "O(n²)"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Ini adalah pertanyaan fallback tentang Strassen's Algorithm. Sistem LLM sedang dalam perbaikan.",
+      "topic": "divide_conquer",
+      "algorithm": "Strassen's Algorithm",
+      "difficulty": "hard",
+      "is_fallback": true
+    },
+    {
+      "question": "Kategori algoritma apa yang digunakan oleh Merge Sort?",
       "answers": [
         "Greedy",
         "Divide & Conquer",
@@ -1136,6 +1049,126 @@
         "Brute Force"
       ],
       "correctAnswer": 1,
+      "explanation": "Ini adalah pertanyaan fallback tentang Merge Sort. Sistem LLM sedang dalam perbaikan.",
+      "topic": "sorting",
+      "algorithm": "Merge Sort",
+      "difficulty": "hard",
+      "is_fallback": true
+    },
+    {
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma Dijkstra?",
+      "answers": [
+        "O(1)",
+        "O(n)",
+        "O(n log n)",
+        "O(n²)"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Ini adalah pertanyaan fallback tentang Dijkstra. Sistem LLM sedang dalam perbaikan.",
+      "topic": "graph",
+      "algorithm": "Dijkstra",
+      "difficulty": "hard",
+      "is_fallback": true
+    },
+    {
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma Heap Sort?",
+      "answers": [
+        "O(1)",
+        "O(n)",
+        "O(n log n)",
+        "O(n²)"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Ini adalah pertanyaan fallback tentang Heap Sort. Sistem LLM sedang dalam perbaikan.",
+      "topic": "sorting",
+      "algorithm": "Heap Sort",
+      "difficulty": "hard",
+      "is_fallback": true
+    },
+    {
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma Coin Change?",
+      "answers": [
+        "O(1)",
+        "O(n)",
+        "O(n log n)",
+        "O(n²)"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Ini adalah pertanyaan fallback tentang Coin Change. Sistem LLM sedang dalam perbaikan.",
+      "topic": "dp",
+      "algorithm": "Coin Change",
+      "difficulty": "hard",
+      "is_fallback": true
+    },
+    {
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma Linear Search?",
+      "answers": [
+        "O(1)",
+        "O(n)",
+        "O(n log n)",
+        "O(n²)"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Ini adalah pertanyaan fallback tentang Linear Search. Sistem LLM sedang dalam perbaikan.",
+      "topic": "search",
+      "algorithm": "Linear Search",
+      "difficulty": "hard",
+      "is_fallback": true
+    },
+    {
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma Merge Sort?",
+      "answers": [
+        "O(1)",
+        "O(n)",
+        "O(n log n)",
+        "O(n²)"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Ini adalah pertanyaan fallback tentang Merge Sort. Sistem LLM sedang dalam perbaikan.",
+      "topic": "divide_conquer",
+      "algorithm": "Merge Sort",
+      "difficulty": "hard",
+      "is_fallback": true
+    },
+    {
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma Coin Change?",
+      "answers": [
+        "O(1)",
+        "O(n)",
+        "O(n log n)",
+        "O(n²)"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Ini adalah pertanyaan fallback tentang Coin Change. Sistem LLM sedang dalam perbaikan.",
+      "topic": "dp",
+      "algorithm": "Coin Change",
+      "difficulty": "hard",
+      "is_fallback": true
+    },
+    {
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma Huffman Coding?",
+      "answers": [
+        "O(1)",
+        "O(n)",
+        "O(n log n)",
+        "O(n²)"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Ini adalah pertanyaan fallback tentang Huffman Coding. Sistem LLM sedang dalam perbaikan.",
+      "topic": "greedy",
+      "algorithm": "Huffman Coding",
+      "difficulty": "hard",
+      "is_fallback": true
+    },
+    {
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma Activity Selection?",
+      "answers": [
+        "O(1)",
+        "O(n)",
+        "O(n log n)",
+        "O(n²)"
+      ],
+      "correctAnswer": 2,
       "explanation": "Ini adalah pertanyaan fallback tentang Activity Selection. Sistem LLM sedang dalam perbaikan.",
       "topic": "greedy",
       "algorithm": "Activity Selection",
@@ -1158,37 +1191,7 @@
       "is_fallback": true
     },
     {
-      "question": "Apa kompleksitas waktu rata-rata dari algoritma Matrix Chain Multiplication?",
-      "answers": [
-        "O(1)",
-        "O(n)",
-        "O(n log n)",
-        "O(n²)"
-      ],
-      "correctAnswer": 2,
-      "explanation": "Ini adalah pertanyaan fallback tentang Matrix Chain Multiplication. Sistem LLM sedang dalam perbaikan.",
-      "topic": "dp",
-      "algorithm": "Matrix Chain Multiplication",
-      "difficulty": "hard",
-      "is_fallback": true
-    },
-    {
-      "question": "Apa kompleksitas waktu rata-rata dari algoritma Linear Search?",
-      "answers": [
-        "O(1)",
-        "O(n)",
-        "O(n log n)",
-        "O(n²)"
-      ],
-      "correctAnswer": 2,
-      "explanation": "Ini adalah pertanyaan fallback tentang Linear Search. Sistem LLM sedang dalam perbaikan.",
-      "topic": "search",
-      "algorithm": "Linear Search",
-      "difficulty": "hard",
-      "is_fallback": true
-    },
-    {
-      "question": "Kategori algoritma apa yang digunakan oleh LCS?",
+      "question": "Kategori algoritma apa yang digunakan oleh BFS?",
       "answers": [
         "Greedy",
         "Divide & Conquer",
@@ -1196,9 +1199,24 @@
         "Brute Force"
       ],
       "correctAnswer": 1,
-      "explanation": "Ini adalah pertanyaan fallback tentang LCS. Sistem LLM sedang dalam perbaikan.",
-      "topic": "dp",
-      "algorithm": "LCS",
+      "explanation": "Ini adalah pertanyaan fallback tentang BFS. Sistem LLM sedang dalam perbaikan.",
+      "topic": "graph",
+      "algorithm": "BFS",
+      "difficulty": "hard",
+      "is_fallback": true
+    },
+    {
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma Strassen's Algorithm?",
+      "answers": [
+        "O(1)",
+        "O(n)",
+        "O(n log n)",
+        "O(n²)"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Ini adalah pertanyaan fallback tentang Strassen's Algorithm. Sistem LLM sedang dalam perbaikan.",
+      "topic": "divide_conquer",
+      "algorithm": "Strassen's Algorithm",
       "difficulty": "hard",
       "is_fallback": true
     },
@@ -1218,52 +1236,52 @@
       "is_fallback": true
     },
     {
-      "question": "Strategi pemilihan pivot mana yang paling efektif untuk menghindari worst case?",
+      "question": "Kategori algoritma apa yang digunakan oleh Jump Search?",
       "answers": [
-        "Selalu elemen pertama",
-        "Selalu elemen terakhir",
-        "Median-of-three",
-        "Random"
+        "Greedy",
+        "Divide & Conquer",
+        "Dynamic Programming",
+        "Brute Force"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Ini adalah pertanyaan fallback tentang Jump Search. Sistem LLM sedang dalam perbaikan.",
+      "topic": "search",
+      "algorithm": "Jump Search",
+      "difficulty": "hard",
+      "is_fallback": true
+    },
+    {
+      "question": "Kategori algoritma apa yang digunakan oleh Jump Search?",
+      "answers": [
+        "Greedy",
+        "Divide & Conquer",
+        "Dynamic Programming",
+        "Brute Force"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Ini adalah pertanyaan fallback tentang Jump Search. Sistem LLM sedang dalam perbaikan.",
+      "topic": "search",
+      "algorithm": "Jump Search",
+      "difficulty": "hard",
+      "is_fallback": true
+    },
+    {
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma Knapsack?",
+      "answers": [
+        "O(1)",
+        "O(n)",
+        "O(n log n)",
+        "O(n²)"
       ],
       "correctAnswer": 2,
-      "explanation": "Median-of-three (mengambil median dari elemen pertama, tengah, terakhir) memberikan partisi lebih seimbang dan menghindari worst case.",
-      "topic": "sorting",
-      "algorithm": "Quick Sort",
-      "difficulty": "hard",
-      "is_fallback": true
-    },
-    {
-      "question": "Kategori algoritma apa yang digunakan oleh Bubble Sort?",
-      "answers": [
-        "Greedy",
-        "Divide & Conquer",
-        "Dynamic Programming",
-        "Brute Force"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Ini adalah pertanyaan fallback tentang Bubble Sort. Sistem LLM sedang dalam perbaikan.",
-      "topic": "sorting",
-      "algorithm": "Bubble Sort",
-      "difficulty": "hard",
-      "is_fallback": true
-    },
-    {
-      "question": "Kategori algoritma apa yang digunakan oleh Matrix Chain Multiplication?",
-      "answers": [
-        "Greedy",
-        "Divide & Conquer",
-        "Dynamic Programming",
-        "Brute Force"
-      ],
-      "correctAnswer": 1,
-      "explanation": "Ini adalah pertanyaan fallback tentang Matrix Chain Multiplication. Sistem LLM sedang dalam perbaikan.",
+      "explanation": "Ini adalah pertanyaan fallback tentang Knapsack. Sistem LLM sedang dalam perbaikan.",
       "topic": "dp",
-      "algorithm": "Matrix Chain Multiplication",
+      "algorithm": "Knapsack",
       "difficulty": "hard",
       "is_fallback": true
     },
     {
-      "question": "Apa kompleksitas waktu rata-rata dari algoritma DFS?",
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma Activity Selection?",
       "answers": [
         "O(1)",
         "O(n)",
@@ -1271,29 +1289,29 @@
         "O(n²)"
       ],
       "correctAnswer": 2,
-      "explanation": "Ini adalah pertanyaan fallback tentang DFS. Sistem LLM sedang dalam perbaikan.",
-      "topic": "graph",
-      "algorithm": "DFS",
+      "explanation": "Ini adalah pertanyaan fallback tentang Activity Selection. Sistem LLM sedang dalam perbaikan.",
+      "topic": "greedy",
+      "algorithm": "Activity Selection",
       "difficulty": "hard",
       "is_fallback": true
     },
     {
-      "question": "Strategi pemilihan pivot mana yang paling efektif untuk menghindari worst case?",
+      "question": "Kategori algoritma apa yang digunakan oleh LCS?",
       "answers": [
-        "Selalu elemen pertama",
-        "Selalu elemen terakhir",
-        "Median-of-three",
-        "Random"
+        "Greedy",
+        "Divide & Conquer",
+        "Dynamic Programming",
+        "Brute Force"
       ],
-      "correctAnswer": 2,
-      "explanation": "Median-of-three (mengambil median dari elemen pertama, tengah, terakhir) memberikan partisi lebih seimbang dan menghindari worst case.",
-      "topic": "sorting",
-      "algorithm": "Quick Sort",
+      "correctAnswer": 1,
+      "explanation": "Ini adalah pertanyaan fallback tentang LCS. Sistem LLM sedang dalam perbaikan.",
+      "topic": "dp",
+      "algorithm": "LCS",
       "difficulty": "hard",
       "is_fallback": true
     },
     {
-      "question": "Apa kompleksitas waktu rata-rata dari algoritma Floyd-Warshall?",
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma Dijkstra?",
       "answers": [
         "O(1)",
         "O(n)",
@@ -1301,9 +1319,39 @@
         "O(n²)"
       ],
       "correctAnswer": 2,
-      "explanation": "Ini adalah pertanyaan fallback tentang Floyd-Warshall. Sistem LLM sedang dalam perbaikan.",
+      "explanation": "Ini adalah pertanyaan fallback tentang Dijkstra. Sistem LLM sedang dalam perbaikan.",
       "topic": "graph",
-      "algorithm": "Floyd-Warshall",
+      "algorithm": "Dijkstra",
+      "difficulty": "hard",
+      "is_fallback": true
+    },
+    {
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma Strassen's Algorithm?",
+      "answers": [
+        "O(1)",
+        "O(n)",
+        "O(n log n)",
+        "O(n²)"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Ini adalah pertanyaan fallback tentang Strassen's Algorithm. Sistem LLM sedang dalam perbaikan.",
+      "topic": "divide_conquer",
+      "algorithm": "Strassen's Algorithm",
+      "difficulty": "hard",
+      "is_fallback": true
+    },
+    {
+      "question": "Apa kompleksitas waktu rata-rata dari algoritma Activity Selection?",
+      "answers": [
+        "O(1)",
+        "O(n)",
+        "O(n log n)",
+        "O(n²)"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Ini adalah pertanyaan fallback tentang Activity Selection. Sistem LLM sedang dalam perbaikan.",
+      "topic": "greedy",
+      "algorithm": "Activity Selection",
       "difficulty": "hard",
       "is_fallback": true
     }

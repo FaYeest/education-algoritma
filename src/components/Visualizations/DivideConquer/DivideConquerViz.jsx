@@ -111,6 +111,16 @@ export default function DivideConquerViz() {
       if (index > step.mid && index <= step.right) return 'bg-brutal-cyan'
     }
     
+    if (step.action === 'parallel_start') {
+      if (index >= step.left && index <= step.mid) return 'bg-yellow-500 animate-pulse'
+      if (index > step.mid && index <= step.right) return 'bg-cyan-500 animate-pulse'
+    }
+    
+    if (step.action === 'parallel_end') {
+      if (index >= step.left && index <= step.mid) return 'bg-yellow-600'
+      if (index > step.mid && index <= step.right) return 'bg-cyan-600'
+    }
+    
     if (step.action === 'merge_compare' || step.action === 'merge_remaining') {
       if (index === step.placing) return 'bg-brutal-success'
       if (step.comparing?.includes(index)) return 'bg-brutal-warning'
@@ -142,6 +152,18 @@ export default function DivideConquerViz() {
       <span className="flex items-center gap-2">
         <ScissorsIcon className="w-5 h-5" />
         MEMECAH
+      </span>
+    )
+    if (action === 'parallel_start') return (
+      <span className="flex items-center gap-2">
+        <BoltIcon className="w-5 h-5" />
+        PARALLEL START
+      </span>
+    )
+    if (action === 'parallel_end') return (
+      <span className="flex items-center gap-2">
+        <CheckCircleIcon className="w-5 h-5" />
+        PARALLEL SELESAI
       </span>
     )
     if (action === 'merge_start') return (
@@ -354,44 +376,137 @@ export default function DivideConquerViz() {
             </div>
 
             {/* Visualization */}
-            <div className="flex items-end justify-center gap-2 h-80">
-              {displayArray.map((value, index) => {
-                const heightPercentage = (value / maxValue) * 100
-                
-                return (
-                  <motion.div
-                    key={`${index}-${value}`}
-                    className="flex flex-col items-center flex-1 max-w-[60px]"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                  >
+            {currentStepData.action === 'parallel_start' ? (
+              // PARALLEL VIEW - Split into LEFT and RIGHT
+              <div className="space-y-4">
+                <div className="text-center font-black text-sm uppercase bg-purple-500 text-white p-2 border-3 border-black animate-pulse">
+                  <BoltIcon className="w-5 h-5 inline mr-2" />
+                  PARALLEL PROCESSING - KIRI & KANAN BERJALAN BERSAMAAN
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  {/* LEFT THREAD */}
+                  <div className="border-3 border-yellow-500 p-3 bg-yellow-50 dark:bg-yellow-900">
+                    <div className="font-black text-xs mb-2 text-center">
+                      LEFT Thread: {currentStepData.left_thread}
+                    </div>
+                    <div className="flex items-end justify-center gap-1 h-48">
+                      {displayArray.slice(currentStepData.left_range[0], currentStepData.left_range[1] + 1).map((value, idx) => {
+                        const index = currentStepData.left_range[0] + idx
+                        const heightPercentage = (value / maxValue) * 100
+                        
+                        return (
+                          <motion.div
+                            key={`left-${index}`}
+                            className="flex flex-col items-center flex-1"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                          >
+                            <motion.div
+                              className="w-full border-2 border-black bg-yellow-500"
+                              style={{ 
+                                height: `${heightPercentage}%`,
+                                minHeight: '30px'
+                              }}
+                              animate={{
+                                scale: [1, 1.1, 1],
+                              }}
+                              transition={{ 
+                                duration: 1,
+                                repeat: Infinity,
+                                repeatType: "reverse"
+                              }}
+                            >
+                              <div className="text-center font-black text-xs mt-1">{value}</div>
+                            </motion.div>
+                          </motion.div>
+                        )
+                      })}
+                    </div>
+                  </div>
+
+                  {/* RIGHT THREAD */}
+                  <div className="border-3 border-cyan-500 p-3 bg-cyan-50 dark:bg-cyan-900">
+                    <div className="font-black text-xs mb-2 text-center">
+                      RIGHT Thread: {currentStepData.right_thread}
+                    </div>
+                    <div className="flex items-end justify-center gap-1 h-48">
+                      {displayArray.slice(currentStepData.right_range[0], currentStepData.right_range[1] + 1).map((value, idx) => {
+                        const index = currentStepData.right_range[0] + idx
+                        const heightPercentage = (value / maxValue) * 100
+                        
+                        return (
+                          <motion.div
+                            key={`right-${index}`}
+                            className="flex flex-col items-center flex-1"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                          >
+                            <motion.div
+                              className="w-full border-2 border-black bg-cyan-500"
+                              style={{ 
+                                height: `${heightPercentage}%`,
+                                minHeight: '30px'
+                              }}
+                              animate={{
+                                scale: [1, 1.1, 1],
+                              }}
+                              transition={{ 
+                                duration: 1,
+                                repeat: Infinity,
+                                repeatType: "reverse",
+                                delay: 0.5
+                              }}
+                            >
+                              <div className="text-center font-black text-xs mt-1">{value}</div>
+                            </motion.div>
+                          </motion.div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              // NORMAL VIEW - Single unified array
+              <div className="flex items-end justify-center gap-2 h-80">
+                {displayArray.map((value, index) => {
+                  const heightPercentage = (value / maxValue) * 100
+                  
+                  return (
                     <motion.div
-                      className={`w-full border-3 border-black dark:border-brutal-bg ${getBarColor(index)} transition-colors relative`}
-                      style={{ 
-                        height: `${heightPercentage}%`,
-                        minHeight: '40px'
-                      }}
-                      animate={{
-                        scale: currentStepData.placing === index ? 1.15 : 1,
-                      }}
-                      transition={{ duration: 0.3, type: "spring" }}
+                      key={`${index}-${value}`}
+                      className="flex flex-col items-center flex-1 max-w-[60px]"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.05 }}
                     >
-                      {currentStepData.placing === index && (
-                        <motion.div
-                          className="absolute -top-8 left-1/2 -translate-x-1/2"
-                          initial={{ y: -10, opacity: 0 }}
-                          animate={{ y: 0, opacity: 1 }}
-                        >
-                          <ArrowDownIcon className="w-6 h-6 text-brutal-success" />
-                        </motion.div>
-                      )}
+                      <motion.div
+                        className={`w-full border-3 border-black dark:border-brutal-bg ${getBarColor(index)} transition-colors relative`}
+                        style={{ 
+                          height: `${heightPercentage}%`,
+                          minHeight: '40px'
+                        }}
+                        animate={{
+                          scale: currentStepData.placing === index ? 1.15 : 1,
+                        }}
+                        transition={{ duration: 0.3, type: "spring" }}
+                      >
+                        {currentStepData.placing === index && (
+                          <motion.div
+                            className="absolute -top-8 left-1/2 -translate-x-1/2"
+                            initial={{ y: -10, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                          >
+                            <ArrowDownIcon className="w-6 h-6 text-brutal-success" />
+                          </motion.div>
+                        )}
                     </motion.div>
                     <span className="text-sm sm:text-base font-black mt-2">{value}</span>
                   </motion.div>
                 )
               })}
-            </div>
+              </div>
+            )}
           </div>
 
           {/* Controls */}
@@ -459,6 +574,8 @@ export default function DivideConquerViz() {
                     </span>
                     <div className={`px-3 py-1 border-3 border-black dark:border-brutal-bg font-black text-lg ${
                       currentStepData.action === 'divide' ? 'bg-brutal-warning text-black' :
+                      currentStepData.action === 'parallel_start' ? 'bg-purple-500 text-white' :
+                      currentStepData.action === 'parallel_end' ? 'bg-indigo-500 text-white' :
                       currentStepData.action?.startsWith('merge') ? 'bg-brutal-cyan text-black' :
                       currentStepData.action === 'complete' ? 'bg-brutal-success text-white' :
                       'bg-brutal-secondary text-black'
@@ -468,8 +585,48 @@ export default function DivideConquerViz() {
                   </div>
                   
                   <div className="font-bold text-base sm:text-lg leading-relaxed">
-                    {getStepExplanation()}
+                    {currentStepData.message || getStepExplanation()}
                   </div>
+
+                  {/* Thread Info */}
+                  {currentStepData.thread_id && (
+                    <div className="mt-3 p-2 bg-gray-100 dark:bg-gray-800 border-2 border-black dark:border-gray-600 rounded">
+                      <div className="text-xs font-bold mb-1">Thread ID:</div>
+                      <div className="font-mono text-sm">{currentStepData.thread_id}</div>
+                      {currentStepData.depth !== undefined && (
+                        <div className="text-xs mt-1">Depth Level: {currentStepData.depth}</div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Parallel Threading Visualization */}
+                  {currentStepData.action === 'parallel_start' && (
+                    <motion.div 
+                      className="mt-4 p-4 bg-purple-100 dark:bg-purple-900 border-3 border-purple-500"
+                      initial={{ scale: 0.9, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                    >
+                      <div className="font-black uppercase text-sm mb-3 flex items-center gap-2">
+                        <BoltIcon className="w-5 h-5" />
+                        PARALLEL EXECUTION
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="p-3 bg-yellow-200 dark:bg-yellow-800 border-2 border-yellow-600 rounded">
+                          <div className="font-black text-xs mb-2">LEFT Thread</div>
+                          <div className="font-mono text-xs mb-1">{currentStepData.left_thread}</div>
+                          <div className="text-xs font-bold">Range: [{currentStepData.left_range?.[0]}, {currentStepData.left_range?.[1]}]</div>
+                        </div>
+                        <div className="p-3 bg-cyan-200 dark:bg-cyan-800 border-2 border-cyan-600 rounded">
+                          <div className="font-black text-xs mb-2">RIGHT Thread</div>
+                          <div className="font-mono text-xs mb-1">{currentStepData.right_thread}</div>
+                          <div className="text-xs font-bold">Range: [{currentStepData.right_range?.[0]}, {currentStepData.right_range?.[1]}]</div>
+                        </div>
+                      </div>
+                      <div className="mt-3 text-xs font-bold text-center bg-white dark:bg-gray-700 p-2 rounded border border-purple-500">
+                        Kedua thread bekerja BERSAMAAN untuk efisiensi maksimal!
+                      </div>
+                    </motion.div>
+                  )}
 
                   {/* Show LEFT and RIGHT with visual boxes */}
                   {currentStepData.left_part && currentStepData.right_part && (
@@ -518,19 +675,155 @@ export default function DivideConquerViz() {
           {/* All Steps List - Only shown in 'list' mode */}
           {viewMode === 'list' && steps.length > 0 && (
             <div className="mt-4">
+              {/* Legend */}
+              <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-4 mb-4">
+                <h3 className="font-black uppercase text-sm mb-3">Legend Warna Step:</h3>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-yellow-500 border-2 border-black dark:border-white"></div>
+                    <span className="text-xs font-bold">Divide</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-purple-500 border-2 border-black dark:border-white"></div>
+                    <span className="text-xs font-bold">Parallel Start</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-indigo-500 border-2 border-black dark:border-white"></div>
+                    <span className="text-xs font-bold">Parallel End</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-cyan-500 border-2 border-black dark:border-white"></div>
+                    <span className="text-xs font-bold">Merge</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-green-500 border-2 border-black dark:border-white"></div>
+                    <span className="text-xs font-bold">Complete</span>
+                  </div>
+                </div>
+                <div className="mt-3 p-2 bg-purple-50 dark:bg-purple-900 border-2 border-purple-500 rounded">
+                  <div className="text-xs font-bold mb-1 flex items-center gap-2">
+                    <BoltIcon className="w-4 h-4" />
+                    Parallel Processing
+                  </div>
+                  <p className="text-xs">Divide & Conquer memecah masalah menjadi sub-masalah yang dapat diselesaikan secara paralel (bersamaan) untuk efisiensi maksimal!</p>
+                </div>
+              </div>
+
               <GenericStepsList 
                 steps={steps} 
                 animationCompleted={animationCompleted}
                 algorithmName="Merge Sort (Divide & Conquer)"
-              />
-            </div>
-          )}
-          {viewMode === 'list' && (
-            <div className="mt-4">
-              <GenericStepsList 
-                steps={steps} 
-                animationCompleted={animationCompleted}
-                algorithmName="Merge Sort"
+                renderStepContent={(step, index, isLastStep) => {
+                  const getStepColor = (action) => {
+                    if (action === 'divide') return 'bg-yellow-500 border-yellow-500'
+                    if (action === 'parallel_start') return 'bg-purple-500 border-purple-500'
+                    if (action === 'parallel_end') return 'bg-indigo-500 border-indigo-500'
+                    if (action?.startsWith('merge')) return 'bg-cyan-500 border-cyan-500'
+                    if (action === 'complete') return 'bg-green-500 border-green-500'
+                    return 'bg-gray-500 border-gray-500'
+                  }
+
+                  const getActionLabel = (action) => {
+                    if (action === 'divide') return 'DIVIDE'
+                    if (action === 'parallel_start') return 'PARALLEL START'
+                    if (action === 'parallel_end') return 'PARALLEL END'
+                    if (action?.startsWith('merge')) return 'MERGE'
+                    if (action === 'complete') return 'COMPLETE'
+                    return action?.toUpperCase() || 'STEP'
+                  }
+
+                  return (
+                    <div>
+                      {/* Action Badge */}
+                      <div className="mb-2 flex items-center gap-2 flex-wrap">
+                        <span className={`inline-block px-3 py-1 border-2 border-black dark:border-white font-black text-xs text-white ${getStepColor(step.action)}`}>
+                          {getActionLabel(step.action)}
+                        </span>
+                        {step.thread_id && (
+                          <span className="inline-block px-2 py-1 bg-gray-200 dark:bg-gray-700 border border-black dark:border-gray-500 font-mono text-xs">
+                            Thread: {step.thread_id}
+                          </span>
+                        )}
+                        {step.depth !== undefined && (
+                          <span className="inline-block px-2 py-1 bg-blue-100 dark:bg-blue-900 border border-black dark:border-blue-500 font-bold text-xs">
+                            Level: {step.depth}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Message */}
+                      <div className="font-bold text-sm mb-2">
+                        {step.description || step.message || `Step ${index + 1}`}
+                      </div>
+
+                      {/* Parallel Threading Visualization */}
+                      {step.action === 'parallel_start' && (
+                        <div className="mt-3 p-3 bg-purple-50 dark:bg-purple-900 border-2 border-purple-500 rounded">
+                          <div className="font-black text-xs mb-2 flex items-center gap-2">
+                            <BoltIcon className="w-4 h-4" />
+                            PARALLEL EXECUTION
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div className="p-2 bg-yellow-100 dark:bg-yellow-900 border border-yellow-500 rounded">
+                              <div className="font-bold text-xs mb-1">LEFT Thread</div>
+                              <div className="font-mono text-xs">{step.left_thread}</div>
+                              <div className="text-xs mt-1">Range: [{step.left_range?.[0]}, {step.left_range?.[1]}]</div>
+                            </div>
+                            <div className="p-2 bg-cyan-100 dark:bg-cyan-900 border border-cyan-500 rounded">
+                              <div className="font-bold text-xs mb-1">RIGHT Thread</div>
+                              <div className="font-mono text-xs">{step.right_thread}</div>
+                              <div className="text-xs mt-1">Range: [{step.right_range?.[0]}, {step.right_range?.[1]}]</div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Array Details */}
+                      {step.current_array && (
+                        <div className="mt-2 p-2 bg-gray-100 dark:bg-gray-800 border-2 border-black dark:border-gray-600">
+                          <div className="text-xs font-bold mb-1">Array:</div>
+                          <div className="flex gap-1 flex-wrap">
+                            {step.current_array.map((num, i) => (
+                              <span key={i} className="px-2 py-1 bg-white dark:bg-gray-700 border border-black dark:border-gray-500 font-black text-xs">
+                                {num}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Left and Right Parts */}
+                      {(step.left_part || step.right_part) && (
+                        <div className="mt-2 grid grid-cols-2 gap-2">
+                          {step.left_part && (
+                            <div className="p-2 bg-yellow-100 dark:bg-yellow-900 border-2 border-black dark:border-yellow-600">
+                              <div className="text-xs font-bold mb-1">Left:</div>
+                              <div className="flex gap-1 flex-wrap">
+                                {step.left_part.map((num, i) => (
+                                  <span key={i} className="px-2 py-1 bg-white dark:bg-gray-700 border border-black dark:border-gray-500 font-black text-xs">
+                                    {num}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                          {step.right_part && (
+                            <div className="p-2 bg-cyan-100 dark:bg-cyan-900 border-2 border-black dark:border-cyan-600">
+                              <div className="text-xs font-bold mb-1">Right:</div>
+                              <div className="flex gap-1 flex-wrap">
+                                {step.right_part.map((num, i) => (
+                                  <span key={i} className="px-2 py-1 bg-white dark:bg-gray-700 border border-black dark:border-gray-500 font-black text-xs">
+                                    {num}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )
+                }}
               />
             </div>
           )}

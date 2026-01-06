@@ -995,10 +995,88 @@ export default function MSTViz() {
           {/* All Steps List - Only shown in 'list' mode */}
           {viewMode === 'list' && (
             <div className="mt-4">
+              {/* Legend */}
+              <div className="card-brutal bg-brutal-bg dark:bg-brutal-dark p-4 mb-4">
+                <h3 className="font-black uppercase text-sm mb-3">Penjelasan Warna:</h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-blue-500 border-2 border-black dark:border-white"></div>
+                    <span className="text-xs font-bold">Init</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-yellow-500 border-2 border-black dark:border-white"></div>
+                    <span className="text-xs font-bold">Check</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-green-500 border-2 border-black dark:border-white"></div>
+                    <span className="text-xs font-bold">Add</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-red-500 border-2 border-black dark:border-white"></div>
+                    <span className="text-xs font-bold">Reject</span>
+                  </div>
+                </div>
+              </div>
+
               <GenericStepsList 
                 steps={steps} 
                 animationCompleted={animationCompleted}
                 algorithmName={algorithm === 'kruskal' ? "Kruskal's MST" : "Prim's MST"}
+                renderStepContent={(step, index, isLastStep) => {
+                  const getStepColor = (action) => {
+                    switch(action) {
+                      case 'init': return 'bg-blue-500 border-blue-500'
+                      case 'check': return 'bg-yellow-500 border-yellow-500'
+                      case 'add': return 'bg-green-500 border-green-500'
+                      case 'reject': return 'bg-red-500 border-red-500'
+                      case 'complete': return 'bg-purple-500 border-purple-500'
+                      default: return 'bg-gray-500 border-gray-500'
+                    }
+                  }
+
+                  const getActionLabel = (action) => {
+                    switch(action) {
+                      case 'init': return 'INIT'
+                      case 'check': return 'CHECK'
+                      case 'add': return 'ADD'
+                      case 'reject': return 'REJECT'
+                      case 'complete': return 'COMPLETE'
+                      default: return action?.toUpperCase()
+                    }
+                  }
+
+                  return (
+                    <div>
+                      {/* Action Badge */}
+                      <div className="mb-2">
+                        <span className={`inline-block px-3 py-1 border-2 border-black dark:border-white font-black text-xs text-white ${getStepColor(step.action)}`}>
+                          {getActionLabel(step.action)}
+                        </span>
+                      </div>
+
+                      {/* Message */}
+                      <div className="font-bold text-sm mb-2">
+                        {step.message}
+                      </div>
+
+                      {/* Details */}
+                      {step.edge && (
+                        <div className="text-xs font-bold opacity-70 mt-2 p-2 bg-gray-100 dark:bg-gray-800 border-2 border-black dark:border-gray-600">
+                          <span className="font-black">Edge:</span> {step.edge.from} ↔ {step.edge.to} 
+                          <span className="ml-2 font-black">Weight:</span> Rp{step.edge.weight}
+                        </div>
+                      )}
+
+                      {/* Cost Info */}
+                      {step.totalCost !== undefined && step.action !== 'init' && (
+                        <div className="text-xs font-bold mt-2 flex items-center gap-2">
+                          <span className="text-brutal-success">Total Biaya: Rp{step.totalCost}</span>
+                          {step.edges && <span className="opacity-70">| Edges: {step.edges.length}</span>}
+                        </div>
+                      )}
+                    </div>
+                  )
+                }}
               />
             </div>
           )}
@@ -1186,7 +1264,7 @@ export default function MSTViz() {
                       handleWeightSubmit()
                     }
                   }}
-                  className="w-full px-4 py-3 border-3 border-black dark:border-white font-black text-lg text-center rounded focus:outline-none focus:ring-4 focus:ring-brutal-primary"
+                  className="w-full px-4 py-3 border-3 border-black dark:border-white font-black text-lg text-center rounded focus:outline-none focus:ring-4 focus:ring-brutal-primary bg-white dark:bg-gray-800 text-black dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
                   placeholder="Masukkan weight..."
                   min="1"
                   autoFocus
