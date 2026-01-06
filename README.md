@@ -455,14 +455,14 @@ Jika ada pertanyaan atau masalah:
 - ✅ PlaybackControls for all algorithms
 - ✅ Dungeon Maze for DP visualization
 - ✅ Multiple scenarios for each algorithm
+- ✅ Custom Playground
 
-### Version 2.0 (Planned)
+### Version 2.0 (Planned Maybe)
 
 - [ ] More algorithms (A\*, Dijkstra, Floyd-Warshall)
 - [ ] User authentication
 - [ ] Save progress & bookmarks
 - [ ] Leaderboard system
-- [ ] Code playground
 - [ ] Export visualization as video/GIF
 - [ ] Multi-language support
 
